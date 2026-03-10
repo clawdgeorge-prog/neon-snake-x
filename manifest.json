@@ -1,0 +1,25 @@
+{
+  "name": "Neon Snake",
+  "short_name": "NeonSnake",
+  "description": "A neon-styled snake game with powerups and multiple difficulty levels",
+  "start_url": "/game.html",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0a0f' width='192' height='192' rx='32'/><circle fill='%23ff00ff' cx='96' cy='96' r='40'/><circle fill='%2300ff88' cx='96' cy='96' r='25'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230a0a0f' width='512' height='512' rx='64'/><circle fill='%23ff00ff' cx='256' cy='256' r='100'/><circle fill='%2300ff88' cx='256' cy='256' r='60'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment"]
+}

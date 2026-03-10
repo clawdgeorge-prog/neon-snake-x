@@ -99,7 +99,9 @@ Data-driven healthcare analytics company (founded 2021), Roosevelt, Utah. Specia
 - Backup: 1am, 9am, 1pm daily
 - Backup Check: 4am, 8am, 12pm, 4pm, 8pm daily
 - X-Trending: 5am daily
-- Business listings: 6am, 12pm, 6pm daily
+- Business listings: 6am, 12pm, 6pm daily (via LaunchAgents / scraper_with_retry.sh)
+- Business email check: every 30 min (via LaunchAgent / check_email.sh)
+- Business site discovery: every 30 min (via LaunchAgents / site-discovery.sh and site_discovery.sh)
 - Innovation: 7am daily
 - Self-improvement: 2am, 2:30am, 2:45am, 3am (varied)
 
@@ -151,6 +153,8 @@ Data-driven healthcare analytics company (founded 2021), Roosevelt, Utah. Specia
 - AGENTS.md updated with CRITICAL reminder to check vector DB
 - Game was created but never logged - found only via file search
 - Joke cron existed but delivery was broken - fixed delivery config
+- Business listings automation is partly outside OpenClaw cron, using macOS LaunchAgents
+- Site discovery failure root cause: `site-discovery.sh` tried to execute `main.py` directly; fixed to use `python3 ~/.openclaw/business-listings/main.py`
 - **Always save important things to MEMORY.md or daily notes immediately**
 
 ## Neon Snake X Game

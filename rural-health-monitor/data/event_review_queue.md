@@ -1,0 +1,74 @@
+# Rural Health Event Review Queue
+
+- [READY] Health-ISAC Hacking Healthcare 3-5-2026 (Health-ISAC)
+  - Link: https://news.google.com/rss/articles/CBMickFVX3lxTE0tZ05hWWx3NFh4M2tBX2t3aWJOZTNqaXdtbjVTX1JIMU1ubXkwMVAyNzJNdFlsZlB2WGVhUGZzYXlUNjFOeHA5X0YySElDVHUwa1hKU3NXUEo2bHhWa01Eai00ZTdaZlRKWUYySlhjZnNPdw?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: 2026-03-05
+  - Score: 6
+- [REVIEW] Best Medical Tourism Conference 2026: Global Medical Tourism & Insurance Summit (Medical Tourism Magazine)
+  - Link: https://news.google.com/rss/articles/CBMiwgFBVV95cUxOX0lhOTlPd05UX0ROQzZzbFluT2o3ZEdpbE1BUzlBMnoySktzWGh4ZTdIakhidGVZOEZsNW1PaHRSVkJ4ZlRyYjRid2hJNDFkUGlibHdlRzg0ZzRaZXpEQ0tFY0dfT0tVOExETFVPd29ScHllYTNRMko5SjhqM0hlWlFLMC1ISE1wbVE0SHhjLTFmb3VJaE1sYlJqN3JxZHdvSzRUbkdqbmJEdktiQWVTbmp5UGFfazRNYTFjVjIwU0FUdw?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 11
+- [REVIEW] AI use in diagnostic care, rural care access, and surge in preventable (ECRI)
+  - Link: https://news.google.com/rss/articles/CBMi8gFBVV95cUxOR0pHY01XMnFCR3VpeW5ZZGRNeTZVWENiTW1QYlNjeXpGZ0ZrNHF2ZUJTSmExdlJZUzEweFMwSUdia2t2S3lXSHFUUFpPVFVpQjR3X05nazkwcTlGTWhUdUFkWm5QbEdDVUNpR3NBNDFoLUdHWDQ5MlFqc2MtTm5lbHdFSjQzMUZrQWcyLVp1dXh4WEJCQlFPQUFrdWlBZkc0VjlSamdycV9RNnJ5VXc4elJsUHFjc0N0TUppU3d5SGZyQTZvNGpJTmh5RTJPVDF5c0hCZXVqbHp6SXYwUFlyYnoxdkktSHp1aktGa2lQNkt5dw?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 8
+- [REVIEW] Guest Column: Clarifying the Rural Health Transformation Program (Idaho County Free Press)
+  - Link: https://news.google.com/rss/articles/CBMi7wFBVV95cUxNZ0ZTNF9pR2tlQ0FXQ3czYVNmZVE3X1IyZ2U4ZU9ycnFiU2REbVZ2SWl5ajl2ZkRaLS1FazdJdURTVDZMRzBJeUFzcGxXZUd3TlNEWHhfbGFjbHpYRTR4Q1dIS1Y4bzR4aUZCRXExak1zWDVKWEdHRUdOZDd4QTBBVUpkcGpXRFFSWHg2aXEwOG1kRGx3N0l3TTUyQ1BEZklWRHFfeXpQUVZlVVNVWlRiUUhOVnZwdG9GTDhSbjdyM1BKN1VzWURkYVZTd2ZKRkFNdE5UVDRZV241dEFqMUtuaU5WZUhabm45NDU2REtLYw?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Best Healthcare Investment and Insurance Conference 2026 (Medical Tourism Magazine)
+  - Link: https://news.google.com/rss/articles/CBMipwFBVV95cUxOWVdkR21RckM0ZGN5WlJEQk05WGVnOGtYWFpuZWxLb1FiLWY2dXBybTRTcVdfaXhxSFJBWnlyYjlfemdraHoteUV0Q2hwY2pkSEwxbURJclpyZDlSNUdpcEJobUpTNGpyN285MUxPdnQycEs0bFktRG1ubW9NQW04eVlobFNDb055WGVoT3dzQzNndnJJSU5zaThCclFibGlRNEgwclB2RQ?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] State to host vendor webinar on rural health contracts (NBC Montana)
+  - Link: https://news.google.com/rss/articles/CBMikgFBVV95cUxQTFR6RXliQnFLcnhidHhnekFBVU1lZzBRbGxXd0xGZW4tOUc4c24tYUZ5SlZ3b3JxS0dvTm1LMThOcnBfWDBBaDZmU1paUXM4YVBraUVxcjNOc3FmSDRfTV94TFBaTjFEb0xRTG5tNFAwQ21ndUxWT1BHRS12cWxCVkJxWXdtUVQ5NXM2R1V4N3lmdw?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Rural Access Today: Fresh Insights for Health Plans (AHIP)
+  - Link: https://news.google.com/rss/articles/CBMihwFBVV95cUxNQm5maU1MV3FmMEpwY2hUSG85WnVzQ2dJQ2RsdTd2b3Zzc05abFBjQzlKQ0pZLXEzRzQ5RVFEZmQ1ZHdhWU1Pb3NpeGo4cy1KWFlDU1VxUEtoRl9LX0NER2JsMktwajEwV1NNU1pOZ3dBdC1nUlhObTZYOTNvZTA3c1FrcUp1aTg?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Dr. Oz touts ‘AI avatars’ to address rural mental health care shortage. Experts urge caution (Association of Health Care Journalists)
+  - Link: https://news.google.com/rss/articles/CBMihgFBVV95cUxNY3B0UGptSFM0TXVNd1QzZVZfdHRMajZTY3FYUlU0X1Y1cHRpT05GQ0xBLURZb0tSSGUzN1ViVm9HZXZrRkJ5c3lmQUJfekFZV3ZjN3F0b2M1cHk0azlRR2hHeG5uVzByN2JaRXBGd3RMMFZkVGJBTlhyUXppS0RHQXFNT0tSdw?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] LLH Healthcare Expands Partnership With American Conference for 2026 Men's and Women's Basketball Championships (American Conference)
+  - Link: https://news.google.com/rss/articles/CBMi6AFBVV95cUxPd29Bd0hTZV9IWmF4bDczYlhGdlBSZzFKeEpnS2N0SVRnemE1UTc1R2RCenVGR1dyejVBNE9yVHFYMU90d0JqQTRrdl9CemN5UmFESGRvUzBMNkNIS05XSmFxQzRoTTVyYTFQR0NmWW1Pd0ctUGV2TUFZekVIZktoWnZ3X05jS28zZDZwdFRaTGRMSld3ZGN3emotOUVJeTlOSkRNLV84UkZGaXNJSE41ODNlaEloMEdvbzJjWmtrX210WU9WQVp1bHJXZG1peEMyN2ZGRVg5aGVuZHd3SDVSaGJDSkxEaW1G?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Column: Budgets Reveal Priorities: Rural Healthcare Must Be One (The New York State Senate (.gov))
+  - Link: https://news.google.com/rss/articles/CBMiwAFBVV95cUxNREVQUmpKbUY4dENBT3JiY3h4c09PM2hMT2plM01KNEYxTjIxNWlKOG9aSFh3U3hOcEpmaDQwTzF5TEdtMHdpdWhwMnZxajUtcWFFR0RNY29hX0JsWmt3Q0EwdFZIUUhrZXBlcVEwai10aU10UzNFeWFHbkFMYU5fMGNfUFdkRDBEbEdweEtnYkZ5YXJyXzBvM2J1WlBzU2VZS1dHWFpKbkV6VHpHZGFadGR0eGFQYkdIcEdQbEVsZjI?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] How to get beyond read-only EHR access during a network outage (Healthcare IT News)
+  - Link: https://news.google.com/rss/articles/CBMimwFBVV95cUxNa0RwdXNMUTFxSTNTdFFndi1SamlTd3RzQzMzVnhhamV4QlZJOVY5SXZWVU80VUtVTWRodFFuWG1Eb2R0VTBDMWJfc2lYbE9TWWRIM2xtcmNiRW5oQ1Y1SVJDMEc4R3BaOExBb3pyd01XTHlhbnZBNjZTTk42c3llenlRbTZydHBIT2xzQl9yNVNzdWtQQ3UyaDFwdw?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] County Supervisors Bullock and Hall Represent Nevada County in Washington, D.C. (Nevada County (.gov))
+  - Link: https://news.google.com/rss/articles/CBMia0FVX3lxTE12azBUMy1SQU51aEJlTVdPVjZtWjhYd1FLeEpuazRGNGpnTmVxNkl0dUNtdExlbU9MUy1BR2hmcUdNNFpWdi0tZ1VrVlBESjBadlUyU3I0N3U4RVhSa0hLdl8xbjZJUFkwenQ0?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] State Officials Hail $154M Federal Grant To Improve Health In Rural Areas (CT News Junkie)
+  - Link: https://news.google.com/rss/articles/CBMirgFBVV95cUxOcUlvQmJyRDFfZE5za2U0S1puQnFFR1hQNk1UNUhubUQzNktuU2M4MHpldnA5S2pERE4yUEtEaHlCUVZRSG1pVFE5YjZfZHNDVlJIQ1dBazB3ZndUd2pQdjVsY1cyZVE0d1F2YTVEaWpfUVNBMGtSdTM0c3J0WG5TODg5TFZhNzc1cHZQLTZmOGRISGNqRmlUXzlNVTZSSjNUMG9zTy1wQ013MDBOS1E?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Opportunities to Improve Rural Responses to Opioid Use Disorder and Overdose (Yahoo Finance)
+  - Link: https://news.google.com/rss/articles/CBMilAFBVV95cUxPRUVTdXRsbGZCbUROaWoza2NfZGR5YTgybERCbWhRYkg2YzN4ZVhOTmtkTElVVHFoTDgzcXNXeTNLb0duU2JZSzd1ZUJTd0hOU0JmT1U5ZnNmdEdRMkotUENyajdfTDdvaDZIQzUzeEEybHExZEhpOGEwUHhpU3cwN0xaY213b3V1WkcyelRXSDBYSHl4?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Mental Health Resources Make a Difference for Farm Families (Successful Farming)
+  - Link: https://news.google.com/rss/articles/CBMinAFBVV95cUxPQjYzOXNONGFvbUY0Q3BjN0VTd3VvbVNGbm5PMUpMdjRGa2NMZS00QkRQQlZKaDY2RDJaV3hUbThQU1pVbHcyNGlMNExsT0dlQkhuMjBpSHFlOHVibEpRMHRDTEI3eW5zbVhuTlFZU3BTaVNQc2ItUERjS3AtcWw4Zkxzak1SWU0wN2QwakVxVkNKVDIzVVlleTZ0b0o?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Executive Council pauses $773 million federal rural health spending, requesting details (New Hampshire Bulletin)
+  - Link: https://news.google.com/rss/articles/CBMiygFBVV95cUxONjg0NmJJbWFFWE8wOHRSTHhUUGZMSmZsT1VJSHZEYXRkdUNCWmNZdFIwSUZRQTJBLVZQUnlJUDFQNG45SEJDXzlDZ0tQSHRnT08tVFFkZHpvQ3NJd1JPV2g1WVBhWWhjYXR1c3gtQ2RZR3Rfd3d0YTJPMW5INEZaUklqWGpDTW9FTDRwdk1vT25jeXJXMVpMM2RQVTJaMmJfdFRSN29OWm82SE5YZWlLUEVTTXR3UXpuMFNmQjFMWHZySGdQSjZJTkVB?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Who’s Who in Arizona Healthcare for 2026 (AZ Big Media)
+  - Link: https://news.google.com/rss/articles/CBMijAFBVV95cUxOV1NjZ3JvblJhSjhiSzZxRE5GT0pIZ1lzWFU1VTUyUnVrQmd6ZHpfRlVlSXdkdjlndWMtOTIyVmRENHdqWkplRDBFVkd3NFZUYmFPT0pQZmFqQUU2d19xM3ZGT0phQWNzSTNpc0l1MWpIcGlVX0NSdmlNLWluYTg3cVZNWWYzUTZaNnVMVg?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6
+- [REVIEW] Eton Pharmaceuticals Expands Rare Disease Portfolio with Acquisition of US Hemangeol Rights (Pharmaceutical Commerce)
+  - Link: https://news.google.com/rss/articles/CBMi0AFBVV95cUxOOVFxZWxKakNERTRJY2liTjBJd1FscmtUMlNDRkhwT2ctY3hDVFRPSEtPZjUtT3VlR0R5a202aW10dUhnU0xUMWZBeWg2bVVhMTZxTmYzbGhacWVTQkJyTmVhUkNNY0JYcnQ1LUhBeXVNRDFadUNReHBTU2QzNFo3STRSeTUzYkQyZFZuYkZQdzRqWlB4eWZiTDREcXpvazRSRWJsY1B1TjdYVTZLaS1ma3RJQ0pjNFk5X2llYjN0RTlvY3VDaG1XYVlxNGtiY2VX?oc=5&hl=en-US&gl=US&ceid=US:en
+  - Event date: not confidently extracted
+  - Score: 6

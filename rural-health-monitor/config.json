@@ -23,28 +23,50 @@
     "rural health annual meeting",
     "rural healthcare partnership United States",
     "rural revenue cycle hospital United States",
-    "population health rural hospital United States"
+    "population health rural hospital United States",
+    "FQHC community health center rural",
+    "rural health clinic United States",
+    "rural hospital merger acquisition",
+    "rural health IT technology",
+    "rural health quality improvement",
+    "rural health workforce shortage",
+    "rural obstetrics maternity care",
+    "rural mental health telehealth",
+    "critical access hospital reimbursement",
+    "rural health policy CMS HRSA",
+    "rural hospital financial distress"
   ],
   "known_sources": [
-    {"name": "Rural Health Information Hub", "url": "https://www.ruralhealthinfo.org/", "category": "policy/resources"},
-    {"name": "National Rural Health Association", "url": "https://www.ruralhealth.us/", "category": "association"},
-    {"name": "FORHP", "url": "https://www.hrsa.gov/rural-health", "category": "federal"},
+    {"name": "Rural Health Information Hub", "url": "https://www.ruralhealthinfo.org/", "category": "policy/resources", "rss": "https://www.ruralhealthinfo.org/rss-updates"},
+    {"name": "National Rural Health Association", "url": "https://www.ruralhealth.us/", "category": "association", "rss": "https://www.ruralhealth.us/rss-news"},
+    {"name": "FORHP", "url": "https://www.hrsa.gov/rural-health", "category": "federal", "rss": "https://www.hrsa.gov/rural-health/about-us/rss"},
     {"name": "CMS Rural Health", "url": "https://www.cms.gov/priorities/innovation/key-concepts/rural-health", "category": "federal"},
-    {"name": "CDC Rural Health", "url": "https://www.cdc.gov/rural-health/", "category": "federal"},
+    {"name": "CDC Rural Health", "url": "https://www.cdc.gov/rural-health/", "category": "federal", "rss": "https://www.cdc.gov/rural-health/rss/index.xml"},
     {"name": "KFF Rural Health", "url": "https://www.kff.org/tag/rural-health/", "category": "research"},
     {"name": "AHA Rural Health Services", "url": "https://www.aha.org/center/rural-health-care-services", "category": "association"},
     {"name": "Becker's Hospital Review", "url": "https://www.beckershospitalreview.com/", "category": "industry news"},
     {"name": "Modern Healthcare", "url": "https://www.modernhealthcare.com/", "category": "industry news"},
     {"name": "Fierce Healthcare", "url": "https://www.fiercehealthcare.com/", "category": "industry news"},
     {"name": "Rural Health Value", "url": "https://www.ruralhealthvalue.org/", "category": "resources"},
-    {"name": "The Chartis Center for Rural Health", "url": "https://www.chartis.com/what-we-do/healthcare/center-for-rural-health", "category": "research"}
+    {"name": "The Chartis Center for Rural Health", "url": "https://www.chartis.com/what-we-do/healthcare/center-for-rural-health", "category": "research"},
+    {"name": "North Carolina Health News", "url": "https://www.northcarolinahealthnews.org/", "category": "state news"},
+    {"name": "The Daily Yonder", "url": "https://www.dailyyonder.com/", "category": "rural news"},
+    {"name": "State Health Access Data Assistance Center", "url": "https://www.shadac.org/", "category": "research"},
+    {"name": "Rural Health Research Gateway", "url": "https://www.ruralhealthresearch.org/", "category": "research"},
+    {"name": "KFF Health News", "url": "https://kffhealthnews.org/", "category": "news"},
+    {"name": "Chartis Center for Rural Health", "url": "https://www.chartis.com/center-for-rural-health", "category": "research"}
   ],
-  "max_results_per_query": 8,
+  "max_results_per_query": 10,
   "max_story_age_days": 7,
   "delivery_top_n": 15,
-  "event_terms": ["conference", "summit", "webinar", "forum", "annual meeting", "symposium", "workshop", "event"],
+  "event_terms": ["conference", "summit", "webinar", "forum", "annual meeting", "symposium", "workshop", "event", "training", "seminar", "deadline", "registration open"],
+  "calendar_confidence_terms": {
+    "high": ["annual meeting", "conference", "summit", "symposium", "workshop", "registration open", "save the date", "save the date", "mark your calendar"],
+    "medium": ["webinar", "forum", "event", "seminar", "training", "deadline", "call for", "presentations", "agenda"],
+    "low": ["meeting", "call", "session", "program"]
+  },
   "coo_priority_terms": {
-    "high": ["funding", "medicaid", "medicare", "reimbursement", "closure", "critical access", "grant", "program", "telehealth", "workforce", "maternal", "hospital", "partnership", "quality", "analytics", "value based care", "revenue cycle"],
-    "medium": ["conference", "summit", "webinar", "rural health", "policy", "hrsa", "cms", "forhp", "flex", "ship", "innovation", "operations"]
+    "high": ["funding", "medicaid", "medicare", "reimbursement", "closure", "critical access", "grant", "program", "telehealth", "workforce", "maternal", "hospital", "partnership", "quality", "analytics", "value based care", "revenue cycle", "merger", "acquisition", "financial", "closure", "bankruptcy"],
+    "medium": ["conference", "summit", "webinar", "rural health", "policy", "hrsa", "cms", "forhp", "flex", "ship", "innovation", "operations", "fqh", "community health center"]
   }
 }

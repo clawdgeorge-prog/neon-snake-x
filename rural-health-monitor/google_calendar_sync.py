@@ -84,10 +84,22 @@ def sync_events(service, calendar_id, state):
     payload = load_events()
     added = []
     skipped = []
+    low_confidence = []
 
     for event in payload.get("events", []):
-        if not event.get("calendar_ready"):
+        # Use calendar_confidence if available, otherwise fall back to calendar_ready
+        confidence = event.get("calendar_confidence", 0.5 if event.get("calendar_ready") else 0)
+        
+        # Only sync events with >= 50% confidence
+        if confidence < 0.5:
+            low_confidence.append(event.get("title"))
+            skipped.append(event.get("title"))
             continue
+            
+        if not event.get("calendar_ready"):
+            skipped.append(event.get("title"))
+            continue
+            
         source_key = f"{event.get('title','').strip().lower()}|{event.get('event_date')}"
         if tracked.get(source_key):
             skipped.append(event.get("title"))
@@ -109,23 +121,25 @@ def sync_events(service, calendar_id, state):
             "event_date": date_str,
             "source": event.get("source"),
             "link": event.get("link"),
+            "confidence": confidence,
             "synced_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         }
         added.append(event["title"])
 
     save_state(state)
-    return added, skipped
+    return added, skipped, low_confidence
 
 
 def main():
     state = load_state()
     service = get_service()
     calendar_id = ensure_calendar(service, state)
-    added, skipped = sync_events(service, calendar_id, state)
+    added, skipped, low_confidence = sync_events(service, calendar_id, state)
     print(json.dumps({
         "calendar_id": calendar_id,
         "added": added,
         "skipped": skipped,
+        "low_confidence": low_confidence[:10],  # Show first 10 low confidence
         "tracked_total": len(state.get("events", {}))
     }, indent=2))
 

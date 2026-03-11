@@ -38,9 +38,11 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 
 ### 🧠 Vector Memory Search
 
-You have a **vector database** that stores both:
+You have a **vector database** that stores:
 - Daily memory files (`memory/YYYY-MM-DD.md`)
-- Full conversation transcripts (from `~/.openclaw/main/sessions/` and `~/.openclaw/agents/main/sessions/`)
+- Full conversation transcripts
+- **Skills & SKILL.md files** from `~/.openclaw/skills/` and `~/.openclaw/earnings-prediction/`
+- Core workspace files (AGENTS.md, MEMORY.md, TOOLS.md, SOUL.md)
 
 **Use vector search for:**
 - Semantic queries (when you need to find things by meaning, not exact words)
@@ -49,11 +51,17 @@ You have a **vector database** that stores both:
 
 **Commands:**
 ```bash
-# Search vector memory
+# Search vector memory (shortcut)
 ~/.openclaw/vector-memory/vector-search.sh "your query here"
 
 # Or directly
 ~/.openclaw/workspace/.venv/bin/python ~/.openclaw/vector-memory/enhanced-vector-memory.py query "your query"
+
+# Force re-index all known sources
+~/.openclaw/vector-memory/auto-ingest.sh
+
+# Index additional important files (run this after creating new skills/projects)
+~/.openclaw/vector-memory/ingest-extra.sh
 ```
 
 **Note:** The vector index auto-ingests daily at 2:15 AM via cron. To force a re-index:
@@ -74,13 +82,14 @@ You have a **vector database** that stores both:
 
 When you don't know something the user asks about (especially past conversations, projects, or things they say "you should remember"):
 
-1. **First**: Check MEMORY.md (already loaded in main session)
-2. **Second**: Run `memory_search` tool with a semantic query
-3. **Third**: Check these additional locations that memory_search might miss:
+1. **First**: Run vector search (try 2-3 different phrasings of the query)
+2. **Second**: Check MEMORY.md (already loaded in main session)
+3. **Third**: Check these additional locations that vector search might miss:
    - `~/.openclaw/earnings-prediction/SKILL.md` - earnings analysis skill
-   - `~/.openclaw/skills/` - workspace skills
-   - `~/.openclaw/workspace/skills/` - another skills folder
-   - Any folder in `~/.openclaw/` that might contain relevant files
+   - `~/.openclaw/skills/*/SKILL.md` - all skill documentation
+   - `~/.openclaw/business-listings/` - business listing projects
+   - `~/.openclaw/cron/` - cron job configs and scripts
+   - Project folders in `~/.openclaw/`
    
 4. **Fourth**: If still not found, use grep to search:
    `grep -r "keyword" ~/.openclaw/`

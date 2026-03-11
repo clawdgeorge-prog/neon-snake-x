@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -16,26 +15,51 @@ def parse_iso(s):
     return datetime.fromisoformat(s.replace("Z", "+00:00"))
 
 
-def classify(article):
-    text = f"{article.get('query','')} {article.get('title','')}".lower()
-    rules = [
-        ("Announcements & Funding", ["grant", "funding", "award", "program", "initiative", "appropriation"]),
-        ("Competitor / Market Intel", ["partnership", "acquisition", "launch", "expansion", "competitor", "vendor", "technology"]),
-        ("Policy & Programs", ["flex", "ship", "forhp", "cms", "hrsa", "medicaid", "medicare", "policy", "rule"]),
-        ("Conferences & Events", ["conference", "summit", "webinar", "forum", "annual meeting"]),
-        ("Success Stories & Operations", ["success", "improved", "turnaround", "quality", "workforce", "telehealth", "maternal", "closure", "hospital"]),
-    ]
-    for label, terms in rules:
-        if any(t in text for t in terms):
-            return label
-    return "General Rural Health"
-
-
 def short_time(dt):
     hours = int((datetime.now(UTC) - dt).total_seconds() // 3600)
     if hours < 24:
         return f"{hours}h ago"
     return f"{hours // 24}d ago"
+
+
+def classify(article):
+    text = f"{article.get('query','')} {article.get('title','')}".lower()
+    rules = [
+        ("Funding / Policy", ["grant", "funding", "appropriation", "medicaid", "medicare", "rule", "policy", "cms", "hrsa", "forhp", "flex", "ship"]),
+        ("Competitors / Market", ["partnership", "acquisition", "expansion", "vendor", "analytics", "technology", "value based", "revenue cycle", "platform"]),
+        ("Operations / Care Delivery", ["closure", "critical access", "telehealth", "workforce", "maternal", "quality", "hospital", "ob-gyn", "rural obstetrics"]),
+        ("Events", ["conference", "summit", "webinar", "forum", "annual meeting", "symposium", "workshop"]),
+    ]
+    for label, terms in rules:
+        if any(t in text for t in terms):
+            return label
+    return "General"
+
+
+def coo_score(article):
+    score = float(article.get("score", 0))
+    text = f"{article.get('title','')} {article.get('query','')} {article.get('source','')}".lower()
+    for term in CONFIG.get("coo_priority_terms", {}).get("high", []):
+        if term in text:
+            score += 4
+    for term in CONFIG.get("coo_priority_terms", {}).get("medium", []):
+        if term in text:
+            score += 2
+    if any(term in text for term in ["conference", "summit", "webinar", "annual meeting"]):
+        score += 1
+    return round(score, 2)
+
+
+def dedupe_articles(recent):
+    seen = set()
+    out = []
+    for article in recent:
+        key = (article.get("title", "").strip().lower(), (article.get("source") or article.get("domain") or "").strip().lower())
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(article)
+    return out
 
 
 def main():
@@ -50,12 +74,14 @@ def main():
         if dt >= recent_cutoff:
             article = dict(article)
             article["dt"] = dt
+            article["coo_score"] = coo_score(article)
+            article["section"] = classify(article)
             recent.append(article)
 
-    recent.sort(key=lambda a: (a.get("score", 0), a["dt"]), reverse=True)
-    buckets = defaultdict(list)
-    for art in recent:
-        buckets[classify(art)].append(art)
+    recent = dedupe_articles(sorted(recent, key=lambda a: (a.get("coo_score", 0), a["dt"]), reverse=True))
+    top_n = CONFIG.get("delivery_top_n", 15)
+    top_items = recent[:top_n]
+    event_items = [a for a in recent if a["section"] == "Events"][:8]
 
     discovered_cutoff = now - timedelta(days=1)
     new_sources = []
@@ -69,48 +95,38 @@ def main():
     new_sources.sort(key=lambda s: s.get("first_seen_at", ""), reverse=True)
 
     lines = []
-    lines.append(f"Rural Healthcare Daily Update — {now.astimezone().date().isoformat()}")
+    lines.append(f"Rural Health COO Brief — {now.astimezone().date().isoformat()}")
     lines.append("")
-    lines.append("Top line: nightly monitor scanned rural-health queries, refreshed tracked stories, and surfaced new domains for RHTP/FLEX/SHIP and broader rural-health intel.")
+    lines.append("Top 15 things to pay attention to today, ranked by freshness + COO relevance for REDi Health-style operations, policy exposure, hospital sustainability, and market/partner intelligence.")
     lines.append("")
 
-    if not recent:
-        lines.append("No fresh stories were captured in the last 24h. The discovery pipeline ran, but nothing new cleared the relevance filter.")
+    if not top_items:
+        lines.append("No fresh qualifying items were captured in the last 24h.")
     else:
-        for section in [
-            "Announcements & Funding",
-            "Policy & Programs",
-            "Competitor / Market Intel",
-            "Success Stories & Operations",
-            "Conferences & Events",
-            "General Rural Health",
-        ]:
-            items = buckets.get(section, [])[:3]
-            if not items:
-                continue
-            lines.append(section)
-            for art in items:
-                lines.append(f"- {art['title']} ({art.get('source') or art.get('domain','unknown')}, {short_time(art['dt'])})")
-                lines.append(f"  Link: {art['link']}")
-                lines.append(f"  Why it matters: surfaced from '{art.get('query','rural health monitoring')}' and scored as relevant for rural-health ops / market awareness.")
-            lines.append("")
+        for idx, art in enumerate(top_items, start=1):
+            lines.append(f"{idx}. [{art['section']}] {art['title']} ({art.get('source') or art.get('domain','unknown')}, {short_time(art['dt'])})")
+            lines.append(f"   Link: {art['link']}")
+            lines.append(f"   Why COO cares: triggered by '{art.get('query','rural health')}' and scored for operating impact / policy / partner / market relevance.")
 
-    lines.append("New source domains discovered last night")
+    lines.append("")
+    lines.append("Events watchlist")
+    if event_items:
+        for art in event_items[:8]:
+            lines.append(f"- {art['title']} ({art.get('source') or art.get('domain','unknown')})")
+            lines.append(f"  Link: {art['link']}")
+    else:
+        lines.append("- No new event-related items captured in the last 24h.")
+
+    lines.append("")
+    lines.append("New sources added to monitoring in the last 24h")
     if new_sources:
         for src in new_sources[:10]:
             label = src.get('name') or src.get('domain') or src.get('source_key')
-            lines.append(f"- {label} — example: {src['example_link']}")
+            lines.append(f"- {label} — {src['example_link']}")
     else:
-        lines.append("- No new domains discovered in the last 24h.")
-    lines.append("")
+        lines.append("- No new sources discovered in the last 24h.")
 
-    lines.append("Tracked themes")
-    lines.append("- Rural hospital finance / closures")
-    lines.append("- Federal and state rural programs (FORHP, FLEX, SHIP, telehealth, workforce)")
-    lines.append("- Competitor and partner activity")
-    lines.append("- Conferences, webinars, and showcase stories")
     lines.append("")
-
     lines.append("Reference files")
     lines.append(f"- Discovery report: file://{(DATA / 'latest_discovery_report.md').resolve()}")
     lines.append(f"- Story database: file://{(DATA / 'articles.json').resolve()}")

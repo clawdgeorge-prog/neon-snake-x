@@ -9,12 +9,21 @@
     "rural hospital funding United States",
     "rural hospital closure United States",
     "rural health conference United States",
+    "rural health webinar United States",
     "NRHA rural health",
     "Federal Office of Rural Health Policy",
     "rural telehealth United States",
     "rural Medicaid rural hospital",
     "rural maternal health United States",
-    "rural healthcare workforce United States"
+    "rural healthcare workforce United States",
+    "rural hospital analytics United States",
+    "value based care rural hospital",
+    "critical access hospital conference",
+    "rural health summit United States",
+    "rural health annual meeting",
+    "rural healthcare partnership United States",
+    "rural revenue cycle hospital United States",
+    "population health rural hospital United States"
   ],
   "known_sources": [
     {"name": "Rural Health Information Hub", "url": "https://www.ruralhealthinfo.org/", "category": "policy/resources"},
@@ -32,5 +41,10 @@
   ],
   "max_results_per_query": 8,
   "max_story_age_days": 7,
-  "delivery_top_n": 12
+  "delivery_top_n": 15,
+  "event_terms": ["conference", "summit", "webinar", "forum", "annual meeting", "symposium", "workshop", "event"],
+  "coo_priority_terms": {
+    "high": ["funding", "medicaid", "medicare", "reimbursement", "closure", "critical access", "grant", "program", "telehealth", "workforce", "maternal", "hospital", "partnership", "quality", "analytics", "value based care", "revenue cycle"],
+    "medium": ["conference", "summit", "webinar", "rural health", "policy", "hrsa", "cms", "forhp", "flex", "ship", "innovation", "operations"]
+  }
 }

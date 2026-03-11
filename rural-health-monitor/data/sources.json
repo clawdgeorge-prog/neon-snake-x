@@ -3,15 +3,664 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNUHlaaGZDSkdZLU9PV0Q0cTFjMHpJVnlHdFlqZWluVkYtbVFxeVQzWjhYay1mRTVGbTJGeUJuYXFsNVJ1QkdaMnowbjBBMXNEcGEwNW5pUy1DbEYzWFphLVN2aWdZRmtUTHFrZFFEWFRMNGxTLVlLcGpnZzFzTEx6VWxpSDR3OE1RSDBUTkY2bktZWk04YXM5V1p5NnJmQzQzSzAxbEIwMXNwQXdjZEZ5cktnajZHeHM?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Debate Grows Over How States Will Use New Rural Health Funds",
+      "first_seen_at": "2026-03-11T16:33:56Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "Governing",
+      "source_key": "governing",
+      "tags": [
+        "Federal Office of Rural Health Policy",
+        "population health rural hospital United States",
+        "rural Medicaid rural hospital",
+        "rural health annual meeting",
+        "rural health conference United States",
+        "rural health program United States",
+        "rural health summit United States",
+        "rural health webinar United States",
+        "rural hospital funding United States",
+        "rural telehealth United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxOT3FOSkptNHRUTnRYN1pCdDRULTU2WVVleC1wekZwdlFyX0UtTGx0T1ZRd3l4dW9SMWk1YzhMTGhZSnRrZHdOQ0M3VFFOZDBrUTJwSzJScm5MWjQ3WmxMWGtCb3B0NlE4NlYydElPM3VHbXNJVTZXOWZZTUp5Y1NnSW9TSFpRd0o2MUNuemJvSEM3YWVPRElKeDVRTmxnTlNwckF6c0JXcE9vNGVTZUFMNFpiZ2ozZTFCVkl3YndpMFdNbkRF?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "New rural health fund offers little relief from federal Medicaid cuts, experts say",
+      "first_seen_at": "2026-03-11T16:33:56Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "The Michigan Independent",
+      "source_key": "the michigan independent",
+      "tags": [
+        "Federal Office of Rural Health Policy",
+        "population health rural hospital United States",
+        "rural Medicaid rural hospital",
+        "rural health annual meeting",
+        "rural health program United States",
+        "rural healthcare partnership United States",
+        "rural hospital funding United States",
+        "rural telehealth United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQYkt1SFlLWGd4Tjg3aV9VQ19RZjZLbTZfM0tVeExiNFZfT3dGQTlpY1dGelNWb2dSTUl6Qk9xRnlpaml3LXFOUmlZU1FsME1hMUlhQTdtVzI4U2tzR2UyUmUyTDVrV1VVTzRlTEd6SXBkM21BMU1aLUtQNlY4dldhZ3RaZ19NdHFwZnAxeVd2T3hab0ZHUXkw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "How delays could squeeze rural hospitals out of CMS\u2019 $50B fund",
+      "first_seen_at": "2026-03-11T16:33:56Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "Modern Healthcare",
+      "source_key": "modern healthcare",
+      "tags": [
+        "Federal Office of Rural Health Policy",
+        "critical access hospital conference",
+        "critical access hospital rural health",
+        "population health rural hospital United States",
+        "rural Medicaid rural hospital",
+        "rural health conference United States",
+        "rural health program United States",
+        "rural health summit United States",
+        "rural healthcare partnership United States",
+        "rural hospital analytics United States",
+        "rural hospital closure United States",
+        "rural hospital funding United States",
+        "rural revenue cycle hospital United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNZ0VKS3dxcmthOEZiei0zb1ZjVkFBemVHM0tqaEl1U0JBUGs1UGNWSXM0V0pnSHFxU0ZsN1hZS0NRTTZrbm11TjMyM01jVGRFS0paNHJaaVlIRUx4Y0w5LTN2RGRIb3RtM0JmMlJwQk42eDZtLUxGNlhPOGxxUFRQZzZZaHBxWjZzUU5ldnktUXZhWE0?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "KFF Health News: Rural Health Transformation Program Fund Allocation",
+      "first_seen_at": "2026-03-11T16:34:00Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "Michigan Health & Hospital Association",
+      "source_key": "michigan health & hospital association",
+      "tags": [
+        "RHTP rural health",
+        "critical access hospital rural health",
+        "population health rural hospital United States",
+        "rural Medicaid rural hospital",
+        "rural hospital funding United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNT2JnclN4ODg1X0hrcjZGQ09hbU1rSmpPeE44X3duX1JjU1VRMDJHWnhZOEZROFJkdXFCelVhVmpxQmRSN0pfdWNTRFVyTzJ6cXNtUkh3Qy1hSUF1UEFrb1pDSF9XZV82M01ocnpiSURrN19lVnhsNXpiZGd2TWRUNHBfQm9rZ1hOaEZmNzZpdDFhRUpm?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Provider Taxes Do Not Save Rural Hospitals",
+      "first_seen_at": "2026-03-11T16:34:12Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "Paragon Health Institute",
+      "source_key": "paragon health institute",
+      "tags": [
+        "population health rural hospital United States",
+        "rural Medicaid rural hospital",
+        "rural hospital closure United States",
+        "rural hospital funding United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOb0FEeDZPLXFnMjZaTnVHLXB1bHhxTGtDMUFxeWN3YXVTMGNXUGdJbWZOMzM1cnhyNGRDVFdXQmk1OGZwcnMwNFJzaFpSak1Nc0p1aFRUT0k1UjlPeGJaNXVHZDUxWjE4RWZkZVZPRGxaMGxNQTgxcnByaWg4eTQzZkJrYm5rckE4TWhLai1nSm43OTZpNlhR?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "A Missouri pilot program reimagines rural hospitals as the central hub for more than health care",
+      "first_seen_at": "2026-03-11T16:34:12Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "thebeaconnews.org",
+      "source_key": "thebeaconnews.org",
+      "tags": [
+        "population health rural hospital United States",
+        "rural Medicaid rural hospital",
+        "rural hospital closure United States",
+        "rural hospital funding United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQZHdXUkw3Y0xSN29YODZVdi1LWk5ncFZOZDc2X0ltVV93QTVKMGZmcmlfRGhSZjE3blZQcG1OLURuelVUajlRUUprLTZyWmVJVl9aLTFYWHBBTzhCcFA3OVV1OUpoTERQWEl1dWFoWVJyVUptbjZrZHVxa2IyT2pLNVFiTllMOENTOEd3Q0thZ1NhblNYMFlfOHY0WThKNEk?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Santa Clara County studies impact of possible rural hospital closure",
+      "first_seen_at": "2026-03-11T16:34:17Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "San Jos\u00e9 Spotlight",
+      "source_key": "san jos\u00e9 spotlight",
+      "tags": [
+        "population health rural hospital United States",
+        "rural Medicaid rural hospital",
+        "rural hospital closure United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNWUd5Y3RvcVhDaDcwamZZTDdxSkJUZmZDdnpPS3I3T2hueFIxVHFRYmN4dEF1eHpTUUtVOUxPTUVvVVI5SEZfMHFVZXM3ZFYxdlctM3ZMSkVibVpBUDZjazdFSFV2LXdfZVhVS09vdEkyYWZuYjZyaGIxdVdydVA3MWRHY1FCSWF0V3Zj?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "$154M federal grant to fund mental health and primary care in CT's rural towns",
+      "first_seen_at": "2026-03-11T16:55:49Z",
+      "last_seen_at": "2026-03-11T16:55:49Z",
+      "name": "CT Insider",
+      "source_key": "ct insider",
+      "tags": [
+        "population health rural hospital United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNLWZ2eGIzVk5MVlB4V05YSkhkZHBIbGJHT0plWkVuamtEdjN3VEhaT1N1b1ljZzVKTllucy1Hd2ctU1FNUXFRU3VMY3doQS1MVTFWdk9nQ1hMcGFQTXhWM2ktc2tfXzBzTzAxZG45cHU1Wk1VR3p4X1V2R3liWjVBbmhxaDVQY3pJV3ZSR3VJWHJZcGtxeEZWMkVuRGwycUR0QWxJ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Too many rural hospitals are missing out on AI's potential \u2013 how to help?",
+      "first_seen_at": "2026-03-11T16:34:09Z",
+      "last_seen_at": "2026-03-11T16:55:45Z",
+      "name": "Healthcare IT News",
+      "source_key": "healthcare it news",
+      "tags": [
+        "critical access hospital conference",
+        "critical access hospital rural health",
+        "rural healthcare partnership United States",
+        "rural hospital analytics United States",
+        "rural revenue cycle hospital United States",
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMijgJBVV95cUxOblMxUUstUG8wQjI4SERkdUw3M1pZQUtPbDVVa3JYV1JVZjNBcVFDZER2a1Q2MXNGd21XdGF3b3VfU2FYY1lKVFpDam5zMXBBd0ZERVZ2SGpNSFFZUEJhY0xIMGI3QlR5bFZMTEEwZ0EyWjNIS3pRZFItbDdqSmhNaE0yZlVvNlJvbEF0TjRnMDZjNVYyZWc3aHVDX2EwR3BzalpsTkVIejdZenBKQmdVNko3LTg0bWt0dUswbHV1QXBhaEU4OWIyR3J3NGdYS044NnRNWUxjazV4a2NFSmtsTDdvLU9GcDRtdFNSNkNnQ1NKNGdFZDI4UjJIZGgyR0VZZnFxTWZiNFJxOHRkT3c?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "NationsBenefits and Food City Partner to Expand Flex Card Access for Rx and OTC Health Needs Across Southeastern Communities",
+      "first_seen_at": "2026-03-11T16:34:02Z",
+      "last_seen_at": "2026-03-11T16:55:45Z",
+      "name": "Business Wire",
+      "source_key": "business wire",
+      "tags": [
+        "FLEX program rural health",
+        "rural revenue cycle hospital United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPRUVTdXRsbGZCbUROaWoza2NfZGR5YTgybERCbWhRYkg2YzN4ZVhOTmtkTElVVHFoTDgzcXNXeTNLb0duU2JZSzd1ZUJTd0hOU0JmT1U5ZnNmdEdRMkotUENyajdfTDdvaDZIQzUzeEEybHExZEhpOGEwUHhpU3cwN0xaY213b3V1WkcyelRXSDBYSHl4?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Opportunities to Improve Rural Responses to Opioid Use Disorder and Overdose",
+      "first_seen_at": "2026-03-11T16:54:50Z",
+      "last_seen_at": "2026-03-11T16:55:45Z",
+      "name": "Yahoo Finance",
+      "source_key": "yahoo finance",
+      "tags": [
+        "rural health webinar United States",
+        "rural revenue cycle hospital United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOaFhIeGJMbFBjMjBnTFhCUk1tMW5Vc1Q0eWJNcEtwcXVsaVhENkNOOGdvUWxuRW1oVkRsejA3Yl9yTlZTRXQ2Y3NlZWtZUm9EY2JIYUZoczZESXMyR1M1WVM0WFlBTUdjN0MxOGNUZm9BSjB3RmZQM2dSclZYQUpwS0pCcVU?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Agentic AI in Healthcare Market Size, Share | Forecast [2034]",
+      "first_seen_at": "2026-03-11T16:55:45Z",
+      "last_seen_at": "2026-03-11T16:55:45Z",
+      "name": "Fortune Business Insights",
+      "source_key": "fortune business insights",
+      "tags": [
+        "rural revenue cycle hospital United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNWnJEeXhuS3Jad3Q1c3VlYnlhZkVGaDVMVnVrR1dHalRubFVkRFNrXzByUmxONTdiZjJQLWhZOTM3d2wwZm5DcmZGbnJSZXhWODA5NlVHWUpONExiZEtqbkNrTnhmVjRFWjFDU3FKcFE0a3UzaF9lb3dJWEc4WGp2MmtTWTlsdDZ2cnpyYnhPM2g3VlBRNkZHN0VQZWgzanREaHk3NUptUU5ySi1UOW8zam1WTnRWVkNVX3pyOUhWNDg1VkFOLUkzeV8xZ9IB0AFBVV95cUxNYUIxamF3Sm9CWnhsNExyMXpxQVBrWmZmbW1fNXdpMFFlWmhJMkFhUEREZnFYS2FQd2ZMMFI4RjZLdHk2YkNmSTU0LUtVRXJGZzBqbTlOX2NsZEJCeE92TmQ0X0tfWGs5VEdtYk1KOUw4TkEzT2VBaEp5UjRmR1VQTUhxYkpsXzRONWg0SW0wY0dKVUExS0JVM2hfc0IzZVBNQTlKQ0I2YjFta2cxM1Q0S09vbUZmWjRCQzg1RHh2bElITExNbV9nZ3gyelYySEFv?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Omega Healthcare scales USRN hiring across Manila, Cebu delivery centers",
+      "first_seen_at": "2026-03-11T16:55:45Z",
+      "last_seen_at": "2026-03-11T16:55:45Z",
+      "name": "The Manila Times",
+      "source_key": "the manila times",
+      "tags": [
+        "rural revenue cycle hospital United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE1ucklfcm9qODlDdU1SWmZ3ZWlkbWQtQXlOTEQ0R1VJUGVQYUpESEJObE1kaGJULXVRVnZDdmhoRGV3WWMzT2ptbEVURTg3Mm5SVUpoc09jM2Z0aUlqQy1OZDd5d0lnYVNUZmJoakxJX3JGLWFEMFBfY3d1MHBXUQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Omega Healthcare ramps up U.S. registered nurse hiring in Philippines",
+      "first_seen_at": "2026-03-11T16:55:45Z",
+      "last_seen_at": "2026-03-11T16:55:45Z",
+      "name": "Outsource Accelerator",
+      "source_key": "outsource accelerator",
+      "tags": [
+        "rural revenue cycle hospital United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOcFhqMkJyazllLXFzM1MtSVdBTTNfeHZ1UmlNZ3RIV0ZXR21LeFoxT2dhUk5VUEpvUGYtMG50M3FSMGdxTlNlYldjQTB0ZUNDTzFxTFVsYkkzME5kM3p6a044ZUwxdGNfZFEtQnZXRGE5Z051QURWSHlMWTUxRkxmSnJBRTY4M0hWTld2YUdB?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Newman Regional Health Selected for National Rural Hospital Stabilization Program",
+      "first_seen_at": "2026-03-11T16:34:26Z",
+      "last_seen_at": "2026-03-11T16:55:40Z",
+      "name": "Emporia Gazette",
+      "source_key": "emporia gazette",
+      "tags": [
+        "Federal Office of Rural Health Policy",
+        "rural healthcare partnership United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNRnU4bklTZlN2MGx1QmNFRUVyWlJHdWNEREdxb193ZlRhS0F0SXR5bGR2MjFlZDN3RjBkc256eDRrRzFvdWhMZWJrQnFBMHptQVhnZ3FRbTdDN1JaLW9xaEpkMXpfZDFXRTVpeDgwaUx2bDFZRXU2dm9tVThtMlZsZ1UzdzlJTVBYT2l3bm01bjRkcFhRY3NTaHBtWkduM19zQWZHRDJ5UGxjNGt6dmVxSWZJSmd3akVUc3BuNEtOOExVVnQ0bUdBVA?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "UofL Health CEO supports measure to find better ways to staff, serve rural areas",
+      "first_seen_at": "2026-03-11T16:33:52Z",
+      "last_seen_at": "2026-03-11T16:55:40Z",
+      "name": "whas11.com",
+      "source_key": "whas11.com",
+      "tags": [
+        "rural healthcare United States",
+        "rural healthcare partnership United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPdTIydTlqLXo1dFZRSU4wSUlWNzZNNldWZjMyZDk0bWRTNjcyTUJwZEVZNW1tYl9uUlJWQVN6c05DOElMb191TW9HZk5RbUZUZnVsVFlxTVZlTjBuNVl4eWZicGJGODg3cFBYQ1NBT1VURTM5aURiZHY4RzVacll0OGVzMVBjbmJwRFdz?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Hospital CEO wins national leadership award",
+      "first_seen_at": "2026-03-11T16:33:52Z",
+      "last_seen_at": "2026-03-11T16:55:40Z",
+      "name": "Hillsdale Collegian",
+      "source_key": "hillsdale collegian",
+      "tags": [
+        "rural healthcare United States",
+        "rural healthcare partnership United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQMGVwQUNmRWZSMDgtUzQya1c2Y2doQjRRYTA1NXhWcnVJLVA2NmYwMVhzVTNGSlV2UzAwMlZHeG9RU3JfSGxYV1UySjB0bU4zRENHdng1aHNUQnhwWkFkOTFJSUpZMWluazB5UjVTekdyYUR0QVkxejhXcThxMTJiUHFaNGs4RnRJY3ZBNHNJemVGamNZOG5TRl9kRXNHcG9YV296aXQ4RFo?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Q&A: Sanford Health bets on AI, virtual care to expand rural healthcare access",
+      "first_seen_at": "2026-03-11T16:55:40Z",
+      "last_seen_at": "2026-03-11T16:55:40Z",
+      "name": "MobiHealthNews",
+      "source_key": "mobihealthnews",
+      "tags": [
+        "rural healthcare partnership United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQY3FJcHFreGRidVhUWTdfcy1ZQ19rYXRVbG9KZmZoeDR0dG9BRzBOSDBCWktYZXQ4cEJJR2lTT21KdS1uRm9YaEZKcTJNVFpmT243T29Wb0tWLVlBTjd1VE5hVjF3X2ZfMGpMcFdCM0N0NnJ6a0JMRWVCc0lON3puLVB3NUxHWnR3dzRXaFFWUnJPdVFFVDhKdExOUHJpcUJMRWpfLQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Unlocking The Power Of The Private Sector For Stronger Health Systems",
+      "first_seen_at": "2026-03-11T16:55:40Z",
+      "last_seen_at": "2026-03-11T16:55:40Z",
+      "name": "Health Policy Watch",
+      "source_key": "health policy watch",
+      "tags": [
+        "rural healthcare partnership United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNY3B0UGptSFM0TXVNd1QzZVZfdHRMajZTY3FYUlU0X1Y1cHRpT05GQ0xBLURZb0tSSGUzN1ViVm9HZXZrRkJ5c3lmQUJfekFZV3ZjN3F0b2M1cHk0azlRR2hHeG5uVzByN2JaRXBGd3RMMFZkVGJBTlhyUXppS0RHQXFNT0tSdw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Dr. Oz touts \u2018AI avatars\u2019 to address rural mental health care shortage. Experts urge caution",
+      "first_seen_at": "2026-03-11T16:34:21Z",
+      "last_seen_at": "2026-03-11T16:55:35Z",
+      "name": "Association of Health Care Journalists",
+      "source_key": "association of health care journalists",
+      "tags": [
+        "rural health annual meeting",
+        "rural health conference United States",
+        "rural health summit United States",
+        "rural health webinar United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOdXV0djRKUmdzUkdzQ0lJXzMwaHlTYTB6R2gzY0pzajVBRmtNdU1yRmU0STAxcV9NakttbGRrNVNFU29mQlc3NHFVUkY2MExlU2NQVnJ6UnR2RFNiOTZLR0JYNUk4ZEl6ME9zbVJNcXZiOGZYSi1RU3hwTFJLeVp1Y3E4djFsVVB0dXpUODNQZU5hdGd3V3czY0FsSll6Q0ozWDlKanVmcEFXNUpLU0FEY0M3SjVudUpkaXZXczl5djlONGdlSlA4?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Tennessee lawmakers skeptical over strings attached to Trump rural health grant program",
+      "first_seen_at": "2026-03-11T16:33:56Z",
+      "last_seen_at": "2026-03-11T16:55:35Z",
+      "name": "Tennessee Lookout",
+      "source_key": "tennessee lookout",
+      "tags": [
+        "rural health annual meeting",
+        "rural health program United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNYTl5N2NJZ0o5TFk5SEcydVhMaHg2TDZxTXdISzliNjVWZ1dLNkRoRk1IN0VaUWp0ZVhKc2JydWJSVlNOZGUyb19meXhPUTBIelFLRDdTVm4xTUZmVUZPUFVtdVhJdmttVVFhZHZBYWp3MnZFSFBUTnUtdTRTTmVnUHhuZW9PSERGbG9XekF2S3ZPNUIzOEM5ZndqTzBNalBDOFVfREVhdTFEejRBM3F3QjlBM1JfaVQ5US1Yak4xbGo0Q3RKOW9IejFDRnBVODBidFE?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Democrats in governor's race use debate stage to spotlight affordability, health care, rural Kansas",
+      "first_seen_at": "2026-03-11T16:55:35Z",
+      "last_seen_at": "2026-03-11T16:55:35Z",
+      "name": "Kansas Reflector",
+      "source_key": "kansas reflector",
+      "tags": [
+        "rural health annual meeting"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMia0FVX3lxTE12azBUMy1SQU51aEJlTVdPVjZtWjhYd1FLeEpuazRGNGpnTmVxNkl0dUNtdExlbU9MUy1BR2hmcUdNNFpWdi0tZ1VrVlBESjBadlUyU3I0N3U4RVhSa0hLdl8xbjZJUFkwenQ0?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "County Supervisors Bullock and Hall Represent Nevada County in Washington, D.C.",
+      "first_seen_at": "2026-03-11T16:55:35Z",
+      "last_seen_at": "2026-03-11T16:55:35Z",
+      "name": "Nevada County (.gov)",
+      "source_key": "nevada county (.gov)",
+      "tags": [
+        "rural health annual meeting"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPQjYzOXNONGFvbUY0Q3BjN0VTd3VvbVNGbm5PMUpMdjRGa2NMZS00QkRQQlZKaDY2RDJaV3hUbThQU1pVbHcyNGlMNExsT0dlQkhuMjBpSHFlOHVibEpRMHRDTEI3eW5zbVhuTlFZU3BTaVNQc2ItUERjS3AtcWw4Zkxzak1SWU0wN2QwakVxVkNKVDIzVVlleTZ0b0o?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Mental Health Resources Make a Difference for Farm Families",
+      "first_seen_at": "2026-03-11T16:55:35Z",
+      "last_seen_at": "2026-03-11T16:55:35Z",
+      "name": "Successful Farming",
+      "source_key": "successful farming",
+      "tags": [
+        "rural health annual meeting"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQeUdzY2lsUUprYUVKN3JMRlJuUVU5Vy1XbVBBWDZ1QTQtY3l4RTZwaGNJVWl6b0dEQkY5Q1RTc05ZMlpRYkVKNzM4Zk56N0ZKY1RXV2lQazRVRFR5ZmRZRVRrNTNjUU1XbG83ZnljZGJjWm96d0RsVGVHWHVWUEtkSS1SVkx5RjFuZ2tHYjV2SHB5UQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Executive Council tables $640M in rural health care funding to review contracts",
+      "first_seen_at": "2026-03-11T16:55:35Z",
+      "last_seen_at": "2026-03-11T16:55:35Z",
+      "name": "WMUR",
+      "source_key": "wmur",
+      "tags": [
+        "rural health annual meeting"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOcUlvQmJyRDFfZE5za2U0S1puQnFFR1hQNk1UNUhubUQzNktuU2M4MHpldnA5S2pERE4yUEtEaHlCUVZRSG1pVFE5YjZfZHNDVlJIQ1dBazB3ZndUd2pQdjVsY1cyZVE0d1F2YTVEaWpfUVNBMGtSdTM0c3J0WG5TODg5TFZhNzc1cHZQLTZmOGRISGNqRmlUXzlNVTZSSjNUMG9zTy1wQ013MDBOS1E?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "State Officials Hail $154M Federal Grant To Improve Health In Rural Areas",
+      "first_seen_at": "2026-03-11T16:34:00Z",
+      "last_seen_at": "2026-03-11T16:55:31Z",
+      "name": "CT News Junkie",
+      "source_key": "ct news junkie",
+      "tags": [
+        "RHTP rural health",
+        "rural health conference United States",
+        "rural health summit United States",
+        "rural healthcare United States",
+        "rural healthcare workforce United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQc3BHUXBUMmI5V1Jfc1lIb3RTZ1JxZmF0bGNlZjVsZHI0V2YzMWRSUHl1ZHY3TS1FUDlReG85cXMyeEZWM3FrNjlhQ0pOWDBMSEJWUGVEa0wzNVd6a0diTEhFc0JIeUc5Q0FLNHRzdzljYUtRX1Fobm13bllTdFF5elFqRldMaVZFeGQxYjVNcw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "RHTP Funding Misaligned With Rural Mortality, Medicaid Losses",
+      "first_seen_at": "2026-03-11T16:34:00Z",
+      "last_seen_at": "2026-03-11T16:55:31Z",
+      "name": "The American Journal of Managed Care\u00ae (AJMC\u00ae)",
+      "source_key": "the american journal of managed care\u00ae (ajmc\u00ae)",
+      "tags": [
+        "Federal Office of Rural Health Policy",
+        "RHTP rural health",
+        "rural health summit United States",
+        "rural hospital funding United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNREVQUmpKbUY4dENBT3JiY3h4c09PM2hMT2plM01KNEYxTjIxNWlKOG9aSFh3U3hOcEpmaDQwTzF5TEdtMHdpdWhwMnZxajUtcWFFR0RNY29hX0JsWmt3Q0EwdFZIUUhrZXBlcVEwai10aU10UzNFeWFHbkFMYU5fMGNfUFdkRDBEbEdweEtnYkZ5YXJyXzBvM2J1WlBzU2VZS1dHWFpKbkV6VHpHZGFadGR0eGFQYkdIcEdQbEVsZjI?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Column: Budgets Reveal Priorities: Rural Healthcare Must Be One",
+      "first_seen_at": "2026-03-11T16:34:21Z",
+      "last_seen_at": "2026-03-11T16:55:31Z",
+      "name": "The New York State Senate (.gov)",
+      "source_key": "the new york state senate (.gov)",
+      "tags": [
+        "rural health conference United States",
+        "rural health summit United States",
+        "rural hospital analytics United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxONjg0NmJJbWFFWE8wOHRSTHhUUGZMSmZsT1VJSHZEYXRkdUNCWmNZdFIwSUZRQTJBLVZQUnlJUDFQNG45SEJDXzlDZ0tQSHRnT08tVFFkZHpvQ3NJd1JPV2g1WVBhWWhjYXR1c3gtQ2RZR3Rfd3d0YTJPMW5INEZaUklqWGpDTW9FTDRwdk1vT25jeXJXMVpMM2RQVTJaMmJfdFRSN29OWm82SE5YZWlLUEVTTXR3UXpuMFNmQjFMWHZySGdQSjZJTkVB?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Executive Council pauses $773 million federal rural health spending, requesting details",
+      "first_seen_at": "2026-03-11T16:33:56Z",
+      "last_seen_at": "2026-03-11T16:55:31Z",
+      "name": "New Hampshire Bulletin",
+      "source_key": "new hampshire bulletin",
+      "tags": [
+        "rural health program United States",
+        "rural health summit United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQdG50bkdaR0ZhNEJJbDhJQktLc1FySVJOM0p6OTNua1FaTTMxd3RTYWlvS1VNeEtBem9YWXMxMTYzLU1wX3lKNGpkeU5CMGczb0ZZV09rNDJnQ1hzWVgzVlJEakh5dWtEYTNvRXR3bWJ2VTNET3JNWEN5NUxuUjJpd1pLbHdDNGRvZFFYVm54cTlPTnA5NGlEMG81Sk1VX200WkxnNUVjdTNqTUNIc2k2VmxDUERUaUMtUXB6dWVR?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Savannah Pride Center hosts summit today despite funding loss",
+      "first_seen_at": "2026-03-11T16:55:31Z",
+      "last_seen_at": "2026-03-11T16:55:31Z",
+      "name": "Savannah Morning News",
+      "source_key": "savannah morning news",
+      "tags": [
+        "rural health summit United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOX0lhOTlPd05UX0ROQzZzbFluT2o3ZEdpbE1BUzlBMnoySktzWGh4ZTdIakhidGVZOEZsNW1PaHRSVkJ4ZlRyYjRid2hJNDFkUGlibHdlRzg0ZzRaZXpEQ0tFY0dfT0tVOExETFVPd29ScHllYTNRMko5SjhqM0hlWlFLMC1ISE1wbVE0SHhjLTFmb3VJaE1sYlJqN3JxZHdvSzRUbkdqbmJEdktiQWVTbmp5UGFfazRNYTFjVjIwU0FUdw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Best Medical Tourism Conference 2026: Global Medical Tourism & Insurance Summit",
+      "first_seen_at": "2026-03-11T16:55:26Z",
+      "last_seen_at": "2026-03-11T16:55:26Z",
+      "name": "Medical Tourism Magazine",
+      "source_key": "medical tourism magazine",
+      "tags": [
+        "critical access hospital conference"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOV1NjZ3JvblJhSjhiSzZxRE5GT0pIZ1lzWFU1VTUyUnVrQmd6ZHpfRlVlSXdkdjlndWMtOTIyVmRENHdqWkplRDBFVkd3NFZUYmFPT0pQZmFqQUU2d19xM3ZGT0phQWNzSTNpc0l1MWpIcGlVX0NSdmlNLWluYTg3cVZNWWYzUTZaNnVMVg?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Who\u2019s Who in Arizona Healthcare for 2026",
+      "first_seen_at": "2026-03-11T16:55:26Z",
+      "last_seen_at": "2026-03-11T16:55:26Z",
+      "name": "AZ Big Media",
+      "source_key": "az big media",
+      "tags": [
+        "critical access hospital conference"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOOVFxZWxKakNERTRJY2liTjBJd1FscmtUMlNDRkhwT2ctY3hDVFRPSEtPZjUtT3VlR0R5a202aW10dUhnU0xUMWZBeWg2bVVhMTZxTmYzbGhacWVTQkJyTmVhUkNNY0JYcnQ1LUhBeXVNRDFadUNReHBTU2QzNFo3STRSeTUzYkQyZFZuYkZQdzRqWlB4eWZiTDREcXpvazRSRWJsY1B1TjdYVTZLaS1ma3RJQ0pjNFk5X2llYjN0RTlvY3VDaG1XYVlxNGtiY2VX?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Eton Pharmaceuticals Expands Rare Disease Portfolio with Acquisition of US Hemangeol Rights",
+      "first_seen_at": "2026-03-11T16:55:26Z",
+      "last_seen_at": "2026-03-11T16:55:26Z",
+      "name": "Pharmaceutical Commerce",
+      "source_key": "pharmaceutical commerce",
+      "tags": [
+        "critical access hospital conference"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9CYU54cG5jNDkxWmh0TjlMTHAxNjFLMFg5ZDBDLW5LMUxGZ19va0NveW1JMVVnWk93S1RMTFVjWi00TWQ3M3EtaDhOVzUzOUgtZHNMSzBrZ1YySU5tcTJnYTI0YkZNbndTUHpoLWFmOTlucTdPZWVuWlBFblZqZTQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Video: Minister Adams & Wilson Press Conference",
+      "first_seen_at": "2026-03-11T16:55:26Z",
+      "last_seen_at": "2026-03-11T16:55:26Z",
+      "name": "Bernews",
+      "source_key": "bernews",
+      "tags": [
+        "critical access hospital conference"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOMkI1ZDlhN0g5NldkQWlUNzFqWW13S0Y4eENZTDVlVV8zMUxkYzFwNk9PRVo4VnpjTEpyc2N1VXY1RWpSVHhSTjBOa3ZUZlRiZW5NcGQyMHdKYkJVTjlxS2FqUF93VDRZVlBMY0oxTUxHYWF3Q01wNFl4Q0Q5MFNiV0RNVUt1XzJIYVFwTnQ0R0hCMmhfcGRhVUNUYUhJXzduT1pLdkY1OGZtY0dkOVBlOURlcEk?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "What does it take to restore rural maternity care? One NC hospital shows a way.",
+      "first_seen_at": "2026-03-11T16:34:38Z",
+      "last_seen_at": "2026-03-11T16:55:22Z",
+      "name": "North Carolina Health News",
+      "source_key": "north carolina health news",
+      "tags": [
+        "rural maternal health United States",
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQUzl4b0FBbGdaYi0xUU1ScEhVcDdSM2RVaVFJZmswckFnd1phdUF1aVVRNnhVeWphUllkLWQxYjhfdW55ejg0dWktSEZRSUgyVllfbk9Ob0lBWEw0Vl8wQ0FERlN1d1pvYnNKMGRqT19xMjVCSnJKbEIybnA2Rl9kc3lrYkpNcjBKYmp6aXAyYXM2R3E2bEM4OXJjWDFUQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "5 Key Telehealth Insights",
+      "first_seen_at": "2026-03-11T16:34:30Z",
+      "last_seen_at": "2026-03-11T16:55:22Z",
+      "name": "American Hospital Association",
+      "source_key": "american hospital association",
+      "tags": [
+        "rural telehealth United States",
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNam9EdEpvLXdSRHlqZndwazRMN3lVdGdIMGJ0dWJVZnZIUW1XdVk0ZkN0cGhSYS01UFR1OEtieU8xUWFlREplUXJISVczUHRCNXFpVUtpaEhBejVzZlp0ZGowdjFYYWktcEdnQkgwcWNaM3lwVVRVMjNJOC1zTldYWktMRTl3YU80YjV1SHA0SkdreWMzZ2JMTnFkelptWkVuQlBuZURmZkdhMEFNc0I2OGxUX3NQQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Why are some rural Medicare patients paying more than patients at bigger hospitals?",
+      "first_seen_at": "2026-03-11T16:34:09Z",
+      "last_seen_at": "2026-03-11T16:55:22Z",
+      "name": "VTDigger",
+      "source_key": "vtdigger",
+      "tags": [
+        "critical access hospital rural health",
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNYmpheTNMQWY2cDU3TlZnNTVaRlMxN3A3S29xME10elFUN19SN3dUakxiRFNyV0xhRGVxU1RfLVB0a2Zuc1N6ZnJUUDFhZHpNSFRVaFhTSURrLVQ4RVo2NlZMbVJOOFlqdmdPS1pRV0ZXYVZUS3lEUVo2MlIzTkRJSk84SFk2bFZoMmE4aWh0VU00ZDhOTG5aQ0xLeUJpc0lWQWZZcWl3aThhRmI5UE5WZXVjNWtqRlVBLVpYU3loMmM4dw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Mercy Rural Hospitals Rank Among Chartis' Top 100 Performers for 2026",
+      "first_seen_at": "2026-03-11T16:34:09Z",
+      "last_seen_at": "2026-03-11T16:55:22Z",
+      "name": "PR Newswire",
+      "source_key": "pr newswire",
+      "tags": [
+        "critical access hospital rural health",
+        "rural hospital analytics United States",
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOdjhKMExJWExXeUQ2SnVyQnhPR1RFbUw3TGEyZS1OWmNjdWc0VnJDOGJKVmEzODZ5XzhoeG44eHdTZDdNcHhTeXA1Ri1YLW1GcjJSRnZUWWc3Q1oxZW1STkttVm5EMUl0RVE4Yk9HWEF1WmRrYWpGekx4UGNYMnNqd2JZYUdWQmF6YkFjU1p3akNiT1pVejNRVHVqYW1RdHhVRU5UR3NBUVd0QQ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Finding the Right Value-Based Payment Model",
+      "first_seen_at": "2026-03-11T16:55:22Z",
+      "last_seen_at": "2026-03-11T16:55:22Z",
+      "name": "Provider magazine",
+      "source_key": "provider magazine",
+      "tags": [
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOTW5QNjNjUGsycHZDa3MtY3RFcnp2TTNyb2ZiR2Z2UGdmRTJRc2ZsUGkwVHBLZDNNczZrVHlHSW9oRXoyQXVaNUN1VVZ0M0dzQWhiRE9JRWRwWHhac3BCNVV4RkVOUFdLcV9XbG50cGJBZXhERGhFaVlOdW5LRzlYN3hncTlIQXpZdFJCaWF2VU5MQkFhdHRPeXh3?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Primary Care Is in Trouble. So Doctors Band Together To Boost Their Market Power.",
+      "first_seen_at": "2026-03-11T16:55:22Z",
+      "last_seen_at": "2026-03-11T16:55:22Z",
+      "name": "KFF Health News",
+      "source_key": "kff health news",
+      "tags": [
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPZXY2OUlaRThmeGlGR09NNVdFMHROWWRvbU9PajRrWFdudDU0aHVkcHk1OEs1YV9mUkNST2NnX1ZOd3pqTV84aHl5U0J3dGoxNDh0WThiOGZtUXQ3bWk5UE9iT2lwNjVnZldNcFdHdjl0dmRTWkJqNk1ETENESXRMNXNOMGhkOG9uc0pQNW43czlrNUlu?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Senator Sarah Keyeski Visits Aspirus Divine Savior Hospital to Explore Rural Health Care Needs",
+      "first_seen_at": "2026-03-11T16:55:22Z",
+      "last_seen_at": "2026-03-11T16:55:22Z",
+      "name": "Aspirus Health",
+      "source_key": "aspirus health",
+      "tags": [
+        "value based care rural hospital"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOR19sQzZVNXc0Z2V0RUlCZ2s4ak13VGVrSnFCMU40bXVmNnhVTG84MVRwb1lNLW5FWV9KSFNBYjhtT2oyN1JERDR4UFFqTTRkVXZlRk1VTWtwUFpOMko3MDY3MnhZbkR6Z1BKZ2VQV1pBU0tHNzRYV2lqWDZjUXNkQmZrWU16RFh0REIwOHRLNUR4b0FOMEV4dU9VVDVzd2VKT0pCZkY1ekl4cUVHWVl4dllqTG5MRnNHbUJWVA?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Statement for the record: Advancing the next generation of America\u2019s health care workforce",
       "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
+      "last_seen_at": "2026-03-11T16:55:18Z",
       "name": "Niskanen Center",
       "source_key": "niskanen center",
       "tags": [
         "rural healthcare United States",
-        "rural healthcare workforce United States"
+        "rural healthcare workforce United States",
+        "rural hospital analytics United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxORHpBYVJEX0RBcFhwY3BSd3dkN2lRdTl2QmhkbVI4b0tpOUxtcHo0bmo3R0YtZHYySWZibEtZTWgwMDJuU1N1Y29zZGMzdGNNdTN3dC0zWC1GeVRiMmRrS21CWFN4eS1Wc0hlRHhJa2MzSFRsOXRyeXR4bnp6Z1UySWg1OGJXanZ1YTQ0azdsYkJMSU5ZLTBhWVRiX2RsdDhQZ1dVMWx6MFB4eUtaUXc?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Report: Loss of Hospital-Based Obstetrics Care Prevalent in Rural Counties",
+      "first_seen_at": "2026-03-11T16:34:17Z",
+      "last_seen_at": "2026-03-11T16:55:18Z",
+      "name": "The Daily Yonder",
+      "source_key": "the daily yonder",
+      "tags": [
+        "rural hospital analytics United States",
+        "rural hospital closure United States",
+        "rural maternal health United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPTmJWT1cyaWl4dnd6Q1NVZFN2S29pYUNNSThPTjFEaXJ5aEhsYUREZWdWV2l0bTliZktmb0pUenJSbmtQTFl4NnpsODJDMkttODh0MVh5Rmp6WDhvR0Ewa1paS0pYVW9EclAzRHlsN1IxaldDcTFybHluRW1pX290cm45M3NtNzBfNW13b2FReFMxY3ZVWmhQcVVUZzYwU3VfM0ptQ1IyaWZpS1pHMl9RWldqdGI3emVkRTJDdXc1N2czUnJTZUVRSDFmOXdLNmxvVnd4V3JsSy10Y3VINW94dDFR?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "The Rural Health Transformation Fund: Political Rhetoric Meets Bipartisan Concern as the Program Moves Forward",
+      "first_seen_at": "2026-03-11T16:33:56Z",
+      "last_seen_at": "2026-03-11T16:55:18Z",
+      "name": "Georgetown University",
+      "source_key": "georgetown university",
+      "tags": [
+        "rural Medicaid rural hospital",
+        "rural health program United States",
+        "rural health webinar United States",
+        "rural hospital analytics United States",
+        "rural hospital funding United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBna1AyYm95enJHd2dlemlEWVRWSnViVHJBeEJvc1VMbU53V0Z0ZnVDaTVlQ1dkNElGdnpsa29nWWNyd1hpMkhLUTVaU3dVbklnbG5VWlZxVGJ1UklCZFZodzh4SjAybzBsTm44X2Z2dw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Researchers find alarming Alzheimer\u2019s pattern in rural America",
+      "first_seen_at": "2026-03-11T16:33:52Z",
+      "last_seen_at": "2026-03-11T16:55:18Z",
+      "name": "ScienceDaily",
+      "source_key": "sciencedaily",
+      "tags": [
+        "rural healthcare United States",
+        "rural hospital analytics United States"
       ]
     },
     {
@@ -20,7 +669,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxQcm1NQnNIT250WVZnZmlCVE9ZV0RWdTFoUF9ncUZ3cUplc1Fadm1EREotY01oRFdhM19kQkdVM1NadUtWc3lHb2xSOTBaRlNfaFMtM3Y3RUdoSU00c24wZnQyR3RjZ25OQndsamtkNUZBUkRPQkpsVkt3S205RG9tT2dFVUFlaUkxN1JfbElaOEF6Qm9lQnBUZ0Z2VHlBVFNGeTR5YU1zZ250RG1DbU1JdjZlRFBtYmEzQ1Q4Yk1Ud3Jub3R4djE5dHdXWnpWa2kzNWstazVnNk1odTdmODVKZ2hlWVZCanRudUpvallhaGg0UUppUWlCcnR3?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Prenatal Attraction: The race to bring OB-GYNs to rural PA before maternity care deserts expand farther",
       "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
+      "last_seen_at": "2026-03-11T16:55:13Z",
       "name": "City & State Pennsylvania",
       "source_key": "city & state pennsylvania",
       "tags": [
@@ -34,7 +683,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxPckpQQzlyWTlDTmcyLVpYZlpEREZJdy1EVXlNOXZ0aVJicTRtb1JNU3VFRlJXY2MtbzZTbUJIYWRRaUFJSkN0My1vRWsxNTE4RVdiREh3SDVocTEwUUFtSmhSM1lHVEYxOXh0a0VFbElqZ1NNZVhTaVRDS0lybXRMYlBxaGh5NDBPQzhucUxVc3lOS3J2TmY3eWQzTWc3WUxhazBPaU04NWNpUmVCdUdxaHphdWM0azRMa0FJelN1REhub3NxYXhadE83UjRKUW5jS2p4VUZMRkNza090cTVv?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Connecticut to receive $154 million for rural health",
       "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
+      "last_seen_at": "2026-03-11T16:55:13Z",
       "name": "Norwich Bulletin",
       "source_key": "norwich bulletin",
       "tags": [
@@ -45,28 +694,14 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOcUlvQmJyRDFfZE5za2U0S1puQnFFR1hQNk1UNUhubUQzNktuU2M4MHpldnA5S2pERE4yUEtEaHlCUVZRSG1pVFE5YjZfZHNDVlJIQ1dBazB3ZndUd2pQdjVsY1cyZVE0d1F2YTVEaWpfUVNBMGtSdTM0c3J0WG5TODg5TFZhNzc1cHZQLTZmOGRISGNqRmlUXzlNVTZSSjNUMG9zTy1wQ013MDBOS1E?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "State Officials Hail $154M Federal Grant To Improve Health In Rural Areas",
-      "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
-      "name": "CT News Junkie",
-      "source_key": "ct news junkie",
-      "tags": [
-        "RHTP rural health",
-        "rural health conference United States",
-        "rural healthcare workforce United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOZzVrV3lKbDBXVnVxNTJmVWNsUnVxaE54S1liVmF6Z2pfS2pxYnQ0dmxRMkRHbmxyeUN1cVJ4RjV3dEUzX2dUNFhNd3R6ZDhyMUp5MEd6c3ByUEw2NUlGcFpPd3pFYzBMQmpIZ3dmNG9fU0VrNm5hMVhic1FnWHc5Z3FUZGwta3BKZFdSQW5lejJONGlFQ1NvYWJ5M1hEcnhFNDQyeDA1R3RaMGV5?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Governor Morrisey Urges Quick Passage of $199 Million Rural Health Funding Bills",
       "first_seen_at": "2026-03-11T16:34:30Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
+      "last_seen_at": "2026-03-11T16:55:13Z",
       "name": "WV Office of the Governor (.gov)",
       "source_key": "wv office of the governor (.gov)",
       "tags": [
+        "rural healthcare United States",
         "rural healthcare workforce United States",
         "rural telehealth United States"
       ]
@@ -77,7 +712,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOR2NlRVlBbTUwVXFZMnlyczlUNnBEWkVGbHlrOTBwcWU0RVcwNkpfMzNLcjlERzloNWhiQllsY1NOY1c3UEk0cTE1dVFfVDh4ZGNZLVpKbUd6QjFDS2RvenYzRkE0eDlNZ1dDWGRXVXJDTm5Ca1RwZ0YyVDdBOGRCck9ZS1lOZHJVQi1SWGN4d1VOTUZZWHBIU3lsWUQyc3NzbEwtaHRlMU90NmR0MjRvMjl2WENmMzBlaXJoZnBjVlRqekY4MHBYbUJZSGY?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "How Tennessee can fix its rural doctor shortage | Opinion",
       "first_seen_at": "2026-03-11T16:34:30Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
+      "last_seen_at": "2026-03-11T16:55:13Z",
       "name": "Knoxville News Sentinel",
       "source_key": "knoxville news sentinel",
       "tags": [
@@ -91,7 +726,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPbGlyaXFmRnZVZmFlZUFKb1pwbk15X0ZrUFMwaGtQZ0FIMmVMMFRQbk1ZUWRWLUxRX2RZcFRQMVEteVRWQzAwRTVyZXVrZm5ZUzlqakhiQUVqVW5xa0ozT0ZfYjdPNUdaMExacUxLV0dXOGFHRTZrTEcxMi1MTFgtb2kyUHB5aFNiU25XTHp3YjBKQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Health Care Has Become the Lifeblood of the Labor Market - The New York Times",
       "first_seen_at": "2026-03-11T16:34:42Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
+      "last_seen_at": "2026-03-11T16:55:13Z",
       "name": "The New York Times",
       "source_key": "the new york times",
       "tags": [
@@ -104,7 +739,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxQNWVxeFlNMUZhUFdsckZRdUVqZ1MxZHkwS3hUTklUaGJzZ2NGQXdtTWhyaVlGcDRCMjZBRUsxX01YQmVnRzFQM2tLZ01GYzBlMVVQekdwR0JQZl9aN2d0OGNaT2V6TkZqVnJIRHRHaWl0SHpRRVRtbGN5ZmtSR01EYmo5T2JNTmhSX0hIVlVEVWZvNFNpWWl4eFJ2VDBIa3lFUUk1TGVfdTlNMTFlc0hFems4QnlwbmJTYnFxV1FhbGNDZmlfRGkxd2NVRjZJVG1KMkY3TENOSHJ0UUlvdUE?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Press Release: King and Curtis Introduce Bipartisan Community TEAMS Act to Enhance Rural Health Care Workforce",
       "first_seen_at": "2026-03-11T16:34:42Z",
-      "last_seen_at": "2026-03-11T16:34:42Z",
+      "last_seen_at": "2026-03-11T16:55:13Z",
       "name": "Quiver Quantitative",
       "source_key": "quiver quantitative",
       "tags": [
@@ -117,7 +752,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxPVkVvSC1hN3Nhb2dPT0loYnFQQ1lyMDhiMkNiRVp3UThmTVdETjE0UkxEZkEwU3NBMXl3Q2d2YlhWcnhkVF9oQjMyN1BiRGVTM21FTXp2OTdJREQyR2VEQVRtTkhnNjBvanRXZ1ljZkJLaElhWlFJckRBWFl0anFvbUlkS0VuNmxqbjhGNGNLRG5xbEZ2Zmw4cjRYbF92dEM5M3hoMHZ1YVgtUDJ1VGFScml3TFpqOG1KUUhRT29BWkljdmkyeEhvdGtRQURvWUJVMnhKbENlaE1zUVBSb2ZNdGx6aGFKeXEyVkt5b3dGWXlNR25Z?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Maternal health at risk with loss of rural obstetrics",
       "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
+      "last_seen_at": "2026-03-11T16:55:09Z",
       "name": "The North Star Monthly",
       "source_key": "the north star monthly",
       "tags": [
@@ -128,24 +763,10 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxORHpBYVJEX0RBcFhwY3BSd3dkN2lRdTl2QmhkbVI4b0tpOUxtcHo0bmo3R0YtZHYySWZibEtZTWgwMDJuU1N1Y29zZGMzdGNNdTN3dC0zWC1GeVRiMmRrS21CWFN4eS1Wc0hlRHhJa2MzSFRsOXRyeXR4bnp6Z1UySWg1OGJXanZ1YTQ0azdsYkJMSU5ZLTBhWVRiX2RsdDhQZ1dVMWx6MFB4eUtaUXc?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Report: Loss of Hospital-Based Obstetrics Care Prevalent in Rural Counties",
-      "first_seen_at": "2026-03-11T16:34:17Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
-      "name": "The Daily Yonder",
-      "source_key": "the daily yonder",
-      "tags": [
-        "rural hospital closure United States",
-        "rural maternal health United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMi_AFBVV95cUxNeF96WTJDQ2RyUlMxa0JKV21RYVR3Z3FfelI1T1BTXzlqblp4dnBpTjh4RWV4OVM3LVN6Mm9XUmpCdmFHS2dIVi0waDY2NVpEbEN5QlVlX1JUWTljSURMeEYzMG9rNzlZNnZiTWdVNl93MFpoRjUyb0ExVUNsdl9xV2FIN3hDaGhtbVVVWEZXQUs2LVJvVHlsaVUtMU9BcmpFWmh3REVVeEpWbFJNNjdLSHo5XzYzTTh1ZjZkQUJMUkJTUVhvdDRJdEJRUWZzdEJpWVYtcUp1SEt1ekh0a1ZTa2drRXpXOEtnVmE4ZlM2OWxYcFlIMjNnM2RZNXI?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Center for Rural Pa. finds state's maternity health desert growing, as 23 counties are without labor and delivery hospital units",
       "first_seen_at": "2026-03-11T16:34:17Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
+      "last_seen_at": "2026-03-11T16:55:09Z",
       "name": "WVIA Public Media",
       "source_key": "wvia public media",
       "tags": [
@@ -159,7 +780,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPN2VGR2pwMWpuNFBDS3RtaTh5REpfS3B5X3pPUE03QUZJdEcteHlnVVFRblBWdFlMd1V4djVsUVRadUVyMFhlUU85Vm9SSTZZZGh4a01mZWNFOTJmT3dJTEJ0VUZqSmxvRzVfYXg5bThwTkhvMVZZSUZ6NVl1enVIQ3pJcVJ1VlZldHQ0cUJyRmdyS3hrMHE2SGI2RndmWlV6cnE4bDNVaFI0VkJZS3RRVTNhVDdqZw?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Telehealth is widely used by older adults insured by Medicare, new research shows",
       "first_seen_at": "2026-03-11T16:34:30Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
+      "last_seen_at": "2026-03-11T16:55:09Z",
       "name": "The Conversation",
       "source_key": "the conversation",
       "tags": [
@@ -170,23 +791,10 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOMkI1ZDlhN0g5NldkQWlUNzFqWW13S0Y4eENZTDVlVV8zMUxkYzFwNk9PRVo4VnpjTEpyc2N1VXY1RWpSVHhSTjBOa3ZUZlRiZW5NcGQyMHdKYkJVTjlxS2FqUF93VDRZVlBMY0oxTUxHYWF3Q01wNFl4Q0Q5MFNiV0RNVUt1XzJIYVFwTnQ0R0hCMmhfcGRhVUNUYUhJXzduT1pLdkY1OGZtY0dkOVBlOURlcEk?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "What does it take to restore rural maternity care? One NC hospital shows a way.",
-      "first_seen_at": "2026-03-11T16:34:38Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
-      "name": "North Carolina Health News",
-      "source_key": "north carolina health news",
-      "tags": [
-        "rural maternal health United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxQMEV1ODA0WnZmMG1oYWhWVW91TGZ2TWZQYWFtVS04UFRFZC1MWWVMTWp4RzFwVW9BekNGSDBNLUFWMVR2M2d6b0t6R3pfZGg4dlQ1QktZdy1sQjFTUUdDRktkWko1WEllTklpYy1EWC1DNEdreDJvQTJZQ3F6Z1RkdG1yZ1Vla3RoUkNWdFdzVUszaWdyZktlRVg0allIMHhpQ2Z6WUVlMlVDQ0d6VmZZdkt5dlRSMEtfV2I1a3ZUUm9kSEQ2dG1HQTg4Rlo2NHNxX0poV0dXUEkzWnFISWkw?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Rural communities face growing maternal healthcare shortage",
       "first_seen_at": "2026-03-11T16:34:38Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
+      "last_seen_at": "2026-03-11T16:55:09Z",
       "name": "wandtv.com",
       "source_key": "wandtv.com",
       "tags": [
@@ -199,7 +807,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOVDEydnAyMjh4azQ5VWI4TUVacEdyakRSNzdDMEVleGdRMEs2NGo1aE8tTWE0Yk9BQWgxY01IczlwTmNkMjVKWmhYR2NycGdid2phRjFQSVRKNmpQUVRlNUZGS2FJNEZtRWNxZEM4Q1BQNXBJV1dDcUhLa0JTOFJQQ3lsUHF6V0RyZHJaOEQ0VVpheXNkWThGV01EZkhTbVR2WmFrUE5CZzc5RGlBaDZQbmZUVFlOQmdMckE?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Driving to Deliver | How pregnant women in rural Arkansas struggle with healthcare",
       "first_seen_at": "2026-03-11T16:34:38Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
+      "last_seen_at": "2026-03-11T16:55:09Z",
       "name": "thv11.com",
       "source_key": "thv11.com",
       "tags": [
@@ -212,7 +820,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNckRiYVVWMnMzd2RsdnRwaGlLYVpEVkt5aDcyWWoyZ20zZEZqYVBzcVFFZ0d3Z3FLUUU3NTEycXh5NFE2b2tHbldmQjFWdkRqWm52R3ViTWw4dWJwZW5FVmhaOEFmNHVnb25qSXhtZmh3UlV4OHFxYjc1MHprczZLLUJ3WnlaTkVmRmVwRjJhc0V3RTNKQ0NfTWZDRzY3bTFVeVZ6Q095V1NaQng4aFpEVHF3RFJyeklhUjVDSEJ6enBtQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "NC has plenty of doctors and nurses to deliver babies, but rural counties still go without",
       "first_seen_at": "2026-03-11T16:34:38Z",
-      "last_seen_at": "2026-03-11T16:34:38Z",
+      "last_seen_at": "2026-03-11T16:55:09Z",
       "name": "NC Newsline",
       "source_key": "nc newsline",
       "tags": [
@@ -222,154 +830,12 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNUHlaaGZDSkdZLU9PV0Q0cTFjMHpJVnlHdFlqZWluVkYtbVFxeVQzWjhYay1mRTVGbTJGeUJuYXFsNVJ1QkdaMnowbjBBMXNEcGEwNW5pUy1DbEYzWFphLVN2aWdZRmtUTHFrZFFEWFRMNGxTLVlLcGpnZzFzTEx6VWxpSDR3OE1RSDBUTkY2bktZWk04YXM5V1p5NnJmQzQzSzAxbEIwMXNwQXdjZEZ5cktnajZHeHM?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Debate Grows Over How States Will Use New Rural Health Funds",
-      "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "Governing",
-      "source_key": "governing",
-      "tags": [
-        "Federal Office of Rural Health Policy",
-        "rural Medicaid rural hospital",
-        "rural health conference United States",
-        "rural health program United States",
-        "rural hospital funding United States",
-        "rural telehealth United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPTmJWT1cyaWl4dnd6Q1NVZFN2S29pYUNNSThPTjFEaXJ5aEhsYUREZWdWV2l0bTliZktmb0pUenJSbmtQTFl4NnpsODJDMkttODh0MVh5Rmp6WDhvR0Ewa1paS0pYVW9EclAzRHlsN1IxaldDcTFybHluRW1pX290cm45M3NtNzBfNW13b2FReFMxY3ZVWmhQcVVUZzYwU3VfM0ptQ1IyaWZpS1pHMl9RWldqdGI3emVkRTJDdXc1N2czUnJTZUVRSDFmOXdLNmxvVnd4V3JsSy10Y3VINW94dDFR?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "The Rural Health Transformation Fund: Political Rhetoric Meets Bipartisan Concern as the Program Moves Forward",
-      "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "Georgetown University",
-      "source_key": "georgetown university",
-      "tags": [
-        "rural Medicaid rural hospital",
-        "rural health program United States",
-        "rural hospital funding United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxOT3FOSkptNHRUTnRYN1pCdDRULTU2WVVleC1wekZwdlFyX0UtTGx0T1ZRd3l4dW9SMWk1YzhMTGhZSnRrZHdOQ0M3VFFOZDBrUTJwSzJScm5MWjQ3WmxMWGtCb3B0NlE4NlYydElPM3VHbXNJVTZXOWZZTUp5Y1NnSW9TSFpRd0o2MUNuemJvSEM3YWVPRElKeDVRTmxnTlNwckF6c0JXcE9vNGVTZUFMNFpiZ2ozZTFCVkl3YndpMFdNbkRF?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "New rural health fund offers little relief from federal Medicaid cuts, experts say",
-      "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "The Michigan Independent",
-      "source_key": "the michigan independent",
-      "tags": [
-        "Federal Office of Rural Health Policy",
-        "rural Medicaid rural hospital",
-        "rural health program United States",
-        "rural hospital funding United States",
-        "rural telehealth United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQYkt1SFlLWGd4Tjg3aV9VQ19RZjZLbTZfM0tVeExiNFZfT3dGQTlpY1dGelNWb2dSTUl6Qk9xRnlpaml3LXFOUmlZU1FsME1hMUlhQTdtVzI4U2tzR2UyUmUyTDVrV1VVTzRlTEd6SXBkM21BMU1aLUtQNlY4dldhZ3RaZ19NdHFwZnAxeVd2T3hab0ZHUXkw?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "How delays could squeeze rural hospitals out of CMS\u2019 $50B fund",
-      "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "Modern Healthcare",
-      "source_key": "modern healthcare",
-      "tags": [
-        "Federal Office of Rural Health Policy",
-        "critical access hospital rural health",
-        "rural Medicaid rural hospital",
-        "rural health conference United States",
-        "rural health program United States",
-        "rural hospital closure United States",
-        "rural hospital funding United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNZ0VKS3dxcmthOEZiei0zb1ZjVkFBemVHM0tqaEl1U0JBUGs1UGNWSXM0V0pnSHFxU0ZsN1hZS0NRTTZrbm11TjMyM01jVGRFS0paNHJaaVlIRUx4Y0w5LTN2RGRIb3RtM0JmMlJwQk42eDZtLUxGNlhPOGxxUFRQZzZZaHBxWjZzUU5ldnktUXZhWE0?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "KFF Health News: Rural Health Transformation Program Fund Allocation",
-      "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "Michigan Health & Hospital Association",
-      "source_key": "michigan health & hospital association",
-      "tags": [
-        "RHTP rural health",
-        "critical access hospital rural health",
-        "rural Medicaid rural hospital",
-        "rural hospital funding United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNT2JnclN4ODg1X0hrcjZGQ09hbU1rSmpPeE44X3duX1JjU1VRMDJHWnhZOEZROFJkdXFCelVhVmpxQmRSN0pfdWNTRFVyTzJ6cXNtUkh3Qy1hSUF1UEFrb1pDSF9XZV82M01ocnpiSURrN19lVnhsNXpiZGd2TWRUNHBfQm9rZ1hOaEZmNzZpdDFhRUpm?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Provider Taxes Do Not Save Rural Hospitals",
-      "first_seen_at": "2026-03-11T16:34:12Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "Paragon Health Institute",
-      "source_key": "paragon health institute",
-      "tags": [
-        "rural Medicaid rural hospital",
-        "rural hospital closure United States",
-        "rural hospital funding United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOb0FEeDZPLXFnMjZaTnVHLXB1bHhxTGtDMUFxeWN3YXVTMGNXUGdJbWZOMzM1cnhyNGRDVFdXQmk1OGZwcnMwNFJzaFpSak1Nc0p1aFRUT0k1UjlPeGJaNXVHZDUxWjE4RWZkZVZPRGxaMGxNQTgxcnByaWg4eTQzZkJrYm5rckE4TWhLai1nSm43OTZpNlhR?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "A Missouri pilot program reimagines rural hospitals as the central hub for more than health care",
-      "first_seen_at": "2026-03-11T16:34:12Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "thebeaconnews.org",
-      "source_key": "thebeaconnews.org",
-      "tags": [
-        "rural Medicaid rural hospital",
-        "rural hospital closure United States",
-        "rural hospital funding United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQZHdXUkw3Y0xSN29YODZVdi1LWk5ncFZOZDc2X0ltVV93QTVKMGZmcmlfRGhSZjE3blZQcG1OLURuelVUajlRUUprLTZyWmVJVl9aLTFYWHBBTzhCcFA3OVV1OUpoTERQWEl1dWFoWVJyVUptbjZrZHVxa2IyT2pLNVFiTllMOENTOEd3Q0thZ1NhblNYMFlfOHY0WThKNEk?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Santa Clara County studies impact of possible rural hospital closure",
-      "first_seen_at": "2026-03-11T16:34:17Z",
-      "last_seen_at": "2026-03-11T16:34:34Z",
-      "name": "San Jos\u00e9 Spotlight",
-      "source_key": "san jos\u00e9 spotlight",
-      "tags": [
-        "rural Medicaid rural hospital",
-        "rural hospital closure United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQMVI2ZkZ6MkFBT2hiSnB3SktzWVlSR2RVNE5taTZBV2JDbS13eWtXQUlLSVh0Q3RHaHMxYUJTVHJOaFBNblN3d3Jqcmx6VzZDVzNBNHM2UlpLZzY2Nk9tbVc5TVlGTzd1OGJ3Q1hDSk1zd0p6bWo4WTMxWXptRFp2UVBaanBOLW9FOF8yWHhXdjhWQnBzcDlEalFMUlIwc2RoZFBmc0owX1NTc1B2VmpFNEVuU1h0WjFZNVdDampB?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Telemedicine Not Closing the Mental Health Gap in Rural Areas",
       "first_seen_at": "2026-03-11T16:34:30Z",
-      "last_seen_at": "2026-03-11T16:34:30Z",
+      "last_seen_at": "2026-03-11T16:55:00Z",
       "name": "U.S. News & World Report",
       "source_key": "u.s. news & world report",
-      "tags": [
-        "rural telehealth United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQUzl4b0FBbGdaYi0xUU1ScEhVcDdSM2RVaVFJZmswckFnd1phdUF1aVVRNnhVeWphUllkLWQxYjhfdW55ejg0dWktSEZRSUgyVllfbk9Ob0lBWEw0Vl8wQ0FERlN1d1pvYnNKMGRqT19xMjVCSnJKbEIybnA2Rl9kc3lrYkpNcjBKYmp6aXAyYXM2R3E2bEM4OXJjWDFUQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "5 Key Telehealth Insights",
-      "first_seen_at": "2026-03-11T16:34:30Z",
-      "last_seen_at": "2026-03-11T16:34:30Z",
-      "name": "American Hospital Association",
-      "source_key": "american hospital association",
       "tags": [
         "rural telehealth United States"
       ]
@@ -380,7 +846,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNZ0FER096SS01c096Z01sRXVSVnY5ZEhHajA1UUJReTlhb0lCOHF1LW92UC04ZThkZmk0UGF3RWc4cGlTRmZRb2pVRXd6aUc3QWVyRHQyQS1CbkhFUGVIZVdQelFJdjFSbmE4cmRadzZGR2JTUnZkbm1zVnhLNHVpYzIteE1ab2NXbk5fd0xPWkxPcm1KRjNBTjhqTWpQVmdnS3haT0lfcF9jVVYyNjNnN3lFc09QZ3NSa2dobHRocE5NaDRQ?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Study: Telehealth did not boost mental health access in rural areas",
       "first_seen_at": "2026-03-11T16:34:30Z",
-      "last_seen_at": "2026-03-11T16:34:30Z",
+      "last_seen_at": "2026-03-11T16:55:00Z",
       "name": "TechTarget",
       "source_key": "techtarget",
       "tags": [
@@ -390,25 +856,10 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQc3BHUXBUMmI5V1Jfc1lIb3RTZ1JxZmF0bGNlZjVsZHI0V2YzMWRSUHl1ZHY3TS1FUDlReG85cXMyeEZWM3FrNjlhQ0pOWDBMSEJWUGVEa0wzNVd6a0diTEhFc0JIeUc5Q0FLNHRzdzljYUtRX1Fobm13bllTdFF5elFqRldMaVZFeGQxYjVNcw?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "RHTP Funding Misaligned With Rural Mortality, Medicaid Losses",
-      "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:26Z",
-      "name": "The American Journal of Managed Care\u00ae (AJMC\u00ae)",
-      "source_key": "the american journal of managed care\u00ae (ajmc\u00ae)",
-      "tags": [
-        "Federal Office of Rural Health Policy",
-        "RHTP rural health",
-        "rural hospital funding United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMigAJBVV95cUxPNDh5dmxEYnR4T1JpVjhfVlcxcjVEY0RZWEFnVTExamx1aHFtcXMwV3RSYmltTk90RkdESFdYZkpKNUdnV3Z6Z0VYbndZQ1hnQV9tZVY4SFFWSWljWDB4SXFrNUNVU21xRF84aldnSVFOdDJObzJzak56YWhVYy1WZUV6M1E0Z3RfZmZWTVgzcnZrWjlPMGdLYUJ5RzZQUThyUW56YU80bDg3bVNEUVFyZ2JyajIyOHFUZGxoUmFEOGdLNndHOGIyUllKNlgzeHpmZHFRR1ZjLXI2V19EdnFTNGdQNVh1VF9oU1Rva3hWU2UxTjR4V3dsbGhUdlFwQVFW?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Colorado Rural Health Center CEO Michelle Mills Named Chair of Rural Health Transformation Program Advisory Committee",
       "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:26Z",
+      "last_seen_at": "2026-03-11T16:54:56Z",
       "name": "24-7PressRelease.com",
       "source_key": "24-7pressrelease.com",
       "tags": [
@@ -419,23 +870,10 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOcFhqMkJyazllLXFzM1MtSVdBTTNfeHZ1UmlNZ3RIV0ZXR21LeFoxT2dhUk5VUEpvUGYtMG50M3FSMGdxTlNlYldjQTB0ZUNDTzFxTFVsYkkzME5kM3p6a044ZUwxdGNfZFEtQnZXRGE5Z051QURWSHlMWTUxRkxmSnJBRTY4M0hWTld2YUdB?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Newman Regional Health Selected for National Rural Hospital Stabilization Program",
-      "first_seen_at": "2026-03-11T16:34:26Z",
-      "last_seen_at": "2026-03-11T16:34:26Z",
-      "name": "Emporia Gazette",
-      "source_key": "emporia gazette",
-      "tags": [
-        "Federal Office of Rural Health Policy"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOR25mWER0Q0hINmFkVlhFamhQcmk4WmEwVzV4cGdVR2d0amxWS2YwSFplNWw0ZnpqUWlsRVptVmRuZmNOdVg3bV9Rc3RIdFp0TE9uY0oxMVhtQjJ3bHUza09hSE1mSDhSLWRRNEMtYnBtdUpmbWZXR3pidkZreDZPR25hQUZtMlVSN3VUSFpPcVNEUjd2R0Q5eEQ3RS00a3pHck5JcEV5UEN3MkdXQ3htbUVWa1FpdEdGNlE?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Newman Regional Health named as participant in federal Rural Health Stabilization Program",
       "first_seen_at": "2026-03-11T16:34:26Z",
-      "last_seen_at": "2026-03-11T16:34:26Z",
+      "last_seen_at": "2026-03-11T16:54:56Z",
       "name": "KVOE",
       "source_key": "kvoe",
       "tags": [
@@ -448,7 +886,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNYnRiRnlaYzMwYnhkMjRGdmsxVDc4YXpWOXh5WEVPdG5ubW5jSldXSC1ZNXU5dkN5ZHpBV3p0eWtsNTREWG5VSWpxdGpNaC00QVFOSHlSMTRWTTRzclQ1LXJKdnI5REJNcDI4VnNvNk5fNmJLcUdUaUlQMmVmVWdqQU45NFY3eWlqbTV5WnBhYmdwY1JwSEMydFo0NA?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Holland & Knight Health Dose: March 10, 2026",
       "first_seen_at": "2026-03-11T16:34:26Z",
-      "last_seen_at": "2026-03-11T16:34:26Z",
+      "last_seen_at": "2026-03-11T16:54:56Z",
       "name": "Holland & Knight",
       "source_key": "holland & knight",
       "tags": [
@@ -461,7 +899,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxObmlSaWh6X0pPYVZwVFlEVzBzYmJBdUpoQlE2amRKZjRHSGVsTzFJYzB4VURPWEp1VDFPeWRRWnRQVzZYMTlDbGVmaHctMlotU292QVN5bHJldmtGNmRsRFhKbUlaemVTQUpUNTZuSmNCZ3R3LW1kRE8wS0NLcGtDeElZOEI5anJLZkZ1dGYzd25ua0hNVllkQXZsTTdGUnhHdk9FTg?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "$50B Rural Health Fund Won\u2019t Offset Medicaid Enrollment Gaps",
       "first_seen_at": "2026-03-11T16:34:22Z",
-      "last_seen_at": "2026-03-11T16:34:22Z",
+      "last_seen_at": "2026-03-11T16:54:52Z",
       "name": "The Malaysian Reserve",
       "source_key": "the malaysian reserve",
       "tags": [
@@ -471,10 +909,63 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxOR0pHY01XMnFCR3VpeW5ZZGRNeTZVWENiTW1QYlNjeXpGZ0ZrNHF2ZUJTSmExdlJZUzEweFMwSUdia2t2S3lXSHFUUFpPVFVpQjR3X05nazkwcTlGTWhUdUFkWm5QbEdDVUNpR3NBNDFoLUdHWDQ5MlFqc2MtTm5lbHdFSjQzMUZrQWcyLVp1dXh4WEJCQlFPQUFrdWlBZkc0VjlSamdycV9RNnJ5VXc4elJsUHFjc0N0TUppU3d5SGZyQTZvNGpJTmh5RTJPVDF5c0hCZXVqbHp6SXYwUFlyYnoxdkktSHp1aktGa2lQNkt5dw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "AI use in diagnostic care, rural care access, and surge in preventable",
+      "first_seen_at": "2026-03-11T16:54:13Z",
+      "last_seen_at": "2026-03-11T16:54:50Z",
+      "name": "ECRI",
+      "source_key": "ecri",
+      "tags": [
+        "rural health webinar United States",
+        "rural healthcare United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQTFR6RXliQnFLcnhidHhnekFBVU1lZzBRbGxXd0xGZW4tOUc4c24tYUZ5SlZ3b3JxS0dvTm1LMThOcnBfWDBBaDZmU1paUXM4YVBraUVxcjNOc3FmSDRfTV94TFBaTjFEb0xRTG5tNFAwQ21ndUxWT1BHRS12cWxCVkJxWXdtUVQ5NXM2R1V4N3lmdw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "State to host vendor webinar on rural health contracts",
+      "first_seen_at": "2026-03-11T16:54:50Z",
+      "last_seen_at": "2026-03-11T16:54:50Z",
+      "name": "NBC Montana",
+      "source_key": "nbc montana",
+      "tags": [
+        "rural health webinar United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNQm5maU1MV3FmMEpwY2hUSG85WnVzQ2dJQ2RsdTd2b3Zzc05abFBjQzlKQ0pZLXEzRzQ5RVFEZmQ1ZHdhWU1Pb3NpeGo4cy1KWFlDU1VxUEtoRl9LX0NER2JsMktwajEwV1NNU1pOZ3dBdC1nUlhObTZYOTNvZTA3c1FrcUp1aTg?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Rural Access Today: Fresh Insights for Health Plans",
+      "first_seen_at": "2026-03-11T16:54:50Z",
+      "last_seen_at": "2026-03-11T16:54:50Z",
+      "name": "AHIP",
+      "source_key": "ahip",
+      "tags": [
+        "rural health webinar United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
+      "example_link": "https://news.google.com/rss/articles/CBMickFVX3lxTE0tZ05hWWx3NFh4M2tBX2t3aWJOZTNqaXdtbjVTX1JIMU1ubXkwMVAyNzJNdFlsZlB2WGVhUGZzYXlUNjFOeHA5X0YySElDVHUwa1hKU3NXUEo2bHhWa01Eai00ZTdaZlRKWUYySlhjZnNPdw?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Health-ISAC Hacking Healthcare 3-5-2026",
+      "first_seen_at": "2026-03-11T16:54:50Z",
+      "last_seen_at": "2026-03-11T16:54:50Z",
+      "name": "Health-ISAC",
+      "source_key": "health-isac",
+      "tags": [
+        "rural health webinar United States"
+      ]
+    },
+    {
+      "discovered_via": "google_news_rss",
+      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPb1hvaGtRVXl4ZXAwTk1jYXdCSkJuY0lDYjM2WGpPYTR4MGdLb1IteUgwOEdfU2hUQXNwVFAxWXRBZ1NURU83djRyd2MxcGdPX3hKdmp5QjVWay1kbFIzUm5KemNQUzlBQnhGWVc3T1kzcWlfM3dMaFI0WUZ6QVpXcllZMkp3MUVCNEJtUnd0UEY2QnBZQUl0Mmdjbm9pSWl0R1RrdDdIU08?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Kentucky lawmakers gavel out April 15 from 2026 legislative session",
       "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:34:21Z",
+      "last_seen_at": "2026-03-11T16:54:45Z",
       "name": "Spectrum News",
       "source_key": "spectrum news",
       "tags": [
@@ -488,7 +979,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxNZ0ZTNF9pR2tlQ0FXQ3czYVNmZVE3X1IyZ2U4ZU9ycnFiU2REbVZ2SWl5ajl2ZkRaLS1FazdJdURTVDZMRzBJeUFzcGxXZUd3TlNEWHhfbGFjbHpYRTR4Q1dIS1Y4bzR4aUZCRXExak1zWDVKWEdHRUdOZDd4QTBBVUpkcGpXRFFSWHg2aXEwOG1kRGx3N0l3TTUyQ1BEZklWRHFfeXpQUVZlVVNVWlRiUUhOVnZwdG9GTDhSbjdyM1BKN1VzWURkYVZTd2ZKRkFNdE5UVDRZV241dEFqMUtuaU5WZUhabm45NDU2REtLYw?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Guest Column: Clarifying the Rural Health Transformation Program",
       "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:21Z",
+      "last_seen_at": "2026-03-11T16:54:45Z",
       "name": "Idaho County Free Press",
       "source_key": "idaho county free press",
       "tags": [
@@ -499,36 +990,10 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNREVQUmpKbUY4dENBT3JiY3h4c09PM2hMT2plM01KNEYxTjIxNWlKOG9aSFh3U3hOcEpmaDQwTzF5TEdtMHdpdWhwMnZxajUtcWFFR0RNY29hX0JsWmt3Q0EwdFZIUUhrZXBlcVEwai10aU10UzNFeWFHbkFMYU5fMGNfUFdkRDBEbEdweEtnYkZ5YXJyXzBvM2J1WlBzU2VZS1dHWFpKbkV6VHpHZGFadGR0eGFQYkdIcEdQbEVsZjI?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Column: Budgets Reveal Priorities: Rural Healthcare Must Be One",
-      "first_seen_at": "2026-03-11T16:34:21Z",
-      "last_seen_at": "2026-03-11T16:34:21Z",
-      "name": "The New York State Senate (.gov)",
-      "source_key": "the new york state senate (.gov)",
-      "tags": [
-        "rural health conference United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNY3B0UGptSFM0TXVNd1QzZVZfdHRMajZTY3FYUlU0X1Y1cHRpT05GQ0xBLURZb0tSSGUzN1ViVm9HZXZrRkJ5c3lmQUJfekFZV3ZjN3F0b2M1cHk0azlRR2hHeG5uVzByN2JaRXBGd3RMMFZkVGJBTlhyUXppS0RHQXFNT0tSdw?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Dr. Oz touts \u2018AI avatars\u2019 to address rural mental health care shortage. Experts urge caution",
-      "first_seen_at": "2026-03-11T16:34:21Z",
-      "last_seen_at": "2026-03-11T16:34:21Z",
-      "name": "Association of Health Care Journalists",
-      "source_key": "association of health care journalists",
-      "tags": [
-        "rural health conference United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxPd29Bd0hTZV9IWmF4bDczYlhGdlBSZzFKeEpnS2N0SVRnemE1UTc1R2RCenVGR1dyejVBNE9yVHFYMU90d0JqQTRrdl9CemN5UmFESGRvUzBMNkNIS05XSmFxQzRoTTVyYTFQR0NmWW1Pd0ctUGV2TUFZekVIZktoWnZ3X05jS28zZDZwdFRaTGRMSld3ZGN3emotOUVJeTlOSkRNLV84UkZGaXNJSE41ODNlaEloMEdvbzJjWmtrX210WU9WQVp1bHJXZG1peEMyN2ZGRVg5aGVuZHd3SDVSaGJDSkxEaW1G?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "LLH Healthcare Expands Partnership With American Conference for 2026 Men's and Women's Basketball Championships",
       "first_seen_at": "2026-03-11T16:34:21Z",
-      "last_seen_at": "2026-03-11T16:34:21Z",
+      "last_seen_at": "2026-03-11T16:54:45Z",
       "name": "American Conference",
       "source_key": "american conference",
       "tags": [
@@ -541,7 +1006,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOMFZmemRxQmVHZjRBVUxEOVhCS0ZLVWpDVWhSVGtLdDFxNjJBUDNPSWs2RGpfaVEtYkg1OTEzZ2dQQnFoR0o3QVU0cWRCaERoeEFlanViMlZkcHZzSktpTHY5WDB2TEhwUjVVLXJObV9fd1p6OTkwRzNFd2k3UkRqSnRUSFg1UmRyUExFODNSM3BRSlZVRUQycmxyVFlIQ3Zq?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "\u2018Executive compensation\u2019 regulation would hurt North Country hospitals",
       "first_seen_at": "2026-03-11T16:34:17Z",
-      "last_seen_at": "2026-03-11T16:34:17Z",
+      "last_seen_at": "2026-03-11T16:54:40Z",
       "name": "THE JOSIAH BARTLETT CENTER FOR PUBLIC POLICY",
       "source_key": "the josiah bartlett center for public policy",
       "tags": [
@@ -554,7 +1019,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNWFJPYVF0X1Y4enkxdUZLd29ra3o3ZVFhdUNxcGRzeHpLUmliVXBKZ3laUXhRSGtIY2xUZWJsX3dmaktkUkp2UWpHenFCcktTNVl5Z3RScUpuRHMwdnUzVWw5dzhGUlhnd0dqdWJUd3VReklTSEFqRHdUTmZHYnpWekJLUklOZ0xSSXJaRXViaTgyNUtUeXlaRkVERQ?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "We must not cap what Maine hospitals can charge | Opinion",
       "first_seen_at": "2026-03-11T16:34:17Z",
-      "last_seen_at": "2026-03-11T16:34:17Z",
+      "last_seen_at": "2026-03-11T16:54:40Z",
       "name": "The Portland Press Herald",
       "source_key": "the portland press herald",
       "tags": [
@@ -567,7 +1032,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNaEdrUWRreElCT2M2ODVpWDlMU2ZPZ2d1b0hLclRLQnZDRkxVNUlCNnY5aHMtTU9QdndraVh1NzhVYlBOSEo1bWF4S3hJQWZpTm1USmc2eDB6aGw1cm1zTkh6b3RYcjVzbnVEOEdPS2c3Rkp4OXoxdGNCazJkR3pRX0hfajJIR0JYam5hNGtrV0RIY2lMQnhaWV95bWNaMHNZcS1GNmhCRUtTU1Z4bmYzMExrUl9JcllVWGRnT1o1a2hVVHhnbkFBanFxNVE?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Essentia Health-Fosston recognized among best critical access hospitals in U.S.",
       "first_seen_at": "2026-03-11T16:34:09Z",
-      "last_seen_at": "2026-03-11T16:34:09Z",
+      "last_seen_at": "2026-03-11T16:54:31Z",
       "name": "Essentia Health",
       "source_key": "essentia health",
       "tags": [
@@ -580,22 +1045,9 @@
       "example_link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPU0JxSkJrSHNWN3lzd2h5UEdjWFFhT0dxUlhieno5VFVpYUxmLXJ6SnNKUEZpWDBPVzhtejRaMmRxM09HZEdFWHB4QXhmYlh4N25NcVRRWVpGSkYtQ0hTaVFsRnJqbUlvYW94VDJhc1dSWW9XMGVwSzlVSkZndE5oTXlvWDhWS2lKNFAtSVdZSUVMUHZuQWZiOWZYRE11Wk9XUnZlakpleGNfc1Vsbnp0S2xKcDhzemFBeDBXUw?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Essentia Health-Fosston placed on Top 100 Critical Access Hospitals list",
       "first_seen_at": "2026-03-11T16:34:09Z",
-      "last_seen_at": "2026-03-11T16:34:09Z",
+      "last_seen_at": "2026-03-11T16:54:31Z",
       "name": "Grand Forks Herald",
       "source_key": "grand forks herald",
-      "tags": [
-        "critical access hospital rural health"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNam9EdEpvLXdSRHlqZndwazRMN3lVdGdIMGJ0dWJVZnZIUW1XdVk0ZkN0cGhSYS01UFR1OEtieU8xUWFlREplUXJISVczUHRCNXFpVUtpaEhBejVzZlp0ZGowdjFYYWktcEdnQkgwcWNaM3lwVVRVMjNJOC1zTldYWktMRTl3YU80YjV1SHA0SkdreWMzZ2JMTnFkelptWkVuQlBuZURmZkdhMEFNc0I2OGxUX3NQQQ?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Why are some rural Medicare patients paying more than patients at bigger hospitals?",
-      "first_seen_at": "2026-03-11T16:34:09Z",
-      "last_seen_at": "2026-03-11T16:34:09Z",
-      "name": "VTDigger",
-      "source_key": "vtdigger",
       "tags": [
         "critical access hospital rural health"
       ]
@@ -606,35 +1058,9 @@
       "example_link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQY19pUzVoZXA1WlprcjJVR09hR2hiWFNqa0xnYjhXUDd1XzRSLVB2bEFPdDE0V1B6ZDNiNFRjYUlVeE5QWlpjVUY2WUJiTWlncUI3MUdjVHgxcTJWMnhLckFYWUNXc2tlWlppblk0ZGY5bDRsLWZYaFB4ZXFxb1NBaHNn?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Six Mercy rural hospitals, including three in Oklahoma, earn national top 100 recognition",
       "first_seen_at": "2026-03-11T16:34:09Z",
-      "last_seen_at": "2026-03-11T16:34:09Z",
+      "last_seen_at": "2026-03-11T16:54:31Z",
       "name": "The Journal Record",
       "source_key": "the journal record",
-      "tags": [
-        "critical access hospital rural health"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNYmpheTNMQWY2cDU3TlZnNTVaRlMxN3A3S29xME10elFUN19SN3dUakxiRFNyV0xhRGVxU1RfLVB0a2Zuc1N6ZnJUUDFhZHpNSFRVaFhTSURrLVQ4RVo2NlZMbVJOOFlqdmdPS1pRV0ZXYVZUS3lEUVo2MlIzTkRJSk84SFk2bFZoMmE4aWh0VU00ZDhOTG5aQ0xLeUJpc0lWQWZZcWl3aThhRmI5UE5WZXVjNWtqRlVBLVpYU3loMmM4dw?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Mercy Rural Hospitals Rank Among Chartis' Top 100 Performers for 2026",
-      "first_seen_at": "2026-03-11T16:34:09Z",
-      "last_seen_at": "2026-03-11T16:34:09Z",
-      "name": "PR Newswire",
-      "source_key": "pr newswire",
-      "tags": [
-        "critical access hospital rural health"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNLWZ2eGIzVk5MVlB4V05YSkhkZHBIbGJHT0plWkVuamtEdjN3VEhaT1N1b1ljZzVKTllucy1Hd2ctU1FNUXFRU3VMY3doQS1MVTFWdk9nQ1hMcGFQTXhWM2ktc2tfXzBzTzAxZG45cHU1Wk1VR3p4X1V2R3liWjVBbmhxaDVQY3pJV3ZSR3VJWHJZcGtxeEZWMkVuRGwycUR0QWxJ?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Too many rural hospitals are missing out on AI's potential \u2013 how to help?",
-      "first_seen_at": "2026-03-11T16:34:09Z",
-      "last_seen_at": "2026-03-11T16:34:09Z",
-      "name": "Healthcare IT News",
-      "source_key": "healthcare it news",
       "tags": [
         "critical access hospital rural health"
       ]
@@ -645,7 +1071,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQRzk5ZzNhbGI0SFFzYkxlRHg5ZjZFSjhhMUlKOWlfa0l5RUUyVUFnazZPYTRubUdmcnJCRm5keXZSNWg0aW5MUWdpT0NWS0N3TGJEZzhpb1ZGN0xrb3NVbWQ4b0Zxa19QaFg1NDdENnJHYWNnZHN2RmlYN2NjbWhDaWlJLTFXek1QZUFvRXpuRWZrcVk?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Australia: Digital Health System Strengthens NSW Rural Healthcare",
       "first_seen_at": "2026-03-11T16:34:04Z",
-      "last_seen_at": "2026-03-11T16:34:04Z",
+      "last_seen_at": "2026-03-11T16:54:27Z",
       "name": "OpenGov Asia",
       "source_key": "opengov asia",
       "tags": [
@@ -658,7 +1084,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPODF5ZUU5b09CazlaSVZjSGVMRmJvQ2ZSUkJmcE9kSGs4em1TSFZGalZMT3B3UW9LMWZtM3BZdmZmOURzLUZtMkxvbE91Nm9fSFhMdTREQXJYU3JVYnBtN01GWWI4QjNHVnkta3Z1eHFUSVVzNXc4THN1YXVrRi13eUFhUk54R0xSc3NPMDdkWXNxa1U3aVZKVGMtRzBhT3FTYTVyTzlQUkZoMzlPZ1pZUGJKUWhnUjhv?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "P&G SEHAT Boat Clinic Expands Healthcare Access in Remote Brahmaputra Communities",
       "first_seen_at": "2026-03-11T16:34:04Z",
-      "last_seen_at": "2026-03-11T16:34:04Z",
+      "last_seen_at": "2026-03-11T16:54:27Z",
       "name": "TheCSRUniverse",
       "source_key": "thecsruniverse",
       "tags": [
@@ -671,7 +1097,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNU0c1WlNTalB6RGRzTU5zdUUzbjZkQWxzZno5OVprU3dXREZzYVlqVDNBNmVMbmJTZVVkcjVoNkk1dXZaWUN0dWVFYjE3Vy1oV05nRGxRNzJ3eXB1RmcyNW95ZzQzVmxBX0lwdWpiLXhEUkJ4VzdydlZfUkJ0T2dNX0hxUUpzWWIySF85cG5ab0o?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Doctors leaving Scotland\u2019s NHS like \u2018rats on a sinking ship\u2019, health chief warns",
       "first_seen_at": "2026-03-11T16:34:04Z",
-      "last_seen_at": "2026-03-11T16:34:04Z",
+      "last_seen_at": "2026-03-11T16:54:27Z",
       "name": "The Scottish Sun",
       "source_key": "the scottish sun",
       "tags": [
@@ -684,7 +1110,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQaVBHbzlPckVtaTMyZ19IRHJ3YzF3WUwxVXFzRVVoWVRqLVNJNGxHa1c4WGJfZG0td0RObXZWa0dkRTROQUxpTW9sb2FfRjR5cXJnQjF6MDZGRk9saEVrMkNUX2ptblFXM0MyeHhKenVwclhWVUNBMXhza3BmUWhTN0RIdm9YN0h1MWdJNUhhYkRfYkg5aFJ30gGeAUFVX3lxTFBGbEdSa3lGVER0aXdSMS1EejN2WDhacTF6amNtbTEwUklLdVo1ZDRqakdqYXRwSUFNNHpIcUlEbnJmamFvQUJoblBZOVRxdTk2WUpZbjZwOXFEMHluUzlueGIwQm93aGFFZmt4VWpsRFZmMnczYzV6LURTZDl1RURjZjVnY21DalNtZVdQTmduT3VINWhKVGJaOHM1Nmtn?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Taiwan detects 8 PLAN vessels around its territory",
       "first_seen_at": "2026-03-11T16:34:04Z",
-      "last_seen_at": "2026-03-11T16:34:04Z",
+      "last_seen_at": "2026-03-11T16:54:27Z",
       "name": "lokmattimes.com",
       "source_key": "lokmattimes.com",
       "tags": [
@@ -694,12 +1120,12 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMijgJBVV95cUxOblMxUUstUG8wQjI4SERkdUw3M1pZQUtPbDVVa3JYV1JVZjNBcVFDZER2a1Q2MXNGd21XdGF3b3VfU2FYY1lKVFpDam5zMXBBd0ZERVZ2SGpNSFFZUEJhY0xIMGI3QlR5bFZMTEEwZ0EyWjNIS3pRZFItbDdqSmhNaE0yZlVvNlJvbEF0TjRnMDZjNVYyZWc3aHVDX2EwR3BzalpsTkVIejdZenBKQmdVNko3LTg0bWt0dUswbHV1QXBhaEU4OWIyR3J3NGdYS044NnRNWUxjazV4a2NFSmtsTDdvLU9GcDRtdFNSNkNnQ1NKNGdFZDI4UjJIZGgyR0VZZnFxTWZiNFJxOHRkT3c?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "NationsBenefits and Food City Partner to Expand Flex Card Access for Rx and OTC Health Needs Across Southeastern Communities",
-      "first_seen_at": "2026-03-11T16:34:02Z",
-      "last_seen_at": "2026-03-11T16:34:02Z",
-      "name": "Business Wire",
-      "source_key": "business wire",
+      "example_link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9xaHlnNzJVSFc5bWoxVHU2YzdkaTE3WEdHX25BaDJLOU5Uc2pmNWNmSFluT2ZaSWtNYTJSNGx1R0NiWWlOakpLa0ZyLVdYM2Rfa0ttalJYRmhjTnhYSjRZ?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "example_title": "Best Cellphone Plans 2026 | Compare Top Mobile Phone Plans and Carriers",
+      "first_seen_at": "2026-03-11T16:54:24Z",
+      "last_seen_at": "2026-03-11T16:54:24Z",
+      "name": "CNET",
+      "source_key": "cnet",
       "tags": [
         "FLEX program rural health"
       ]
@@ -710,7 +1136,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQVmF3eThjQVFGSDFsYTBSVFZIWmNhZmxaeGFoc01XQWYwWlZiOUo2VmgxWXBLb2ZSTXJoSVM1Y2Q0T0xZYXpnYmpiaVMtSnJLSV9zQWxZdWZXQTVTLVYxUXpFZFpKamhidWE1NnY2MzBQVWdEbHJqZkFhQ3NtQVc1QWZPSkRWNmNUWGZyamk1Wk9KN3h1VHpYTFVkdWxKNWV4dndwWjdVaGI?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "South Dakota Joins PA Compact in Third RHTP-driven Win for PAs",
       "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:00Z",
+      "last_seen_at": "2026-03-11T16:54:21Z",
       "name": "American Academy of Physician Associates",
       "source_key": "american academy of physician associates",
       "tags": [
@@ -723,7 +1149,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPRlk5OEVrNVBMWEJVWGpFOTJUNHE0ampPZTJGcWtzakRuWFpnQm4yRTZqWlVWOXh1VDFERkRKWkFVMzlQS3ExNTNydTBTblFhdEVDcUZfMHdqYWwwUm42NUVsaVEydzN0T2lDVnNQbmJDTjFEYTc0WTlsLWdFNTlZT0w0UEVqdDhLLVlwUXVhNkJWemdiX2FTUUlzZ2VxQzg5MjJaaHFxWG9kWFZVdWRCMEd0dWZEcDF6NWJQNTZRRGhnQVNjalJ5aGtPMXhyTkxOdjI0VzRR?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Rural Health Funding Push Positions Luma Health for Potential Workflow Modernization Demand",
       "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:00Z",
+      "last_seen_at": "2026-03-11T16:54:21Z",
       "name": "TipRanks",
       "source_key": "tipranks",
       "tags": [
@@ -736,7 +1162,7 @@
       "example_link": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxPUl9jU1NkLWRobW4wVTVtbzdtQUtRN1U2RjVvcl9FZTZ3czc3WnhBN0xRbG0wVTFlaHJ3Zm42OVZFTTdlYUlNLWZYOU16OEYxREdLUkFQRUxNbEIzdUdsUk55LW1fSjZEd240TjFfeEQ4akV6cks3eUZ0TmZPbHFUU1F0YTF1WTVuRjZmbXFldkltalpWcFd1aXFyc3lERktLOE9jZ09EdVBpeWJGSFJnNWRvSnBaenRuY3pDbnNkUGhsLWNzUTctdl9OUW9ZVG1vXy1IeWhYd1gwU1ZUcjIzSUdEQ2luVDZSN29zeXRzTlA?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Increasing Healthcare Services: New initiative aids rural areas across state",
       "first_seen_at": "2026-03-11T16:34:00Z",
-      "last_seen_at": "2026-03-11T16:34:00Z",
+      "last_seen_at": "2026-03-11T16:54:21Z",
       "name": "thechronicle.com",
       "source_key": "thechronicle.com",
       "tags": [
@@ -746,64 +1172,12 @@
     {
       "discovered_via": "google_news_rss",
       "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOdXV0djRKUmdzUkdzQ0lJXzMwaHlTYTB6R2gzY0pzajVBRmtNdU1yRmU0STAxcV9NakttbGRrNVNFU29mQlc3NHFVUkY2MExlU2NQVnJ6UnR2RFNiOTZLR0JYNUk4ZEl6ME9zbVJNcXZiOGZYSi1RU3hwTFJLeVp1Y3E4djFsVVB0dXpUODNQZU5hdGd3V3czY0FsSll6Q0ozWDlKanVmcEFXNUpLU0FEY0M3SjVudUpkaXZXczl5djlONGdlSlA4?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Tennessee lawmakers skeptical over strings attached to Trump rural health grant program",
-      "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:33:56Z",
-      "name": "Tennessee Lookout",
-      "source_key": "tennessee lookout",
-      "tags": [
-        "rural health program United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxONjg0NmJJbWFFWE8wOHRSTHhUUGZMSmZsT1VJSHZEYXRkdUNCWmNZdFIwSUZRQTJBLVZQUnlJUDFQNG45SEJDXzlDZ0tQSHRnT08tVFFkZHpvQ3NJd1JPV2g1WVBhWWhjYXR1c3gtQ2RZR3Rfd3d0YTJPMW5INEZaUklqWGpDTW9FTDRwdk1vT25jeXJXMVpMM2RQVTJaMmJfdFRSN29OWm82SE5YZWlLUEVTTXR3UXpuMFNmQjFMWHZySGdQSjZJTkVB?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Executive Council pauses $773 million federal rural health spending, requesting details",
-      "first_seen_at": "2026-03-11T16:33:56Z",
-      "last_seen_at": "2026-03-11T16:33:56Z",
-      "name": "New Hampshire Bulletin",
-      "source_key": "new hampshire bulletin",
-      "tags": [
-        "rural health program United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNRnU4bklTZlN2MGx1QmNFRUVyWlJHdWNEREdxb193ZlRhS0F0SXR5bGR2MjFlZDN3RjBkc256eDRrRzFvdWhMZWJrQnFBMHptQVhnZ3FRbTdDN1JaLW9xaEpkMXpfZDFXRTVpeDgwaUx2bDFZRXU2dm9tVThtMlZsZ1UzdzlJTVBYT2l3bm01bjRkcFhRY3NTaHBtWkduM19zQWZHRDJ5UGxjNGt6dmVxSWZJSmd3akVUc3BuNEtOOExVVnQ0bUdBVA?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "UofL Health CEO supports measure to find better ways to staff, serve rural areas",
-      "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:33:52Z",
-      "name": "whas11.com",
-      "source_key": "whas11.com",
-      "tags": [
-        "rural healthcare United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
       "example_link": "https://news.google.com/rss/articles/CBMiogJBVV95cUxNNWQ4YjgzZHJlMWNxWEJKVElyWFY2VU8zUW5NMUlScDg0YS1MdGpMWWFUeDBzNFo4d3dkVVNlaXZoZ2UwZ1pNNk9KYTZLR3p0OGM1STh5SEM1cmUtZ2VvRVBudmwzTlM1cEphY1phc05adHBYQkpGWWp1X09CbzRvNjV6WTkzLWxvQ1FOczlLX0cyX0MyMTZzcUcyenZkeWdPS3lmWWg1WTFqNDNhTVIyamlhLS1oMm4tUnk5bEdRblBvZEpsV0hkTzd6Ul9SSE04aHZ4c3owLVlIby11X1JpcVk0NTVjZzN3X2dySUdTd0dpRUZTUUhTTkpnZlMtSlpjWDh5U1ZEVlUtZzZuRGdpS0o3UjFPdTNhRDh2Z0kwb1V4UQ?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Maine\u2019s rural health care players confront challenges while trying to stay afloat",
       "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:33:52Z",
+      "last_seen_at": "2026-03-11T16:54:13Z",
       "name": "The Ellsworth American",
       "source_key": "the ellsworth american",
-      "tags": [
-        "rural healthcare United States"
-      ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBna1AyYm95enJHd2dlemlEWVRWSnViVHJBeEJvc1VMbU53V0Z0ZnVDaTVlQ1dkNElGdnpsa29nWWNyd1hpMkhLUTVaU3dVbklnbG5VWlZxVGJ1UklCZFZodzh4SjAybzBsTm44X2Z2dw?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Researchers find alarming Alzheimer\u2019s pattern in rural America",
-      "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:33:52Z",
-      "name": "ScienceDaily",
-      "source_key": "sciencedaily",
       "tags": [
         "rural healthcare United States"
       ]
@@ -814,26 +1188,13 @@
       "example_link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPekpRYlVzZVhDUzZ6REh4YUpmd2kyM0NHSEktWm5CbTM2bTZkRjVpSGNDX0ljLWZqZkIzak9uY1lNei10NUs1TTBhTlhGdGFhbzRGMEJZQTlNWk5JVnhZb21aV25CNGVvMUxRUFdnazJfYUV0NEh1VTh4NVR0S1FqUFZXWmRkV0V1QWJTMmVGSVQwZlcxT1ZDMEdrMlM1R0tla25yZFdZN0ctN0dxTmRhZFVLQjItTEh3MEVwWWdhM3HSAcYBQVVfeXFMT0dCdDRFdkZ6Yl9xMGFZZ08zeERWUGJ0a0JJRExLSGtReW15dUF5Y3V5aUdxRWFCU1g4WlpDdUd3QVFzZld1M01nc01GZEstZkJaNThiMnNvTnVIWDNnZXV0SVh5ZnhkdlhtTXJJZU5SV0FIVkNnUUhFeFhpNHdNRE94cFNveDlncUxkdUQ5b3Rfc2VNMmJCc25PMUttWGkyZkU0UTVIMzVDcTlDb1ZDUW02cnBMM2Z5R3FXcU9DOHBoYzFyYUVB?oc=5&hl=en-US&gl=US&ceid=US:en",
       "example_title": "Morrisey signs healthcare bill, urges quick passage of rural health funding bills",
       "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:33:52Z",
+      "last_seen_at": "2026-03-11T16:54:13Z",
       "name": "WOWK 13 News",
       "source_key": "wowk 13 news",
       "tags": [
         "rural healthcare United States"
       ]
-    },
-    {
-      "discovered_via": "google_news_rss",
-      "domain": "news.google.com",
-      "example_link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPdTIydTlqLXo1dFZRSU4wSUlWNzZNNldWZjMyZDk0bWRTNjcyTUJwZEVZNW1tYl9uUlJWQVN6c05DOElMb191TW9HZk5RbUZUZnVsVFlxTVZlTjBuNVl4eWZicGJGODg3cFBYQ1NBT1VURTM5aURiZHY4RzVacll0OGVzMVBjbmJwRFdz?oc=5&hl=en-US&gl=US&ceid=US:en",
-      "example_title": "Hospital CEO wins national leadership award",
-      "first_seen_at": "2026-03-11T16:33:52Z",
-      "last_seen_at": "2026-03-11T16:33:52Z",
-      "name": "Hillsdale Collegian",
-      "source_key": "hillsdale collegian",
-      "tags": [
-        "rural healthcare United States"
-      ]
     }
   ],
-  "updated_at": "2026-03-11T16:34:42Z"
+  "updated_at": "2026-03-11T16:55:49Z"
 }

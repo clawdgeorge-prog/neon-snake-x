@@ -265,6 +265,7 @@
             display: none;
             margin-top: 1rem;
             touch-action: manipulation;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         .touch-dpad {
@@ -394,17 +395,19 @@
             }
 
             canvas {
-                max-width: 300px;
+                max-width: min(300px, calc(100vw - 24px));
             }
 
             .touch-btn {
-                width: 50px;
-                height: 50px;
+                width: 54px;
+                height: 54px;
+                font-size: 1.35rem;
             }
 
             .touch-dpad {
-                grid-template-columns: repeat(3, 50px);
-                grid-template-rows: repeat(2, 50px);
+                grid-template-columns: repeat(3, 54px);
+                grid-template-rows: repeat(2, 54px);
+                gap: 10px;
             }
         }
 
@@ -485,10 +488,10 @@
     
     <div class="controls">
         <button class="btn-start" id="startBtn">Start</button>
-        <button class="btn-easy active" data-speed="150">Easy</button>
-        <button class="btn-medium" data-speed="100">Medium</button>
-        <button class="btn-hard" data-speed="70">Hard</button>
-        <button class="btn-nightmare" data-speed="40">Nightmare</button>
+        <button class="btn-easy active" data-difficulty="easy" data-speed="150">Easy</button>
+        <button class="btn-medium" data-difficulty="medium" data-speed="100">Medium</button>
+        <button class="btn-hard" data-difficulty="hard" data-speed="70">Hard</button>
+        <button class="btn-nightmare" data-difficulty="nightmare" data-speed="40">Nightmare</button>
     </div>
     
     <div class="powerup-info">
@@ -500,7 +503,7 @@
     </div>
     
     <div class="instructions">
-        Arrow Keys or WASD to move | P to Pause | Space to Start
+        Arrow Keys or WASD to move | P to Pause | Space to Start | Swipe or use the D-pad on phone
     </div>
 
     <!-- Mobile Touch Controls -->
@@ -587,7 +590,10 @@
         let food = { x: 0, y: 0 };
         let powerups = [];
         let score = 0;
-        let highScore = localStorage.getItem('snakeHighScore') || 0;
+        const HIGH_SCORE_KEY = 'snakeHighScoresByDifficulty';
+        let selectedDifficulty = 'easy';
+        let highScores = loadHighScores();
+        let highScore = highScores[selectedDifficulty] || 0;
         let lives = 3;
         let gameSpeed = 150;
         let gameLoop = null;
@@ -609,8 +615,42 @@
         const finalScoreEl = document.getElementById('finalScore');
         const startBtn = document.getElementById('startBtn');
         const difficultyBtns = document.querySelectorAll('[data-speed]');
-        
-        highScoreEl.textContent = highScore;
+
+        function loadHighScores() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(HIGH_SCORE_KEY) || '{}');
+                return {
+                    easy: Number(saved.easy) || 0,
+                    medium: Number(saved.medium) || 0,
+                    hard: Number(saved.hard) || 0,
+                    nightmare: Number(saved.nightmare) || 0
+                };
+            } catch {
+                return { easy: 0, medium: 0, hard: 0, nightmare: 0 };
+            }
+        }
+
+        function saveHighScores() {
+            localStorage.setItem(HIGH_SCORE_KEY, JSON.stringify(highScores));
+        }
+
+        function updateDifficultyUI() {
+            difficultyBtns.forEach(btn => {
+                const isActive = btn.dataset.difficulty === selectedDifficulty;
+                btn.classList.toggle('active', isActive);
+                btn.disabled = isRunning && !isGameOver;
+            });
+        }
+
+        function setDifficulty(difficulty, speed) {
+            selectedDifficulty = difficulty;
+            gameSpeed = speed;
+            highScore = highScores[selectedDifficulty] || 0;
+            updateDifficultyUI();
+            updateUI();
+        }
+
+        setDifficulty(selectedDifficulty, gameSpeed);
         
         // Powerup types
         const POWERUP_TYPES = [
@@ -621,6 +661,27 @@
             { type: 'shield', color: '#ff8800', duration: 8000, symbol: '🛡' }
         ];
         
+        function getCurrentTickSpeed() {
+            let currentSpeed = gameSpeed;
+            if (slowActive) currentSpeed *= 1.5;
+            if (speedActive) currentSpeed *= 0.5;
+            return Math.max(30, Math.round(currentSpeed));
+        }
+
+        function restartGameLoop() {
+            if (!isRunning || isPaused || isGameOver) return;
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(gameStep, getCurrentTickSpeed());
+        }
+
+        function clearTemporaryEffects() {
+            doublePoints = false;
+            ghostMode = false;
+            shieldActive = false;
+            speedActive = false;
+            slowActive = false;
+        }
+
         function initGame() {
             snake = [
                 { x: 10, y: 15 },
@@ -633,11 +694,7 @@
             powerups = [];
             score = 0;
             lives = 3;
-            doublePoints = false;
-            ghostMode = false;
-            shieldActive = false;
-            speedActive = false;
-            slowActive = false;
+            clearTemporaryEffects();
             isPaused = false;
             isGameOver = false;
             updateUI();
@@ -716,7 +773,8 @@
                 
                 if (score > highScore) {
                     highScore = score;
-                    localStorage.setItem('snakeHighScore', highScore);
+                    highScores[selectedDifficulty] = highScore;
+                    saveHighScores();
                 }
                 
                 spawnPowerup();
@@ -729,6 +787,7 @@
             powerups = powerups.filter(p => now - p.spawnTime < p.duration);
             
             // Reset temporary effects
+            let speedChanged = false;
             if (doublePoints && now - doublePoints.startTime > doublePoints.duration) {
                 doublePoints = false;
             }
@@ -740,20 +799,26 @@
             }
             if (speedActive && now - speedActive.startTime > speedActive.duration) {
                 speedActive = false;
+                speedChanged = true;
             }
             if (slowActive && now - slowActive.startTime > slowActive.duration) {
                 slowActive = false;
+                speedChanged = true;
             }
+            if (speedChanged) restartGameLoop();
             
             updateUI();
         }
         
         function activatePowerup(powerup) {
             const now = Date.now();
-            
+            let speedChanged = false;
+
             switch(powerup.type) {
                 case 'speed':
                     speedActive = { startTime: now, duration: powerup.duration };
+                    slowActive = false;
+                    speedChanged = true;
                     break;
                 case 'ghost':
                     ghostMode = { startTime: now, duration: powerup.duration };
@@ -763,11 +828,15 @@
                     break;
                 case 'slow':
                     slowActive = { startTime: now, duration: powerup.duration };
+                    speedActive = false;
+                    speedChanged = true;
                     break;
                 case 'shield':
                     shieldActive = { startTime: now, duration: powerup.duration };
                     break;
             }
+
+            if (speedChanged) restartGameLoop();
         }
         
         function handleDeath() {
@@ -794,6 +863,8 @@
                 direction = { x: 1, y: 0 };
                 nextDirection = { x: 1, y: 0 };
                 powerups = [];
+                clearTemporaryEffects();
+                restartGameLoop();
                 updateUI();
             }
         }
@@ -803,6 +874,7 @@
             isRunning = false;
             isGameOver = true;
             clearInterval(gameLoop);
+            updateDifficultyUI();
             finalScoreEl.textContent = score;
             gameOverOverlay.classList.add('visible');
             startBtn.textContent = 'Start';
@@ -925,7 +997,7 @@
             ctx.shadowBlur = 0;
             
             // Draw active effect indicators
-            let effectY = 10;
+            let effectY = 26;
             const effects = [
                 { active: doublePoints, color: '#ffff00', label: '2X' },
                 { active: ghostMode, color: '#ff00ff', label: 'GHOST' },
@@ -937,10 +1009,13 @@
             effects.forEach(e => {
                 if (e.active) {
                     ctx.fillStyle = e.color;
-                    ctx.font = 'bold 10px Orbitron';
+                    ctx.font = 'bold 16px Orbitron';
                     ctx.textAlign = 'left';
-                    ctx.fillText(e.label, 10, effectY);
-                    effectY += 14;
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = e.color;
+                    ctx.fillText(e.label, 14, effectY);
+                    ctx.shadowBlur = 0;
+                    effectY += 22;
                 }
             });
         }
@@ -959,17 +1034,10 @@
             isPaused = false;
             isGameOver = false;
             startBtn.textContent = 'Restart';
-            
+            updateDifficultyUI();
+
             if (gameLoop) clearInterval(gameLoop);
-            
-            // Adjust speed for slow powerup
-            let currentSpeed = gameSpeed;
-            if (slowActive) currentSpeed *= 1.5;
-            if (speedActive) currentSpeed *= 0.5;
-            
-            gameLoop = setInterval(() => {
-                gameStep();
-            }, currentSpeed);
+            gameLoop = setInterval(gameStep, getCurrentTickSpeed());
         }
         
         function togglePause() {
@@ -1024,15 +1092,8 @@
         
         difficultyBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                difficultyBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                gameSpeed = parseInt(btn.dataset.speed);
-                
-                // Restart if running
-                if (isRunning && !isPaused && !isGameOver) {
-                    clearInterval(gameLoop);
-                    gameLoop = setInterval(gameStep, gameSpeed);
-                }
+                if (isRunning && !isGameOver) return;
+                setDifficulty(btn.dataset.difficulty, parseInt(btn.dataset.speed, 10));
             });
         });
 
@@ -1154,6 +1215,7 @@
         });
 
         // Initial draw
+        updateDifficultyUI();
         draw();
     </script>
 </body>

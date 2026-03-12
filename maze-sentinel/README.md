@@ -12,8 +12,9 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - `index.html` — playable prototype
 
 ## Current systems
-- Three drone classes: Hunter, Ambusher, and Flanker
+- Three drone classes: Scout, Hunter, and Glimmer
 - Path-based pursuit so enemies can pressure routes more intelligently
+- Hunter drones telegraph a lock-on reticle, then burst into short high-speed surges
 - Compact in-run drone intel row for readability
 - District theme rotation: every level-up shifts the arena palette, ambience, and HUD identity for stronger progression feel
 

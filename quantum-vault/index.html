@@ -100,6 +100,7 @@
         <div class="card"><div class="label">Integrity</div><div id="lives" class="value">3</div><div class="sub">Chassis remaining</div></div>
         <div class="card"><div class="label">Keys</div><div id="keys" class="value">0 / 0</div><div class="sub">Main objective</div></div>
         <div class="card"><div class="label">Cores</div><div id="cores" class="value">0 / 0</div><div class="sub">Risk bonus route</div></div>
+        <div class="card"><div class="label">Caches</div><div id="caches" class="value">0 / 0</div><div class="sub">Fast-expiring stash</div></div>
       </div>
       <div class="box">
         <div class="section">Run Controls</div>
@@ -123,8 +124,9 @@
         <ul>
           <li>Key shards grow score flow and refill your burst meter</li>
           <li>Optional vault cores pay huge points and jam the gate grid open</li>
-          <li>Near-miss dodges and clean routing keep your combo alive</li>
-          <li>Level exits pay integrity, speed, chain, and full-core sweep bonuses</li>
+          <li>Bonus credit caches expire fast, forcing greedy route calls</li>
+          <li>Near-miss dodges, speed lanes, and clean routing keep your combo alive</li>
+          <li>Level exits pay integrity, speed, chain, stash, and full-sweep bonuses</li>
         </ul>
       </div>
       <div class="box">
@@ -146,6 +148,7 @@
           <div class="pill">Exit <strong id="exitState">Locked</strong></div>
           <div class="pill">Chain <strong id="combo">x1</strong></div>
           <div class="pill">Flow <strong id="flow">0%</strong></div>
+          <div class="pill">Stash <strong id="stash">0</strong></div>
           <div class="pill">Clock <strong id="timer">60</strong></div>
         </div>
       </div>
@@ -183,6 +186,7 @@
     const livesEl = document.getElementById('lives');
     const keysEl = document.getElementById('keys');
     const coresEl = document.getElementById('cores');
+    const cachesEl = document.getElementById('caches');
     const stateEl = document.getElementById('state');
     const bestEl = document.getElementById('best');
     const enemiesEl = document.getElementById('enemies');
@@ -190,6 +194,7 @@
     const comboEl = document.getElementById('combo');
     const rankEl = document.getElementById('rank');
     const comboFlowEl = document.getElementById('flow');
+    const stashEl = document.getElementById('stash');
     const themeEl = document.getElementById('theme');
     const timerEl = document.getElementById('timer');
     const districtNameEl = document.getElementById('districtName');
@@ -224,10 +229,10 @@
     ];
 
     const THEMES = [
-      { name:'Prism Lock', wallA:'rgba(90,169,255,.24)', wallB:'rgba(36,72,130,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(99,242,255,.034)', glow:'hsla(193,100%,60%,.12)', key:'#ffd86f', core:'#ff9f67', hue:193, rule:'Flux gates cycle fast — keep your route moving.' },
-      { name:'Ion Bloom', wallA:'rgba(84,255,196,.24)', wallB:'rgba(21,105,98,.48)', wallC:'rgba(99,242,255,.2)', floor:'rgba(69,224,196,.038)', glow:'hsla(164,100%,56%,.11)', key:'#a6ff7b', core:'#63f2ff', hue:164, rule:'Core pickups jam security doors open for a breather.' },
-      { name:'Velvet Circuit', wallA:'rgba(255,101,212,.22)', wallB:'rgba(116,39,117,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(255,101,212,.034)', glow:'hsla(319,100%,64%,.11)', key:'#ffb1f5', core:'#ffd86f', hue:319, rule:'Long flow chains matter more here — stay clean.' },
-      { name:'Solar Breach', wallA:'rgba(255,190,92,.25)', wallB:'rgba(127,67,28,.5)', wallC:'rgba(255,113,113,.22)', floor:'rgba(255,183,77,.032)', glow:'hsla(30,100%,58%,.11)', key:'#ffd86f', core:'#ff7272', hue:28, rule:'Lockdown turns vicious late — bank time early.' }
+      { name:'Prism Lock', wallA:'rgba(90,169,255,.24)', wallB:'rgba(36,72,130,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(99,242,255,.034)', glow:'hsla(193,100%,60%,.12)', key:'#ffd86f', core:'#ff9f67', cache:'#ffeaa5', speed:'rgba(99,242,255,.28)', hue:193, gateRate:.92, gateOpen:.92, jamBoost:1, comboBoost:1, cacheLife:11.5, timerBias:0, keyBoost:1, coreBoost:1, speedBoost:1.16, rule:'Flux gates cycle extra fast — keep your route moving.' },
+      { name:'Ion Bloom', wallA:'rgba(84,255,196,.24)', wallB:'rgba(21,105,98,.48)', wallC:'rgba(99,242,255,.2)', floor:'rgba(69,224,196,.038)', glow:'hsla(164,100%,56%,.11)', key:'#a6ff7b', core:'#63f2ff', cache:'#d6fff1', speed:'rgba(84,255,196,.24)', hue:164, gateRate:1, gateOpen:1, jamBoost:1.45, comboBoost:1.04, cacheLife:13.5, timerBias:2, keyBoost:1, coreBoost:1.08, speedBoost:1.18, rule:'Core pickups jam security doors even longer here.' },
+      { name:'Velvet Circuit', wallA:'rgba(255,101,212,.22)', wallB:'rgba(116,39,117,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(255,101,212,.034)', glow:'hsla(319,100%,64%,.11)', key:'#ffb1f5', core:'#ffd86f', cache:'#ffc7f0', speed:'rgba(255,101,212,.24)', hue:319, gateRate:1.02, gateOpen:.98, jamBoost:1, comboBoost:1.2, cacheLife:12.25, timerBias:0, keyBoost:1.12, coreBoost:1.08, speedBoost:1.17, rule:'Long flow chains pay harder — clean routing is king.' },
+      { name:'Solar Breach', wallA:'rgba(255,190,92,.25)', wallB:'rgba(127,67,28,.5)', wallC:'rgba(255,113,113,.22)', floor:'rgba(255,183,77,.032)', glow:'hsla(30,100%,58%,.11)', key:'#ffd86f', core:'#ff7272', cache:'#ffd2ba', speed:'rgba(255,190,92,.23)', hue:28, gateRate:1.12, gateOpen:.88, jamBoost:.92, comboBoost:1.02, cacheLife:10.25, timerBias:-4, keyBoost:1, coreBoost:1.12, speedBoost:1.22, rule:'Lockdown hits earlier, but boost lanes run hotter.' }
     ];
 
     const RANKS = [
@@ -253,6 +258,8 @@
       keysTotal:0,
       coresCollected:0,
       coresTotal:0,
+      cachesCollected:0,
+      cachesTotal:0,
       pulseCharge:0,
       scorePulse:0,
       securityDoors:[],
@@ -266,6 +273,8 @@
       enemies:[],
       keyOrbs:[],
       vaultCores:[],
+      bonusCaches:[],
+      speedPads:[],
       exit:null,
       particles:[],
       ribbons:[],
@@ -285,6 +294,7 @@
       levelClock:66,
       nearMissCooldown:0,
       newBestGlow:0,
+      lastBreakdown:null,
       message:'Standby'
     };
 
@@ -474,8 +484,8 @@
         state.securityDoors.push({
           ...cell,
           phase: rand(0, 2.6),
-          period: clamp(3.15 - Math.min(1.1, level * .09) + rand(-.18,.22), 1.9, 3.4),
-          openSpan: clamp(1.1 - Math.min(.2, level * .02) + rand(-.08,.12), .78, 1.22),
+          period: clamp((3.15 - Math.min(1.1, level * .09) + rand(-.18,.22)) * state.theme.gateRate, 1.65, 3.4),
+          openSpan: clamp((1.1 - Math.min(.2, level * .02) + rand(-.08,.12)) * state.theme.gateOpen, .72, 1.3),
           hue: state.theme.hue + rand(-18, 18)
         });
       }
@@ -500,9 +510,12 @@
       state.player = {x:cellCenter(1,1).x,y:cellCenter(1,1).y,radius:TILE*.29,speed:3.55,dir:{x:0,y:0},nextDir:{x:0,y:0},hitCooldown:0,trail:[],dashGlow:0};
       state.keysCollected = 0;
       state.coresCollected = 0;
+      state.cachesCollected = 0;
       state.exitUnlocked = false;
       state.keyOrbs = [];
       state.vaultCores = [];
+      state.bonusCaches = [];
+      state.speedPads = [];
       state.enemies = [];
       state.securityDoors = [];
       state.ribbons = [];
@@ -510,13 +523,16 @@
       state.popups = [];
       state.waves = [];
       state.nearMissCooldown = 0;
+      state.comboWindow = 6.5 * state.theme.comboBoost;
       state.comboTimer = Math.min(state.comboWindow * .65, state.comboTimer + 1.6);
       state.doorJam = 0;
       state.doorTick = 0;
       const totalKeys = 5 + Math.min(7, level-1);
       const totalCores = 2 + Math.floor((level-1) % 3 === 2 ? 2 : 1);
+      const totalCaches = 2 + ((level - 1) % 2);
       state.keysTotal = totalKeys;
       state.coresTotal = totalCores;
+      state.cachesTotal = totalCaches;
       for(let i=0;i<totalKeys;i++){
         let c=randomOpenCell();
         while((Math.abs(c.cx-1)<3&&Math.abs(c.cy-1)<3) || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
@@ -525,12 +541,23 @@
       for(let i=0;i<totalCores;i++){
         let c=randomOpenCell();
         while((Math.abs(c.cx-1)<5&&Math.abs(c.cy-1)<5) || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.vaultCores.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
-        state.vaultCores.push({...c,rot:rand(0,Math.PI*2),pulse:rand(0,Math.PI*2),value:350 + level*60});
+        state.vaultCores.push({...c,rot:rand(0,Math.PI*2),pulse:rand(0,Math.PI*2),value:Math.round((350 + level*60) * state.theme.coreBoost)});
+      }
+      for(let i=0;i<totalCaches;i++){
+        let c=randomOpenCell();
+        while((Math.abs(c.cx-1)<4&&Math.abs(c.cy-1)<4) || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.vaultCores.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.bonusCaches.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
+        state.bonusCaches.push({...c,rot:rand(0,Math.PI*2),pulse:rand(0,Math.PI*2),life:state.theme.cacheLife - i*1.1,value:Math.round(240 + level*55 + i*70)});
+      }
+      const padCount = 3 + (level % 2);
+      for(let i=0;i<padCount;i++){
+        let c=randomOpenCell();
+        while((Math.abs(c.cx-1)<3&&Math.abs(c.cy-1)<3) || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.vaultCores.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.bonusCaches.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.speedPads.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
+        state.speedPads.push({...c,pulse:rand(0,Math.PI*2)});
       }
       spawnSecurityDoors(level);
       state.exit = {...cellCenter(GRID-2, GRID-2), active:false, pulse:0};
       state.pulseCharge = clamp(state.pulseCharge * .4 + 18, 0, 100);
-      state.levelClock = DIFF[state.difficulty].timer + Math.max(0, 10 - level * 2);
+      state.levelClock = DIFF[state.difficulty].timer + Math.max(0, 10 - level * 2) + state.theme.timerBias;
       const cfg = DIFF[state.difficulty];
       const enemyCount = cfg.enemyCount + Math.floor((level-1)/2);
       for(let i=0;i<enemyCount;i++) spawnEnemy(i);
@@ -579,12 +606,14 @@
       livesEl.textContent = state.lives;
       keysEl.textContent = `${state.keysCollected} / ${state.keysTotal}`;
       coresEl.textContent = `${state.coresCollected} / ${state.coresTotal}`;
+      cachesEl.textContent = `${state.cachesCollected} / ${state.cachesTotal}`;
       stateEl.textContent = state.over ? 'Run Lost' : state.paused ? 'Paused' : state.running ? 'Active' : 'Standby';
       bestEl.textContent = state.score >= state.best && state.score > 0 ? `★ ${state.best.toLocaleString()}` : state.best.toLocaleString();
       enemiesEl.textContent = state.enemies.length;
       exitStateEl.textContent = state.exitUnlocked ? 'Online' : `${state.securityDoors.length} Gates`;
       comboEl.textContent = `x${state.combo}`;
       comboFlowEl.textContent = `${Math.round((state.comboTimer / state.comboWindow) * 100)}%`;
+      stashEl.textContent = state.bonusCaches.length ? `${state.bonusCaches.length}` : `${state.cachesCollected}`;
       rankEl.textContent = getRankName(state.score);
       themeEl.textContent = state.theme.name;
       districtNameEl.textContent = state.theme.name;
@@ -614,7 +643,8 @@
       const integrityBonus = state.lives * 240;
       const chainBonus = state.combo * 140;
       const coreSweepBonus = state.coresCollected >= state.coresTotal ? 520 : state.coresCollected * 120;
-      awardScore(timeBonus + integrityBonus + chainBonus + coreSweepBonus + 500, 'DISTRICT CLEAR', state.exit.x, state.exit.y - 50, '#a6ff7b');
+      const cacheSweepBonus = state.cachesCollected >= state.cachesTotal ? 420 : state.cachesCollected * 140;
+      awardScore(timeBonus + integrityBonus + chainBonus + coreSweepBonus + cacheSweepBonus + 500, 'DISTRICT CLEAR', state.exit.x, state.exit.y - 50, '#a6ff7b');
       state.level += 1;
       state.combo = clamp(state.combo + 1, 1, 12);
       feedCombo(2.2);
@@ -631,7 +661,9 @@
       state.running = false;
       maybeRecordBest();
       overlay.classList.remove('hidden');
-      overlayCard.innerHTML = `<h2>${reason}</h2><p>You reached <strong>level ${state.level}</strong> with <strong>${state.score.toLocaleString()}</strong> credits as a <strong>${getRankName(state.score)}</strong>. Best local score: <strong>${state.best.toLocaleString()}</strong>.</p><p style="margin-top:10px;color:rgba(255,255,255,.66)">${state.theme.rule}</p><div class="actions"><button id="restartBtn" class="primary">Run Again</button></div>`;
+      const medal = state.score >= state.best ? '🏆 New local best' : state.score >= Math.max(2500, state.best * .7) ? '✨ Hot run' : '⚡ Warm-up run';
+      const cacheLine = `${state.cachesCollected}/${state.cachesTotal} caches • ${state.coresCollected}/${state.coresTotal} cores • chain x${state.combo}`;
+      overlayCard.innerHTML = `<h2>${reason}</h2><p><strong>${medal}</strong></p><p>You reached <strong>level ${state.level}</strong> with <strong>${state.score.toLocaleString()}</strong> credits as a <strong>${getRankName(state.score)}</strong>. Best local score: <strong>${state.best.toLocaleString()}</strong>.</p><p style="margin-top:10px;color:rgba(255,255,255,.8)">${cacheLine}</p><p style="margin-top:10px;color:rgba(255,255,255,.66)">${state.theme.rule}</p><div class="actions"><button id="restartBtn" class="primary">Run Again</button></div>`;
       document.getElementById('restartBtn').addEventListener('click', startGame);
       syncHud();
     }
@@ -643,7 +675,7 @@
           feedCombo(1.65);
           state.pulseCharge = clamp(state.pulseCharge + 28, 0, 100);
           state.keysCollected += 1;
-          awardScore((110 + Math.max(0, Math.floor(state.levelClock * .7))) * state.combo, `KEY x${state.combo}`, k.x, k.y - 18, state.theme.key);
+          awardScore(Math.round((110 + Math.max(0, Math.floor(state.levelClock * .7))) * state.combo * state.theme.keyBoost), `KEY x${state.combo}`, k.x, k.y - 18, state.theme.key);
           addParticles(k.x,k.y,state.theme.key,24,5,1.2);
           addWave(k.x,k.y,state.theme.key,18,68);
           sfx('key');
@@ -666,10 +698,10 @@
         if(Math.hypot(core.x-state.player.x,core.y-state.player.y) < TILE*.36){
           state.coresCollected += 1;
           state.pulseCharge = clamp(state.pulseCharge + 40, 0, 100);
-          state.doorJam = Math.max(state.doorJam, 4.4);
+          state.doorJam = Math.max(state.doorJam, 4.4 * state.theme.jamBoost);
           state.cameraShake = .12;
           state.combo = clamp(state.combo + 1, 1, 12);
-          feedCombo(2.25);
+          feedCombo(2.25 * state.theme.comboBoost);
           awardScore((core.value + Math.floor(state.levelClock * 6)) * state.combo, `CORE ${(core.value + Math.floor(state.levelClock * 6)) * state.combo}`, core.x, core.y - 20, state.theme.core);
           addParticles(core.x,core.y,state.theme.core,34,6.6,1.35);
           addWave(core.x,core.y,state.theme.core,24,90);
@@ -679,6 +711,45 @@
         }
         return true;
       });
+    }
+
+    function collectCaches(dt){
+      const kept = [];
+      for (const cache of state.bonusCaches){
+        cache.life -= dt;
+        cache.pulse += .085;
+        if(Math.hypot(cache.x-state.player.x,cache.y-state.player.y) < TILE*.35){
+          state.cachesCollected += 1;
+          const hurry = clamp(cache.life / state.theme.cacheLife, .2, 1);
+          const payout = Math.round((cache.value + cache.life * 26 + state.levelClock * 4) * state.combo * hurry);
+          state.pulseCharge = clamp(state.pulseCharge + 24, 0, 100);
+          state.levelClock = Math.min(state.levelClock + 4.5, DIFF[state.difficulty].timer + 18);
+          state.combo = clamp(state.combo + 1, 1, 12);
+          feedCombo(1.8 * state.theme.comboBoost);
+          awardScore(payout, `CACHE ${payout}`, cache.x, cache.y - 22, state.theme.cache);
+          addParticles(cache.x, cache.y, state.theme.cache, 28, 5.8, 1.2);
+          addWave(cache.x, cache.y, state.theme.cache, 18, 80);
+          addPopup('+TIME', cache.x, cache.y + 26, '#63f2ff');
+          sfx('key');
+          continue;
+        }
+        if(cache.life <= 0){
+          addParticles(cache.x, cache.y, 'rgba(255,159,103,.8)', 12, 3.5, .85);
+          addPopup('CACHE LOST', cache.x, cache.y - 16, '#ff9f67');
+          continue;
+        }
+        kept.push(cache);
+      }
+      state.bonusCaches = kept;
+    }
+
+    function applySpeedPads(){
+      const cell = nearestCell(state.player.x, state.player.y);
+      const onPad = state.speedPads.find(pad => pad.cx === cell.cx && pad.cy === cell.cy);
+      state.player.padBoost = onPad ? .85 : Math.max(0, (state.player.padBoost || 0) - .04);
+      if(onPad && Math.random() < .18){
+        addRibbon(state.player.x + rand(-12,12), state.player.y + rand(-12,12), state.theme.speed, 18);
+      }
     }
 
     function tryExit(){
@@ -711,7 +782,7 @@
       const p = state.player;
       p.hitCooldown = Math.max(0, p.hitCooldown - dt);
       p.dashGlow = Math.max(0, p.dashGlow - dt);
-      const speedMul = 1 + (state.pulseCharge >= 100 ? .11 : 0) + p.dashGlow * .06;
+      const speedMul = 1 + (state.pulseCharge >= 100 ? .11 : 0) + p.dashGlow * .06 + (p.padBoost || 0) * (state.theme.speedBoost - 1);
       const dx = p.nextDir.x * p.speed * speedMul;
       const dy = p.nextDir.y * p.speed * speedMul;
       if((p.nextDir.x || p.nextDir.y) && canMoveTo(p.x+dx,p.y+dy,p.radius)) p.dir = {...p.nextDir};
@@ -775,7 +846,7 @@
         if(d < enemy.radius + state.player.radius + TILE * .18 && d > enemy.radius + state.player.radius && state.nearMissCooldown <= 0 && !enemy.stunned){
           state.nearMissCooldown = .45;
           state.combo = clamp(state.combo + 1, 1, 12);
-          feedCombo(1.05);
+          feedCombo(1.05 * state.theme.comboBoost);
           awardScore(40 * state.combo, 'NEAR MISS', state.player.x, state.player.y - 22, '#ffb1f5');
           state.pulseCharge = clamp(state.pulseCharge + 10, 0, 100);
           sfx('miss');
@@ -845,10 +916,12 @@
       updateFlow(dt);
       updateClock(dt);
       updatePlayer(dt);
+      applySpeedPads();
       updateEnemies(dt);
       updateParticles(dt);
       collectKeys();
       collectCores();
+      collectCaches(dt);
       tryExit();
       syncHud();
     }
@@ -1002,6 +1075,55 @@
         ctx.lineTo(-TILE*.18,0);
         ctx.closePath();
         ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawCaches(){
+      state.bonusCaches.forEach(cache => {
+        const life = clamp(cache.life / state.theme.cacheLife, 0, 1);
+        cache.rot += .038;
+        ctx.save();
+        ctx.translate(cache.x, cache.y);
+        ctx.rotate(cache.rot);
+        ctx.shadowBlur = 30 + life * 12;
+        ctx.shadowColor = state.theme.cache;
+        ctx.globalAlpha = .38 + life * .62;
+        ctx.strokeStyle = state.theme.cache;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        for(let i=0;i<6;i++){
+          const a = Math.PI / 3 * i;
+          const r = i % 2 === 0 ? TILE * (.22 + Math.sin(cache.pulse) * .012) : TILE * .11;
+          const x = Math.cos(a) * r, y = Math.sin(a) * r;
+          i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,.18)';
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawSpeedPads(){
+      state.speedPads.forEach(pad => {
+        pad.pulse += .05;
+        const px = pad.cx * TILE, py = pad.cy * TILE;
+        ctx.save();
+        ctx.translate(px + TILE/2, py + TILE/2);
+        ctx.strokeStyle = state.theme.speed;
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = state.theme.speed;
+        ctx.lineWidth = 4;
+        ctx.globalAlpha = .45 + Math.sin(pad.pulse) * .12;
+        for(let i=-1;i<=1;i++){
+          ctx.beginPath();
+          ctx.moveTo(-TILE*.22, i*TILE*.1 - TILE*.08);
+          ctx.lineTo(0, i*TILE*.1);
+          ctx.lineTo(TILE*.22, i*TILE*.1 - TILE*.08);
+          ctx.stroke();
+        }
         ctx.restore();
       });
     }
@@ -1179,7 +1301,7 @@
     function drawTopBanner(){
       ctx.save();
       ctx.globalAlpha = .94;
-      const w = 560, h = 108, x = canvas.width/2 - w/2, y = 18;
+      const w = 620, h = 130, x = canvas.width/2 - w/2, y = 18;
       const g = ctx.createLinearGradient(x,y,x+w,y+h);
       g.addColorStop(0,'rgba(7,18,38,.78)');
       g.addColorStop(1,'rgba(7,18,38,.42)');
@@ -1196,7 +1318,10 @@
       ctx.fillText(state.score.toLocaleString(), canvas.width/2, y + 76);
       ctx.font = '700 16px Inter, system-ui, sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,.72)';
-      ctx.fillText(`Level ${state.level} • ${getRankName(state.score)} • ${state.keysCollected}/${state.keysTotal} keys • ${state.coresCollected}/${state.coresTotal} cores`, canvas.width/2, y + 98);
+      ctx.fillText(`Level ${state.level} • ${getRankName(state.score)} • ${state.keysCollected}/${state.keysTotal} keys • ${state.coresCollected}/${state.coresTotal} cores • ${state.bonusCaches.length} live caches`, canvas.width/2, y + 98);
+      ctx.font = '700 14px Inter, system-ui, sans-serif';
+      ctx.fillStyle = state.score >= state.best && state.score > 0 ? '#ffd86f' : 'rgba(99,242,255,.78)';
+      ctx.fillText(`BEST ${state.best.toLocaleString()} • STASH ${state.cachesCollected}/${state.cachesTotal}`, canvas.width/2, y + 118);
       ctx.restore();
     }
 
@@ -1231,8 +1356,10 @@
       drawDoors();
       drawExit();
       drawRibbons();
+      drawSpeedPads();
       drawKeys();
       drawCores();
+      drawCaches();
       drawEnemies();
       drawPlayer();
       drawParticles();

@@ -145,7 +145,8 @@
       <div class="box">
         <div class="section-title">Current Gameplay</div>
         <ul>
-          <li>Collect prism shards for score and charge</li>
+          <li>Collect prism shards to charge the breach meter and open the district exit</li>
+          <li>Reach the exit portal once it opens to complete the level and rotate districts</li>
           <li>Discharge pulse to scatter nearby drones</li>
           <li>Pulse through an active decoy to fire an arc lash across the lane</li>
           <li>Use gates to break chase routes and reposition cleanly</li>
@@ -162,6 +163,7 @@
           <div class="pill"><strong id="stateLabel">Standby</strong></div>
           <div class="pill">Best <strong id="bestScore">0</strong></div>
           <div class="pill">Shards <strong id="shardCount">0</strong></div>
+          <div class="pill">Breach <strong id="objectiveCount">0 / 4</strong></div>
         </div>
         <div class="hud-right">
           <div class="pill">Bursts <strong id="pulseCells">0</strong></div>
@@ -177,7 +179,7 @@
           <div id="districtBanner" class="district-banner">District Shift</div>
           <div class="overlay-card" id="overlayCard">
             <h2>Maze Sentinel</h2>
-            <p>Slip through a luminous security lattice, charge your pulse core, and bend pursuit lines to your advantage. This build now has a cinematic intro, adaptive audio, telegraphed hunter surges, richer environmental FX, and a new arc-lash combo that turns placed decoys into crackling trap lanes.</p>
+            <p>Slip through a luminous security lattice, charge your pulse core, and bend pursuit lines to your advantage. This build now has a cinematic intro, adaptive audio, telegraphed hunter surges, richer environmental FX, a decoy-to-pulse arc lash, and a proper breach objective that opens an exit portal each district.</p>
             <div class="title-actions">
               <button id="overlayStart" class="primary">Enter District</button>
               <button id="audioBtn">Audio On</button>
@@ -207,6 +209,7 @@
   const chargeEl = document.getElementById('charge');
   const bestScoreEl = document.getElementById('bestScore');
   const shardCountEl = document.getElementById('shardCount');
+  const objectiveCountEl = document.getElementById('objectiveCount');
   const pulseCellsEl = document.getElementById('pulseCells');
   const decoyCountEl = document.getElementById('decoyCount');
   const droneCountEl = document.getElementById('droneCount');
@@ -258,8 +261,8 @@
   ].map(r => r.split('').map(Number));
   const state = {
     running:false, paused:false, over:false, introPulse:0,
-    score:0, level:1, health:3, charge:0, shards:0, best:Number(localStorage.getItem(STORAGE_KEY) || 0), difficulty:'normal',
-    player:null, drones:[], particles:[], ribbons:[], pulses:[], decoys:[], links:[], shard:null, gate:null, ambience:[], sparks:[],
+    score:0, level:1, health:3, charge:0, shards:0, levelShards:0, objectiveTarget:4, best:Number(localStorage.getItem(STORAGE_KEY) || 0), difficulty:'normal',
+    player:null, drones:[], particles:[], ribbons:[], pulses:[], decoys:[], links:[], shard:null, gate:null, exitPortal:null, ambience:[], sparks:[],
     lastTs:0, spawnTimer:0, flash:0, cameraShake:0, shardGlow:0, pulseCounter:0, decoyCharges:1, waveType:'Scout', audioEnabled:true, audioStarted:false,
     themeIndex:0, currentTheme:districts[0], districtBannerTimer:0
   };
@@ -367,6 +370,39 @@
   function initPlayer(){ const c = cellCenter(1,1); return {x:c.x,y:c.y,radius:TILE*.31,speed:3.35,dir:{x:0,y:0},nextDir:{x:0,y:0},hitCooldown:0,trail:[]}; }
   function spawnShard(){ let c; do c=randomOpenCell(); while(Math.abs(c.cx-1)<3&&Math.abs(c.cy-1)<3); state.shard={...c,rot:rand(0,Math.PI*2)}; }
   function spawnGate(){ let a=randomOpenCell(), b=randomOpenCell(); while(Math.abs(a.cx-b.cx)+Math.abs(a.cy-b.cy)<8) b=randomOpenCell(); state.gate={a,b,cooldown:0,pulse:0}; }
+  function spawnExitPortal(){
+    let c = randomOpenCell();
+    let tries = 0;
+    while((Math.abs(c.cx - nearestCell(state.player.x, state.player.y).cx) + Math.abs(c.cy - nearestCell(state.player.x, state.player.y).cy) < 8 || (state.gate && (Math.hypot(c.x - state.gate.a.x, c.y - state.gate.a.y) < TILE * 1.5 || Math.hypot(c.x - state.gate.b.x, c.y - state.gate.b.y) < TILE * 1.5))) && tries < 120){
+      c = randomOpenCell();
+      tries += 1;
+    }
+    state.exitPortal = {...c, pulse:0};
+    addParticles(c.x, c.y, state.currentTheme.gateA, 28, 4.8, 1.1);
+    playSfx('gate');
+  }
+  function completeLevel(){
+    state.score += 350 + state.level * 120;
+    state.level += 1;
+    state.levelShards = 0;
+    state.objectiveTarget = Math.min(8, 3 + state.level);
+    state.exitPortal = null;
+    state.charge = clamp(state.charge + 20, 0, 100);
+    state.health = Math.min(5, state.health + 1);
+    state.decoyCharges = Math.min(3, state.decoyCharges + 1);
+    spawnGate();
+    spawnShard();
+    spawnDrone();
+    if(state.drones.length < 3 + state.level){
+      spawnDrone();
+    }
+    advanceDistrict();
+    state.cameraShake = .24;
+    addParticles(state.player.x, state.player.y, state.currentTheme.shardB, 32, 5.2, 1.2);
+    playSfx('start');
+    if(state.score>state.best){ state.best=state.score; localStorage.setItem(STORAGE_KEY,String(state.best)); }
+    syncHud();
+  }
   function pickDroneType(){ const pool = ['scout','hunter','glimmer']; return pool[Math.min(pool.length-1, Math.floor((state.level-1)/2))] || 'scout'; }
   function spawnDrone(){
     let c=randomOpenCell(); while(Math.abs(c.cx-1)<5&&Math.abs(c.cy-1)<5) c=randomOpenCell();
@@ -383,11 +419,11 @@
     });
   }
   function resetGame(){
-    state.running=false; state.paused=false; state.over=false; state.score=0; state.level=1; state.health=3; state.charge=0; state.shards=0; state.drones=[]; state.particles=[]; state.ribbons=[]; state.pulses=[]; state.decoys=[]; state.links=[]; state.spawnTimer=0; state.flash=0; state.cameraShake=0; state.shardGlow=0; state.pulseCounter=0; state.decoyCharges=1; state.waveType='Scout'; state.districtBannerTimer=0;
+    state.running=false; state.paused=false; state.over=false; state.score=0; state.level=1; state.health=3; state.charge=0; state.shards=0; state.levelShards=0; state.objectiveTarget=4; state.drones=[]; state.particles=[]; state.ribbons=[]; state.pulses=[]; state.decoys=[]; state.links=[]; state.spawnTimer=0; state.flash=0; state.cameraShake=0; state.shardGlow=0; state.pulseCounter=0; state.decoyCharges=1; state.waveType='Scout'; state.districtBannerTimer=0; state.exitPortal=null;
     state.player=initPlayer(); setDistrictTheme(0, false); spawnShard(); spawnGate(); for(let i=0;i<3;i++) spawnDrone(); syncHud();
     overlay.classList.remove('hidden');
   }
-  function syncHud(){ scoreEl.textContent=state.score; levelEl.textContent=state.level; healthEl.textContent=state.health; chargeEl.textContent=`${Math.round(state.charge)}%`; bestScoreEl.textContent=state.best; shardCountEl.textContent=state.shards; pulseCellsEl.textContent=state.pulseCounter; decoyCountEl.textContent=state.decoyCharges; droneCountEl.textContent=state.drones.length; districtNameEl.textContent=state.currentTheme.name; waveTypeEl.textContent=state.waveType; stateLabelEl.textContent=state.over?'Run Lost':state.paused?'Paused':state.running?'Active':'Standby'; }
+  function syncHud(){ scoreEl.textContent=state.score; levelEl.textContent=state.level; healthEl.textContent=state.health; chargeEl.textContent=`${Math.round(state.charge)}%`; bestScoreEl.textContent=state.best; shardCountEl.textContent=state.shards; objectiveCountEl.textContent=`${state.levelShards} / ${state.objectiveTarget}`; pulseCellsEl.textContent=state.pulseCounter; decoyCountEl.textContent=state.decoyCharges; droneCountEl.textContent=state.drones.length; districtNameEl.textContent=state.currentTheme.name; waveTypeEl.textContent=state.waveType; stateLabelEl.textContent=state.over?'Run Lost':state.paused?'Paused':state.running?(state.exitPortal?'Exit Open':'Active'):'Standby'; }
   function tryChangeDir(dir){ state.player.nextDir=dir; }
   function updatePlayer(dt){
     const p=state.player; p.hitCooldown=Math.max(0,p.hitCooldown-dt);
@@ -521,11 +557,36 @@
     });
   }
   function updateParticles(dt){ state.particles=state.particles.filter(p=>{ p.x+=p.vx; p.y+=p.vy; p.vx*=.985; p.vy*=.985; p.life-=dt; return p.life>0; }); state.ribbons=state.ribbons.filter(r=>{ r.life-=dt*1.4; return r.life>0; }); }
-  function collectShard(){ if(!state.shard) return; if(Math.hypot(state.player.x-state.shard.x,state.player.y-state.shard.y)<TILE*.38){ state.score+=150; state.shards+=1; state.charge=clamp(state.charge+25,0,100); if(state.shards % 3 === 0) state.decoyCharges = Math.min(3, state.decoyCharges + 1); state.shardGlow=1; addParticles(state.shard.x,state.shard.y,state.currentTheme.shardB,28,5.2,1.3); playSfx('shard'); if(state.score>state.best){ state.best=state.score; localStorage.setItem(STORAGE_KEY,String(state.best)); } if(state.shards%4===0){ state.level+=1; spawnDrone(); spawnGate(); advanceDistrict(); } spawnShard(); syncHud(); } }
-  function gameOver(){ state.running=false; state.over=true; overlay.classList.remove('hidden'); overlayCard.innerHTML = `<h2>Signal Lost</h2><p>You reached <strong>${state.score}</strong> points on level <strong>${state.level}</strong>. The build now includes cinematic intro treatment, adaptive synth tones, telegraphed hunter surges, richer environmental motion, and a decoy-to-pulse arc lash for cleaner trap setups.</p><div class="title-actions"><button id="overlayRestart" class="primary">Run Again</button></div>`; document.getElementById('overlayRestart').addEventListener('click', startGame); syncHud(); }
+  function collectShard(){
+    if(!state.shard) return;
+    if(Math.hypot(state.player.x-state.shard.x,state.player.y-state.shard.y)<TILE*.38){
+      state.score+=150;
+      state.shards+=1;
+      state.levelShards = Math.min(state.objectiveTarget, state.levelShards + 1);
+      state.charge=clamp(state.charge+25,0,100);
+      if(state.shards % 3 === 0) state.decoyCharges = Math.min(3, state.decoyCharges + 1);
+      state.shardGlow=1;
+      addParticles(state.shard.x,state.shard.y,state.currentTheme.shardB,28,5.2,1.3);
+      playSfx('shard');
+      if(state.score>state.best){ state.best=state.score; localStorage.setItem(STORAGE_KEY,String(state.best)); }
+      if(state.levelShards >= state.objectiveTarget){
+        state.shard = null;
+        if(!state.exitPortal) spawnExitPortal();
+      } else {
+        spawnShard();
+      }
+      syncHud();
+    }
+  }
+  function gameOver(){ state.running=false; state.over=true; overlay.classList.remove('hidden'); overlayCard.innerHTML = `<h2>Signal Lost</h2><p>You reached <strong>${state.score}</strong> points on level <strong>${state.level}</strong>. This build now has a real breach loop: collect enough shards to open the district exit, then survive the sprint to the portal while drones collapse the route.</p><div class="title-actions"><button id="overlayRestart" class="primary">Run Again</button></div>`; document.getElementById('overlayRestart').addEventListener('click', startGame); syncHud(); }
   function update(dt){ state.introPulse += dt; state.districtBannerTimer=Math.max(0,state.districtBannerTimer-dt); if(state.districtBannerTimer<=0) districtBanner.classList.remove('visible'); if(!state.running||state.paused||state.over) return; state.spawnTimer+=dt; state.flash=Math.max(0,state.flash-dt); state.cameraShake=Math.max(0,state.cameraShake-dt); state.shardGlow=Math.max(0,state.shardGlow-dt*1.6); if(state.gate){ state.gate.cooldown=Math.max(0,state.gate.cooldown-dt); state.gate.pulse+=dt*2.8; }
+    if(state.exitPortal) state.exitPortal.pulse += dt * 2.4;
     if(state.spawnTimer>=difficulties[state.difficulty].spawnEvery){ state.spawnTimer=0; if(state.drones.length<4+state.level*2) spawnDrone(); syncHud(); }
-    updatePlayer(dt); updateDrones(dt); updatePulses(dt); updateDecoys(dt); updateLinks(dt); updateParticles(dt); collectShard(); }
+    updatePlayer(dt); updateDrones(dt); updatePulses(dt); updateDecoys(dt); updateLinks(dt); updateParticles(dt); collectShard();
+    if(state.exitPortal && Math.hypot(state.player.x - state.exitPortal.x, state.player.y - state.exitPortal.y) < TILE * .44){
+      completeLevel();
+    }
+  }
   function drawSceneBackground(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     const theme = state.currentTheme;
@@ -538,6 +599,34 @@
   function drawMaze(){ const theme = state.currentTheme; for(let y=0;y<GRID;y++){ for(let x=0;x<GRID;x++){ const px=x*TILE, py=y*TILE; if(maze[y][x]===1){ const g=ctx.createLinearGradient(px,py,px+TILE,py+TILE); g.addColorStop(0,theme.wallA); g.addColorStop(.5,theme.wallB); g.addColorStop(1,theme.wallC); ctx.fillStyle=g; roundedRect(px+3,py+3,TILE-6,TILE-6,8,true); ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1.4; roundedRect(px+3,py+3,TILE-6,TILE-6,8,false); ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.beginPath(); ctx.moveTo(px+8,py+10); ctx.lineTo(px+TILE-10,py+10); ctx.stroke(); } else { ctx.fillStyle=theme.pathFill; ctx.fillRect(px,py,TILE,TILE); ctx.strokeStyle=theme.pathLine; ctx.strokeRect(px+.5,py+.5,TILE-1,TILE-1); } } } }
   function drawGate(){ if(!state.gate) return; const p=state.gate.pulse; [[state.gate.a,state.currentTheme.gateA,0],[state.gate.b,state.currentTheme.gateB,Math.PI]].forEach(([g,col,off])=>{ ctx.save(); ctx.translate(g.x,g.y); ctx.shadowBlur=36; ctx.shadowColor=col; ctx.strokeStyle=col; ctx.lineWidth=4; for(let i=0;i<3;i++){ ctx.globalAlpha=.9-i*.22; ctx.beginPath(); ctx.arc(0,0,TILE*(.18+i*.08+Math.sin(p+off)*.01),0,Math.PI*2); ctx.stroke(); } ctx.restore(); }); ctx.save(); ctx.setLineDash([9,9]); ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(state.gate.a.x,state.gate.a.y); ctx.lineTo(state.gate.b.x,state.gate.b.y); ctx.stroke(); ctx.restore(); }
   function drawShard(){ if(!state.shard) return; state.shard.rot+=.03; const s=state.shard; ctx.save(); ctx.translate(s.x,s.y); ctx.rotate(s.rot); ctx.shadowBlur=34; ctx.shadowColor=state.currentTheme.shardB; const scale=1.08+state.shardGlow*.15; ctx.scale(scale,scale); const grad=ctx.createLinearGradient(-10,-10,12,12); grad.addColorStop(0,state.currentTheme.shardA); grad.addColorStop(1,state.currentTheme.shardB); ctx.fillStyle=grad; ctx.beginPath(); for(let i=0;i<8;i++){ const a=Math.PI/4*i; const r=i%2===0?TILE*.2:TILE*.09; const x=Math.cos(a)*r, y=Math.sin(a)*r; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.closePath(); ctx.fill(); ctx.restore(); }
+  function drawExitPortal(){
+    if(!state.exitPortal) return;
+    const p = state.exitPortal;
+    const pulse = p.pulse || 0;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    for(let i = 0; i < 3; i++){
+      const ring = TILE * (.24 + i * .1 + Math.sin(pulse + i) * .018);
+      ctx.strokeStyle = i % 2 === 0 ? state.currentTheme.gateA : state.currentTheme.gateB;
+      ctx.globalAlpha = .28 + i * .12;
+      ctx.lineWidth = 5 - i;
+      ctx.shadowBlur = 28;
+      ctx.shadowColor = i % 2 === 0 ? state.currentTheme.gateA : state.currentTheme.gateB;
+      ctx.beginPath();
+      ctx.arc(0, 0, ring, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.rotate(pulse * 0.9);
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    ctx.beginPath();
+    ctx.moveTo(0, -TILE * .18);
+    ctx.lineTo(TILE * .18, 0);
+    ctx.lineTo(0, TILE * .18);
+    ctx.lineTo(-TILE * .18, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
   function drawRibbons(){ state.ribbons.forEach(r=>{ ctx.fillStyle=r.color.replace('.22', String(r.life*.28)); ctx.beginPath(); ctx.arc(r.x,r.y,r.size*r.life*.36,0,Math.PI*2); ctx.fill(); }); }
   function drawPulses(){ state.pulses.forEach(p=>{ const alpha=p.life/p.maxLife; ctx.save(); ctx.strokeStyle=`rgba(99,242,255,${alpha})`; ctx.lineWidth=10; ctx.shadowBlur=40; ctx.shadowColor='#63f2ff'; ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.stroke(); ctx.restore(); }); }
   function drawDecoys(){
@@ -642,7 +731,7 @@
       ctx.restore(); }); }
   function drawParticles(){ state.particles.forEach(p=>{ const alpha=p.life/p.maxLife; ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size*alpha,0,Math.PI*2); ctx.fill(); ctx.restore(); }); }
   function drawVignette(){ const g=ctx.createRadialGradient(canvas.width*.5,canvas.height*.5,canvas.width*.22,canvas.width*.5,canvas.height*.5,canvas.width*.78); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,state.currentTheme.vignette); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height); if(state.flash>0){ ctx.fillStyle=`rgba(255,80,80,${state.flash*.22})`; ctx.fillRect(0,0,canvas.width,canvas.height); } }
-  function render(){ drawSceneBackground(); const shake=state.cameraShake*8; ctx.save(); ctx.translate(rand(-shake,shake), rand(-shake,shake)); drawMaze(); drawGate(); drawRibbons(); drawShard(); drawDecoys(); drawLinks(); drawPulses(); drawThreatTelegraphs(); drawDrones(); drawPlayer(); drawParticles(); ctx.restore(); drawVignette(); }
+  function render(){ drawSceneBackground(); const shake=state.cameraShake*8; ctx.save(); ctx.translate(rand(-shake,shake), rand(-shake,shake)); drawMaze(); drawGate(); drawRibbons(); drawShard(); drawExitPortal(); drawDecoys(); drawLinks(); drawPulses(); drawThreatTelegraphs(); drawDrones(); drawPlayer(); drawParticles(); ctx.restore(); drawVignette(); }
   function frame(ts){ if(!state.lastTs) state.lastTs=ts; const dt=Math.min((ts-state.lastTs)/1000,.033); state.lastTs=ts; update(dt); render(); requestAnimationFrame(frame); }
   function startGame(){ initAudio(); if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); resetGame(); state.running=true; overlay.classList.add('hidden'); playSfx('start'); syncHud(); }
   function togglePause(){ if(!state.running||state.over) return; state.paused=!state.paused; syncHud(); }

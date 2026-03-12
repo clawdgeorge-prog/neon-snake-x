@@ -17,11 +17,12 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - Hunter drones telegraph a lock-on reticle, then burst into short high-speed surges
 - Decoy beacon ability: place a temporary lure on your tile to bend pursuit lines and open safer escape lanes
 - Arc-lash combo: trigger a pulse while a decoy is active to fire a crackling trap lane that stuns drones caught along the link
-- Compact in-run drone intel row for readability
-- District theme rotation: every level-up shifts the arena palette, ambience, and HUD identity for stronger progression feel
+- District breach loop: collect a shard quota to open an exit portal, then reach it alive to clear the district
+- Compact in-run HUD now shows breach progress alongside score / drones / district state
+- District theme rotation: every completed breach shifts the arena palette, ambience, and HUD identity for stronger progression feel
 
 ## Next polish ideas
-- stronger level goals / progression beyond score survival
 - richer soundtrack / SFX system
 - title screen, progression, unlocks
 - smarter drone synergies and telegraphed threat moments
+- stronger portal presentation / completion cinematics

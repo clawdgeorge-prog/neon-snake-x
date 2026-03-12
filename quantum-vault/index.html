@@ -79,7 +79,8 @@
     .touch button{min-height:72px;font-size:1.2rem;border-radius:22px}
     .foot{color:rgba(255,255,255,.56);font-size:.82rem;line-height:1.45}
     @media (max-width:1024px){.app{grid-template-columns:1fr}.sidebar{order:2}.game-shell{order:1}}
-    @media (max-width:720px){body{padding:10px}.sidebar,.game-shell{padding:14px}.touch{display:grid}.canvas-wrap{min-height:320px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hud{gap:8px}.pill{font-size:.84rem;padding:9px 12px}}
+    @media (max-width:720px){body{padding:10px}.app{gap:12px}.sidebar,.game-shell{padding:14px;border-radius:24px}.brand{gap:8px}.tagline{font-size:.92rem;line-height:1.45}.touch{display:grid}.canvas-wrap{min-height:320px;border-radius:24px}.stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.card{min-height:88px;padding:12px}.value{font-size:1.34rem}.sub,.foot{font-size:.76rem}.hud{gap:8px}.hud-group{gap:8px}.pill{font-size:.82rem;padding:8px 11px}.row button{flex:1 1 0}}
+    @media (max-width:560px){body{padding:8px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.overlay-card{padding:22px 18px;border-radius:22px}.overlay h2{font-size:2.2rem}.touch{grid-template-columns:repeat(3,72px);gap:8px}.touch button{min-height:64px;border-radius:20px}}
   </style>
 </head>
 <body>
@@ -119,7 +120,7 @@
           <li>Collect every glowing shard in the maze</li>
           <li>The exit portal opens when the maze is clear</li>
           <li>Pulse Burst stuns nearby drones when the meter is full</li>
-          <li>Clear fast and stay alive for bigger scores</li>
+          <li>Fast clears and spare lives turn into simple bonus points</li>
         </ul>
       </div>
 
@@ -142,7 +143,7 @@
         </div>
         <div class="hud-group">
           <div class="pill">Goal <strong id="goal">Collect shards</strong></div>
-          <div class="pill">Chain <strong id="chain">x1</strong></div>
+          <div class="pill">Speed <strong id="speedBonus">+0</strong></div>
           <div class="pill">Clear <strong id="clearPct">0%</strong></div>
         </div>
       </div>
@@ -188,7 +189,7 @@
     const themeEl = document.getElementById('theme');
     const districtNameEl = document.getElementById('districtName');
     const goalEl = document.getElementById('goal');
-    const chainEl = document.getElementById('chain');
+    const speedBonusEl = document.getElementById('speedBonus');
     const clearPctEl = document.getElementById('clearPct');
     const leaderboardEl = document.getElementById('leaderboard');
     const overlay = document.getElementById('overlay');
@@ -238,8 +239,8 @@
       shardCount:0,
       shardTotal:0,
       burst:0,
-      streak:1,
-      streakTimer:0,
+      speedBonus:0,
+      levelTimer:0,
       best:Number(localStorage.getItem(BEST_KEY) || 0),
       leaderboard:JSON.parse(localStorage.getItem(BOARD_KEY) || '[]'),
       maze:null,
@@ -252,6 +253,7 @@
       ribbons:[],
       popups:[],
       ambient:[],
+      beams:[],
       stars:[],
       lastTs:0,
       flash:0,
@@ -374,6 +376,7 @@
 
     function buildAmbient(){
       state.ambient = Array.from({length:28},()=>({x:rand(0,canvas.width),y:rand(0,canvas.height),r:rand(100,240),h:state.theme.hue + rand(-24,24),a:rand(.03,.08),d:rand(-.18,.18)}));
+      state.beams = Array.from({length:6},()=>({x:rand(-220,canvas.width),y:rand(-120,canvas.height*.7),w:rand(180,320),h:rand(420,620),a:rand(.02,.05),s:rand(.6,1.3)}));
       state.stars = Array.from({length:78},()=>({x:rand(0,canvas.width),y:rand(0,canvas.height),a:rand(.04,.28),s:rand(.25,1.2)}));
     }
 
@@ -423,6 +426,7 @@
 
     function syncHud(){
       const clearPct = state.shardTotal ? Math.round((state.shardCount / state.shardTotal) * 100) : 0;
+      state.speedBonus = Math.max(0, Math.round(state.speedBonus));
       scoreEl.textContent = state.score.toLocaleString();
       bestHeroEl.textContent = state.best.toLocaleString();
       levelEl.textContent = state.level;
@@ -436,7 +440,7 @@
       themeEl.textContent = state.theme.name;
       districtNameEl.textContent = state.theme.name;
       goalEl.textContent = state.exitUnlocked ? 'Reach the exit' : 'Collect shards';
-      chainEl.textContent = `x${state.streak}`;
+      speedBonusEl.textContent = `+${state.speedBonus}`;
       clearPctEl.textContent = `${clearPct}%`;
     }
 
@@ -466,7 +470,8 @@
       state.exitUnlocked = false;
       state.exit = {...cellCenter(GRID-2, GRID-2), pulse:0};
       state.shardCount = 0;
-      state.streakTimer = Math.min(3.8, state.streakTimer + 1.2);
+      state.levelTimer = Math.max(11, 28 - level * .75);
+      state.speedBonus = Math.round(state.levelTimer) * 25;
       state.burst = clamp(state.burst + 16, 0, 100);
 
       const totalShards = 7 + Math.min(7, level - 1);
@@ -477,7 +482,7 @@
         state.shards.push({...c,rot:rand(0,Math.PI*2),pulse:rand(0,Math.PI*2)});
       }
 
-      const enemyCount = Math.min(5, 2 + Math.floor((level - 1) / 2));
+      const enemyCount = Math.min(4, 2 + Math.floor((level - 1) / 3));
       for(let i=0;i<enemyCount;i++) spawnEnemy(i);
       buildAmbient();
       syncHud();
@@ -504,8 +509,8 @@
       state.level = 1;
       state.lives = 3;
       state.burst = 0;
-      state.streak = 1;
-      state.streakTimer = 0;
+      state.speedBonus = 0;
+      state.levelTimer = 0;
       state.newBestGlow = 0;
       setupLevel(1);
       overlay.classList.remove('hidden');
@@ -539,10 +544,8 @@
         if(Math.hypot(shard.x - state.player.x, shard.y - state.player.y) < TILE*.35){
           state.shardCount += 1;
           state.burst = clamp(state.burst + 24, 0, 100);
-          state.streakTimer = 3.2;
-          state.streak = clamp(state.streak + 1, 1, 9);
-          const clearBonus = Math.round((state.shardCount / state.shardTotal) * 80);
-          awardScore(90 + (state.streak - 1) * 18 + clearBonus, `SHARD x${state.streak}`, shard.x, shard.y - 18, state.theme.shard);
+          const clearBonus = Math.round((state.shardCount / state.shardTotal) * 90);
+          awardScore(110 + clearBonus, `SHARD +${110 + clearBonus}`, shard.x, shard.y - 18, state.theme.shard);
           addParticles(shard.x, shard.y, state.theme.shard, 26, 5, 1.1);
           addRing(shard.x, shard.y, state.theme.shard, 18, 72);
           sfx('shard');
@@ -554,13 +557,11 @@
     }
 
     function nextLevel(){
-      const levelBonus = 600 + state.level * 180;
-      const lifeBonus = state.lives * 250;
-      const streakBonus = state.streak * 110;
-      awardScore(levelBonus + lifeBonus + streakBonus, 'DISTRICT CLEAR', state.exit.x, state.exit.y - 48, '#baff8b');
+      const speedBonus = state.speedBonus;
+      const levelBonus = 520 + state.level * 180;
+      const lifeBonus = state.lives * 220;
+      awardScore(levelBonus + lifeBonus + speedBonus, `CLEAR +${levelBonus + lifeBonus + speedBonus}`, state.exit.x, state.exit.y - 48, '#baff8b');
       state.level += 1;
-      state.streak = clamp(state.streak + 1, 1, 9);
-      state.streakTimer = 2.4;
       setupLevel(state.level);
       state.running = true;
       addRing(state.player.x, state.player.y, state.theme.exit, 22, 90);
@@ -610,7 +611,22 @@
       const boost = 1 + p.burstGlow*.08;
       const dx = p.nextDir.x * p.speed * boost;
       const dy = p.nextDir.y * p.speed * boost;
-      if((p.nextDir.x || p.nextDir.y) && canMoveTo(p.x+dx, p.y+dy, p.radius)) p.dir = {...p.nextDir};
+      const cx = Math.round((p.x - TILE/2) / TILE) * TILE + TILE/2;
+      const cy = Math.round((p.y - TILE/2) / TILE) * TILE + TILE/2;
+      const centeredX = Math.abs(p.x - cx) < TILE * .18;
+      const centeredY = Math.abs(p.y - cy) < TILE * .18;
+      if((p.nextDir.x || p.nextDir.y)){
+        const wantsVertical = p.nextDir.y !== 0;
+        const wantsHorizontal = p.nextDir.x !== 0;
+        const turnReady = (wantsVertical && centeredX) || (wantsHorizontal && centeredY);
+        if(turnReady && canMoveTo(p.x+dx, p.y+dy, p.radius)){
+          if(wantsVertical) p.x += (cx - p.x) * .34;
+          if(wantsHorizontal) p.y += (cy - p.y) * .34;
+          p.dir = {...p.nextDir};
+        }
+      }
+      if(p.dir.x !== 0) p.y += (cy - p.y) * .18;
+      if(p.dir.y !== 0) p.x += (cx - p.x) * .18;
       const nx = p.x + p.dir.x * p.speed * boost;
       const ny = p.y + p.dir.y * p.speed * boost;
       if(canMoveTo(nx, ny, p.radius)){
@@ -661,8 +677,7 @@
         if(d < enemy.radius + state.player.radius && state.player.hitCooldown <= 0 && !enemy.stunned){
           state.player.hitCooldown = 1.1;
           state.lives -= 1;
-          state.streak = Math.max(1, Math.floor(state.streak * .5));
-          state.streakTimer = 0;
+          state.speedBonus = Math.max(0, state.speedBonus - 140);
           state.flash = .65;
           state.shake = .24;
           addParticles(state.player.x, state.player.y, '#ff7b84', 34, 6, 1.2);
@@ -690,9 +705,12 @@
       state.clearGlow = Math.max(0, state.clearGlow - dt);
       state.newBestGlow = Math.max(0, state.newBestGlow - dt);
       state.exit.pulse += dt * 3.2;
-      if(state.streak > 1 || state.streakTimer > 0){
-        state.streakTimer = Math.max(0, state.streakTimer - dt);
-        if(state.streakTimer === 0 && state.streak > 1) state.streak -= 1;
+      if(!state.exitUnlocked){
+        state.levelTimer = Math.max(0, state.levelTimer - dt);
+        state.speedBonus = state.levelTimer * 25;
+      }
+      else {
+        state.speedBonus = Math.max(0, state.speedBonus);
       }
     }
 
@@ -725,6 +743,21 @@
         a.x += a.d;
         if(a.x < -a.r) a.x = canvas.width + a.r;
         if(a.x > canvas.width + a.r) a.x = -a.r;
+      });
+
+      state.beams.forEach(b => {
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.rotate(-.55);
+        const beam = ctx.createLinearGradient(0,0,b.w,0);
+        beam.addColorStop(0,'rgba(255,255,255,0)');
+        beam.addColorStop(.5,`hsla(${state.theme.hue},100%,70%,${b.a})`);
+        beam.addColorStop(1,'rgba(255,255,255,0)');
+        ctx.fillStyle = beam;
+        ctx.fillRect(0,0,b.w,b.h);
+        ctx.restore();
+        b.x += b.s;
+        if(b.x > canvas.width + 260){ b.x = -260; b.y = rand(-120, canvas.height*.7); }
       });
 
       state.stars.forEach(s => {
@@ -826,13 +859,13 @@
         ctx.arc(t.x, t.y, p.radius*(idx/p.trail.length)*.92, 0, Math.PI*2);
         ctx.fill();
       });
-      if(state.streak > 1){
+      if(state.speedBonus > 0 && !state.exitUnlocked){
         ctx.save();
         ctx.translate(p.x,p.y);
-        ctx.strokeStyle = `rgba(255,217,119,${.26 + (state.streakTimer/3.2)*.28})`;
+        ctx.strokeStyle = `rgba(255,217,119,${.16 + Math.min(.24, state.speedBonus/1200)})`;
         ctx.lineWidth = 5;
         ctx.beginPath();
-        ctx.arc(0,0,p.radius*1.7,-Math.PI/2,-Math.PI/2 + Math.PI*2*(state.streakTimer/3.2));
+        ctx.arc(0,0,p.radius*1.7,-Math.PI/2,-Math.PI/2 + Math.PI*2*Math.min(1, state.levelTimer/28));
         ctx.stroke();
         ctx.restore();
       }
@@ -980,7 +1013,7 @@
       ctx.fillText(state.score.toLocaleString(), canvas.width/2, y + 76);
       ctx.font = '700 16px Inter, system-ui, sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,.72)';
-      ctx.fillText(`Level ${state.level} • ${state.shardCount}/${state.shardTotal} shards • ${state.lives} lives • ${state.enemies.length} drones`, canvas.width/2, y + 100);
+      ctx.fillText(`Level ${state.level} • ${state.shardCount}/${state.shardTotal} shards • ${state.lives} lives • speed +${Math.max(0, Math.round(state.speedBonus))}`, canvas.width/2, y + 100);
       ctx.restore();
     }
 

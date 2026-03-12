@@ -242,6 +242,42 @@
 
     .pill strong { color: var(--ink); }
 
+    .drone-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: -2px;
+    }
+
+    .drone-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.62);
+      font-size: .76rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .drone-chip strong {
+      color: var(--ink);
+      font-size: .86rem;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .drone-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      box-shadow: 0 0 16px currentColor;
+      flex: 0 0 auto;
+    }
+
     .canvas-wrap {
       position: relative;
       overflow: hidden;
@@ -394,7 +430,7 @@
           <li>Collect prism shards for score and charge</li>
           <li>Discharge pulse to scatter nearby drones</li>
           <li>Use gates to break chase routes and reposition cleanly</li>
-          <li>Every few shards the district gets meaner and prettier</li>
+          <li>Hunter, ambusher, and flanker drones now pressure different lanes</li>
         </ul>
       </div>
 
@@ -413,6 +449,8 @@
           <div class="pill">Drones <strong id="droneCount">0</strong></div>
         </div>
       </div>
+
+      <div id="droneIntel" class="drone-legend"></div>
 
       <div class="canvas-wrap">
         <canvas id="game" width="1100" height="1100"></canvas>
@@ -447,6 +485,7 @@
   const shardCountEl = document.getElementById('shardCount');
   const pulseCellsEl = document.getElementById('pulseCells');
   const droneCountEl = document.getElementById('droneCount');
+  const droneIntelEl = document.getElementById('droneIntel');
   const stateLabelEl = document.getElementById('stateLabel');
   const startBtn = document.getElementById('startBtn');
   const pauseBtn = document.getElementById('pauseBtn');
@@ -461,6 +500,12 @@
     cinematic: { enemySpeed: 0.60, pulseCost: 42, spawnEvery: 4.4 },
     normal:    { enemySpeed: 0.67, pulseCost: 50, spawnEvery: 4.1 },
     arcade:    { enemySpeed: 0.82, pulseCost: 60, spawnEvery: 3.0 }
+  };
+
+  const DRONE_ARCHETYPES = {
+    hunter:   { label: 'Hunter',   hue: 194, unlockLevel: 1, speedMul: 1.00, summary: 'direct pursuit' },
+    ambusher: { label: 'Ambusher', hue: 322, unlockLevel: 2, speedMul: 0.96, summary: 'predicts ahead' },
+    flanker:  { label: 'Flanker',  hue:  42, unlockLevel: 3, speedMul: 1.04, summary: 'cuts side lanes' }
   };
 
   const maze = [
@@ -511,7 +556,8 @@
     flash: 0,
     cameraShake: 0,
     shardGlow: 0,
-    pulseCounter: 0
+    pulseCounter: 0,
+    spawnIndex: 0
   };
 
   function rand(min, max) { return Math.random() * (max - min) + min; }
@@ -550,6 +596,96 @@
     return [
       { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }
     ].filter(d => !isWall(cx + d.x, cy + d.y));
+  }
+
+  function clampCell(cx, cy) {
+    return { cx: clamp(cx, 1, GRID - 2), cy: clamp(cy, 1, GRID - 2) };
+  }
+
+  function resolveTargetCell(cx, cy) {
+    const target = clampCell(cx, cy);
+    if (!isWall(target.cx, target.cy)) return target;
+    for (let radius = 1; radius < GRID; radius++) {
+      for (let y = target.cy - radius; y <= target.cy + radius; y++) {
+        for (let x = target.cx - radius; x <= target.cx + radius; x++) {
+          const cell = clampCell(x, y);
+          if (!isWall(cell.cx, cell.cy)) return cell;
+        }
+      }
+    }
+    return { cx: 1, cy: 1 };
+  }
+
+  function findStepTowards(start, target) {
+    if (!target || (start.cx === target.cx && start.cy === target.cy)) return null;
+    const startKey = `${start.cx},${start.cy}`;
+    const targetKey = `${target.cx},${target.cy}`;
+    const queue = [start];
+    const seen = new Set([startKey]);
+    const parent = new Map();
+
+    while (queue.length) {
+      const cell = queue.shift();
+      const key = `${cell.cx},${cell.cy}`;
+      if (key === targetKey) break;
+      for (const dir of pathOptions(cell.cx, cell.cy)) {
+        const next = { cx: cell.cx + dir.x, cy: cell.cy + dir.y };
+        const nextKey = `${next.cx},${next.cy}`;
+        if (seen.has(nextKey)) continue;
+        seen.add(nextKey);
+        parent.set(nextKey, key);
+        queue.push(next);
+      }
+    }
+
+    if (!seen.has(targetKey)) return null;
+    let cursor = targetKey;
+    let prev = parent.get(cursor);
+    while (prev && prev !== startKey) {
+      cursor = prev;
+      prev = parent.get(cursor);
+    }
+    const [cx, cy] = cursor.split(',').map(Number);
+    return { x: cx - start.cx, y: cy - start.cy };
+  }
+
+  function activePlayerDir() {
+    const dir = state.player?.dir || { x: 0, y: 0 };
+    if (dir.x || dir.y) return dir;
+    return state.player?.nextDir || { x: 0, y: 0 };
+  }
+
+  function chooseDroneType() {
+    const unlocked = Object.entries(DRONE_ARCHETYPES)
+      .filter(([, data]) => state.level >= data.unlockLevel)
+      .map(([type]) => type);
+    const type = unlocked[state.spawnIndex % unlocked.length] || 'hunter';
+    state.spawnIndex += 1;
+    return type;
+  }
+
+  function getDroneTargetCell(drone, playerCell) {
+    const dir = activePlayerDir();
+    if (drone.type === 'ambusher') {
+      const lookAhead = dir.x || dir.y ? 3 : 0;
+      return resolveTargetCell(playerCell.cx + dir.x * lookAhead, playerCell.cy + dir.y * lookAhead);
+    }
+    if (drone.type === 'flanker') {
+      if (dir.x || dir.y) {
+        const perp = dir.x !== 0 ? { x: 0, y: drone.y < state.player.y ? -3 : 3 } : { x: drone.x < state.player.x ? -3 : 3, y: 0 };
+        return resolveTargetCell(playerCell.cx + perp.x, playerCell.cy + perp.y);
+      }
+      return resolveTargetCell(playerCell.cx + (drone.x < state.player.x ? -2 : 2), playerCell.cy + (drone.y < state.player.y ? -2 : 2));
+    }
+    return playerCell;
+  }
+
+  function syncDroneIntel() {
+    const unlocked = Object.entries(DRONE_ARCHETYPES).filter(([, data]) => state.level >= data.unlockLevel);
+    droneIntelEl.innerHTML = unlocked.map(([type, data]) => {
+      const count = state.drones.filter(drone => drone.type === type).length;
+      return `<div class="drone-chip"><span class="drone-swatch" style="color:hsl(${data.hue} 100% 65%); background:hsl(${data.hue} 100% 65%)"></span>${data.label} <strong>${count}</strong></div>`;
+    }).join('');
   }
 
   function addParticles(x, y, color, count, spread = 3.2, life = 1) {
@@ -609,17 +745,18 @@
     state.gate = { a, b, cooldown: 0, pulse: 0 };
   }
 
-  function spawnDrone() {
+  function spawnDrone(type = chooseDroneType()) {
     let c = randomOpenCell();
     while (Math.abs(c.cx - 1) < 5 && Math.abs(c.cy - 1) < 5) c = randomOpenCell();
     const diff = difficulties[state.difficulty];
-    const hue = Math.random() > 0.5 ? 194 : 322;
+    const archetype = DRONE_ARCHETYPES[type] || DRONE_ARCHETYPES.hunter;
     state.drones.push({
       x: c.x,
       y: c.y,
       radius: TILE * 0.22,
-      speed: diff.enemySpeed + state.level * 0.038 + rand(0, 0.04),
-      hue,
+      speed: (diff.enemySpeed + state.level * 0.038 + rand(0, 0.04)) * archetype.speedMul,
+      hue: archetype.hue + rand(-6, 6),
+      type,
       stunned: 0,
       trail: [],
       wobble: rand(0, Math.PI * 2)
@@ -640,8 +777,11 @@
     state.ribbons = [];
     state.pulses = [];
     state.spawnTimer = 0;
+    state.spawnIndex = 0;
+    state.pulseCounter = 0;
     state.flash = 0;
     state.cameraShake = 0;
+    state.shardGlow = 0;
     state.player = initPlayer();
     buildAmbience();
     spawnShard();
@@ -649,7 +789,7 @@
     for (let i = 0; i < 3; i++) spawnDrone();
     syncHud();
     overlay.classList.remove('hidden');
-    overlayCard.innerHTML = '<h2>Route the district</h2><p>Pull clean lines through the neon lattice. Gather shards, trigger pulse bursts, and use gate jumps to break pursuit. This build favors atmosphere, readability, and feel over system complexity.</p>';
+    overlayCard.innerHTML = '<h2>Route the district</h2><p>Pull clean lines through the neon lattice. Gather shards, trigger pulse bursts, and use gate jumps to break pursuit. Hunter drones chase directly, ambushers read ahead, and flankers try to seal side lanes.</p>';
   }
 
   function syncHud() {
@@ -662,6 +802,7 @@
     pulseCellsEl.textContent = state.pulseCounter;
     droneCountEl.textContent = state.drones.length;
     stateLabelEl.textContent = state.over ? 'Run Lost' : state.paused ? 'Paused' : state.running ? 'Active' : 'Standby';
+    syncDroneIntel();
   }
 
   function tryChangeDir(dir) {
@@ -727,15 +868,26 @@
       drone.stunned = Math.max(0, drone.stunned - dt);
       const dc = nearestCell(drone.x, drone.y);
       const opts = pathOptions(dc.cx, dc.cy);
+      const targetCell = getDroneTargetCell(drone, playerCell);
       let choice = { x: 0, y: 0 };
+
       if (opts.length) {
-        opts.sort((a, b) => {
-          const aScore = Math.abs((dc.cx + a.x) - playerCell.cx) + Math.abs((dc.cy + a.y) - playerCell.cy);
-          const bScore = Math.abs((dc.cx + b.x) - playerCell.cx) + Math.abs((dc.cy + b.y) - playerCell.cy);
-          return drone.stunned > 0 ? bScore - aScore : aScore - bScore;
-        });
-        choice = opts[0];
+        if (drone.stunned > 0) {
+          opts.sort((a, b) => {
+            const aScore = Math.abs((dc.cx + a.x) - playerCell.cx) + Math.abs((dc.cy + a.y) - playerCell.cy);
+            const bScore = Math.abs((dc.cx + b.x) - playerCell.cx) + Math.abs((dc.cy + b.y) - playerCell.cy);
+            return bScore - aScore;
+          });
+          choice = opts[0];
+        } else {
+          choice = findStepTowards(dc, targetCell) || opts.sort((a, b) => {
+            const aScore = Math.abs((dc.cx + a.x) - targetCell.cx) + Math.abs((dc.cy + a.y) - targetCell.cy);
+            const bScore = Math.abs((dc.cx + b.x) - targetCell.cx) + Math.abs((dc.cy + b.y) - targetCell.cy);
+            return aScore - bScore;
+          })[0];
+        }
       }
+
       const speed = (drone.speed * (drone.stunned > 0 ? .28 : 1)) * dt * TILE;
       const nx = drone.x + choice.x * speed;
       const ny = drone.y + choice.y * speed;
@@ -819,7 +971,7 @@
     state.running = false;
     state.over = true;
     overlay.classList.remove('hidden');
-    overlayCard.innerHTML = `<h2>Signal Lost</h2><p>You reached <strong>${state.score}</strong> points on level <strong>${state.level}</strong>. The visuals are in a strong place now — next passes can deepen audio, enemy types, and progression.</p>`;
+    overlayCard.innerHTML = `<h2>Signal Lost</h2><p>You reached <strong>${state.score}</strong> points on level <strong>${state.level}</strong>. Hunter, ambusher, and flanker pressure is online now — next passes can layer in audio, abilities, and progression.</p>`;
     syncHud();
   }
 
@@ -1051,12 +1203,34 @@
       ctx.shadowColor = `hsla(${drone.hue},100%,60%,.9)`;
       ctx.fillStyle = drone.stunned > 0 ? '#ffffff' : `hsl(${drone.hue} 100% 64%)`;
       ctx.globalAlpha = drone.stunned > 0 ? 0.8 : 1;
+
       ctx.beginPath();
-      ctx.moveTo(0, -drone.radius * 1.25);
-      ctx.lineTo(drone.radius * 1.08, drone.radius * .9);
-      ctx.lineTo(0, drone.radius * .45);
-      ctx.lineTo(-drone.radius * 1.08, drone.radius * .9);
+      if (drone.type === 'ambusher') {
+        ctx.moveTo(0, -drone.radius * 1.3);
+        ctx.lineTo(drone.radius * 1.16, 0);
+        ctx.lineTo(0, drone.radius * 1.05);
+        ctx.lineTo(-drone.radius * 1.16, 0);
+      } else if (drone.type === 'flanker') {
+        ctx.moveTo(-drone.radius * 1.18, -drone.radius * .26);
+        ctx.lineTo(0, -drone.radius * 1.22);
+        ctx.lineTo(drone.radius * 1.18, -drone.radius * .26);
+        ctx.lineTo(drone.radius * .52, drone.radius * 1.02);
+        ctx.lineTo(0, drone.radius * .5);
+        ctx.lineTo(-drone.radius * .52, drone.radius * 1.02);
+      } else {
+        ctx.moveTo(0, -drone.radius * 1.25);
+        ctx.lineTo(drone.radius * 1.08, drone.radius * .9);
+        ctx.lineTo(0, drone.radius * .45);
+        ctx.lineTo(-drone.radius * 1.08, drone.radius * .9);
+      }
       ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.5)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,.96)';
+      ctx.beginPath();
+      ctx.arc(0, -drone.radius * .1, drone.radius * .2, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     });

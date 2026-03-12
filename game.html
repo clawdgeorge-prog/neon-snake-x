@@ -166,6 +166,16 @@
         .btn-medium.active, .btn-medium:hover { background: rgba(255, 255, 0, 0.2); box-shadow: 0 0 20px rgba(255, 255, 0, 0.4); }
         .btn-hard.active, .btn-hard:hover { background: rgba(255, 136, 0, 0.2); box-shadow: 0 0 20px rgba(255, 136, 0, 0.4); }
         .btn-nightmare.active, .btn-nightmare:hover { background: rgba(255, 0, 68, 0.2); box-shadow: 0 0 20px rgba(255, 0, 68, 0.4); }
+        .btn-secondary {
+            color: #7b61ff;
+            border-color: #7b61ff;
+            box-shadow: 0 0 15px rgba(123, 97, 255, 0.25);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(123, 97, 255, 0.16);
+            box-shadow: 0 0 22px rgba(123, 97, 255, 0.45);
+        }
         
         .active {
             transform: scale(1.05);
@@ -506,6 +516,7 @@
     
     <div class="controls">
         <button class="btn-start" id="startBtn">Start</button>
+        <button class="btn-secondary" id="fullscreenBtn" aria-label="Toggle fullscreen mode">Fullscreen</button>
         <button class="btn-easy active" data-difficulty="easy" data-speed="150">Easy</button>
         <button class="btn-medium" data-difficulty="medium" data-speed="100">Medium</button>
         <button class="btn-hard" data-difficulty="hard" data-speed="70">Hard</button>
@@ -518,10 +529,11 @@
         <div class="powerup-item"><span class="powerup-icon" style="background:#ffff00;box-shadow:0 0 5px #ffff00"></span> 2x Points</div>
         <div class="powerup-item"><span class="powerup-icon" style="background:#00ff88;box-shadow:0 0 5px #00ff88"></span> Slow</div>
         <div class="powerup-item"><span class="powerup-icon" style="background:#ff8800;box-shadow:0 0 5px #ff8800"></span> Shield</div>
+        <div class="powerup-item"><span class="powerup-icon" style="background:#7b61ff;box-shadow:0 0 5px #7b61ff"></span> Portal Gates</div>
     </div>
     
     <div class="instructions">
-        Arrow Keys or WASD to move | P to Pause | Space to Start | Swipe or use the D-pad on phone
+        Arrow Keys or WASD to move | P to Pause | Space to Start | Fullscreen works great on phone | Portal gates begin appearing after 40 points
     </div>
 
     <!-- Mobile Touch Controls -->
@@ -554,7 +566,11 @@
             
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.connect(gain);
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 2400;
+            osc.connect(filter);
+            filter.connect(gain);
             gain.connect(audioCtx.destination);
             
             const now = audioCtx.currentTime;
@@ -587,6 +603,7 @@
                     osc.stop(now + 0.3);
                     break;
                 case 'gameover':
+                    osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(300, now);
                     osc.frequency.setValueAtTime(200, now + 0.2);
                     osc.frequency.setValueAtTime(100, now + 0.4);
@@ -595,7 +612,21 @@
                     osc.start(now);
                     osc.stop(now + 0.6);
                     break;
+                case 'teleport':
+                    osc.type = 'triangle';
+                    filter.frequency.setValueAtTime(4200, now);
+                    osc.frequency.setValueAtTime(480, now);
+                    osc.frequency.exponentialRampToValueAtTime(1440, now + 0.14);
+                    gain.gain.setValueAtTime(0.11, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+                    osc.start(now);
+                    osc.stop(now + 0.16);
+                    break;
             }
+        }
+
+        function vibrate(pattern) {
+            if (navigator.vibrate) navigator.vibrate(pattern);
         }
         
         // Game state
@@ -607,6 +638,7 @@
         let nextDirection = { x: 1, y: 0 };
         let food = { x: 0, y: 0 };
         let powerups = [];
+        let portals = [];
         let score = 0;
         const HIGH_SCORE_KEY = 'snakeHighScoresByDifficulty';
         let selectedDifficulty = 'easy';
@@ -632,6 +664,7 @@
         const gameOverOverlay = document.getElementById('gameOverOverlay');
         const finalScoreEl = document.getElementById('finalScore');
         const startBtn = document.getElementById('startBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
         const difficultyBtns = document.querySelectorAll('[data-speed]');
 
         function loadHighScores() {
@@ -674,10 +707,54 @@
         const POWERUP_TYPES = [
             { type: 'speed', color: '#00ffff', duration: 5000, symbol: '⚡' },
             { type: 'ghost', color: '#ff00ff', duration: 6000, symbol: '👻' },
-            { type: 'double', color: '#ffff00', duration: 8000, symbol: '�2' },
+            { type: 'double', color: '#ffff00', duration: 8000, symbol: '2×' },
             { type: 'slow', color: '#00ff88', duration: 5000, symbol: '🐢' },
             { type: 'shield', color: '#ff8800', duration: 8000, symbol: '🛡' }
         ];
+        const PORTAL_COLORS = ['#7b61ff', '#00d4ff'];
+        const PORTAL_MIN_SCORE = 40;
+        const PORTAL_DURATION = 12000;
+
+        function isCellOccupied(x, y) {
+            return snake.some(seg => seg.x === x && seg.y === y) ||
+                (food.x === x && food.y === y) ||
+                powerups.some(p => p.x === x && p.y === y) ||
+                portals.some(p => p.x === x && p.y === y);
+        }
+
+        function findOpenCell() {
+            for (let attempts = 0; attempts < 60; attempts++) {
+                const x = Math.floor(Math.random() * TILE_COUNT);
+                const y = Math.floor(Math.random() * TILE_COUNT);
+                if (!isCellOccupied(x, y)) {
+                    return { x, y };
+                }
+            }
+            return null;
+        }
+
+        function maybeSpawnPortals() {
+            if (score < PORTAL_MIN_SCORE || portals.length) return;
+            if (Math.random() > 0.45) return;
+
+            const first = findOpenCell();
+            const second = findOpenCell();
+            if (!first || !second) return;
+            if (first.x === second.x && first.y === second.y) return;
+
+            const spawnTime = Date.now();
+            portals = [
+                { ...first, color: PORTAL_COLORS[0], spawnTime, duration: PORTAL_DURATION },
+                { ...second, color: PORTAL_COLORS[1], spawnTime, duration: PORTAL_DURATION }
+            ];
+        }
+
+        function getPortalExit(head) {
+            if (portals.length !== 2) return null;
+            if (head.x === portals[0].x && head.y === portals[0].y) return portals[1];
+            if (head.x === portals[1].x && head.y === portals[1].y) return portals[0];
+            return null;
+        }
         
         function getCurrentTickSpeed() {
             let currentSpeed = gameSpeed;
@@ -710,6 +787,7 @@
             nextDirection = { x: 1, y: 0 };
             spawnFood();
             powerups = [];
+            portals = [];
             score = 0;
             lives = 3;
             clearTemporaryEffects();
@@ -725,7 +803,8 @@
             while (!valid) {
                 food.x = Math.floor(Math.random() * TILE_COUNT);
                 food.y = Math.floor(Math.random() * TILE_COUNT);
-                valid = !snake.some(seg => seg.x === food.x && seg.y === food.y);
+                valid = !snake.some(seg => seg.x === food.x && seg.y === food.y) &&
+                        !portals.some(portal => portal.x === food.x && portal.y === food.y);
             }
         }
         
@@ -740,7 +819,8 @@
                 y = Math.floor(Math.random() * TILE_COUNT);
                 valid = !snake.some(seg => seg.x === x && seg.y === y) &&
                         !(food.x === x && food.y === y) &&
-                        !powerups.some(p => p.x === x && p.y === y);
+                        !powerups.some(p => p.x === x && p.y === y) &&
+                        !portals.some(p => p.x === x && p.y === y);
                 attempts++;
             }
             
@@ -756,6 +836,7 @@
         
         function update() {
             direction = { ...nextDirection };
+            const now = Date.now();
             
             const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
             
@@ -763,6 +844,14 @@
             if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT) {
                 handleDeath();
                 return;
+            }
+
+            const portalExit = getPortalExit(head);
+            if (portalExit) {
+                head.x = portalExit.x;
+                head.y = portalExit.y;
+                playSound('teleport');
+                vibrate([18, 22, 18]);
             }
             
             // Self collision (unless ghost mode)
@@ -780,6 +869,7 @@
                 activatePowerup(powerup);
                 powerups.splice(powerupIndex, 1);
                 playSound('powerup');
+                vibrate([10, 30, 10]);
             }
             
             // Check food collision
@@ -787,6 +877,7 @@
                 const points = doublePoints ? 20 : 10;
                 score += points;
                 playSound('eat');
+                vibrate(12);
                 spawnFood();
                 
                 if (score > highScore) {
@@ -796,13 +887,14 @@
                 }
                 
                 spawnPowerup();
+                maybeSpawnPortals();
             } else {
                 snake.pop();
             }
             
-            // Clean up expired powerups
-            const now = Date.now();
+            // Clean up expired powerups and portals
             powerups = powerups.filter(p => now - p.spawnTime < p.duration);
+            portals = portals.filter(p => now - p.spawnTime < p.duration);
             
             // Reset temporary effects
             let speedChanged = false;
@@ -863,10 +955,12 @@
                 // Remove tail segment as penalty
                 snake.pop();
                 playSound('powerup');
+                vibrate(20);
                 return;
             }
             
             playSound('die');
+            vibrate([60, 30, 60]);
             lives--;
             
             if (lives <= 0) {
@@ -881,6 +975,7 @@
                 direction = { x: 1, y: 0 };
                 nextDirection = { x: 1, y: 0 };
                 powerups = [];
+                portals = [];
                 clearTemporaryEffects();
                 restartGameLoop();
                 updateUI();
@@ -926,8 +1021,28 @@
                 ctx.stroke();
             }
             
-            // Draw powerups
+            // Draw portal gates
             const now = Date.now();
+            portals.forEach((portal, index) => {
+                const pulse = 0.6 + Math.sin((now - portal.spawnTime) / 140 + index) * 0.18;
+                ctx.strokeStyle = portal.color;
+                ctx.lineWidth = 3;
+                ctx.shadowBlur = 18;
+                ctx.shadowColor = portal.color;
+                ctx.globalAlpha = 0.9;
+                ctx.beginPath();
+                ctx.arc(portal.x * GRID_SIZE + GRID_SIZE / 2, portal.y * GRID_SIZE + GRID_SIZE / 2, (GRID_SIZE / 2 - 3) * pulse, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(portal.x * GRID_SIZE + GRID_SIZE / 2, portal.y * GRID_SIZE + GRID_SIZE / 2, GRID_SIZE / 2 - 5, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(123, 97, 255, 0.2)';
+                ctx.fillRect(portal.x * GRID_SIZE + 4, portal.y * GRID_SIZE + 4, GRID_SIZE - 8, GRID_SIZE - 8);
+            });
+            ctx.globalAlpha = 1;
+
+            // Draw powerups
             powerups.forEach(p => {
                 const alpha = 1 - (now - p.spawnTime) / p.duration;
                 ctx.globalAlpha = alpha;
@@ -1065,8 +1180,28 @@
             pauseOverlay.classList.toggle('visible', isPaused);
         }
         
+        async function toggleFullscreen() {
+            const target = document.documentElement;
+            try {
+                if (!document.fullscreenElement) {
+                    await target.requestFullscreen?.();
+                    fullscreenBtn.textContent = 'Windowed';
+                } else {
+                    await document.exitFullscreen?.();
+                    fullscreenBtn.textContent = 'Fullscreen';
+                }
+            } catch (error) {
+                console.warn('Fullscreen toggle failed', error);
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            fullscreenBtn.textContent = document.fullscreenElement ? 'Windowed' : 'Fullscreen';
+        });
+
         // Event listeners
         startBtn.addEventListener('click', startGame);
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
         
         document.addEventListener('keydown', (e) => {
             initAudio();

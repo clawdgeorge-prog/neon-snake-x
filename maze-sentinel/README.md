@@ -19,6 +19,7 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - Arc-lash combo: trigger a pulse while a decoy is active to fire a crackling trap lane that stuns drones caught along the link
 - District breach loop: collect a shard quota to open an exit portal, then reach it alive to clear the district
 - Compact in-run HUD now shows breach progress alongside score / drones / district state
+- Route-assist breadcrumb line now guides you toward the live objective (next shard or open exit), improving readability on touch screens without adding clutter
 - District theme rotation is now mechanical as well as visual:
   - **Astra / Flux Reserve** — pulse costs less charge
   - **Velour / Mirage Grid** — decoys last longer and recharge faster

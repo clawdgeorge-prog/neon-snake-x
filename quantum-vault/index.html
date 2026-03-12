@@ -121,10 +121,10 @@
       <div class="box">
         <div class="section">Scoring Feel</div>
         <ul>
-          <li>Key shards build your chain and pulse meter</li>
-          <li>Optional vault cores pay huge points but force harder routes</li>
-          <li>Near-miss dodges and fast clears reward aggressive play</li>
-          <li>Level exits pay integrity, speed, and chain bonuses</li>
+          <li>Key shards grow score flow and refill your burst meter</li>
+          <li>Optional vault cores pay huge points and jam the gate grid open</li>
+          <li>Near-miss dodges and clean routing keep your combo alive</li>
+          <li>Level exits pay integrity, speed, chain, and full-core sweep bonuses</li>
         </ul>
       </div>
       <div class="box">
@@ -138,12 +138,14 @@
         <div class="hud-group">
           <div class="pill accent"><strong id="state">Standby</strong></div>
           <div class="pill">Best <strong id="best">0</strong></div>
+          <div class="pill">Rank <strong id="rank">Rookie</strong></div>
           <div class="pill">Enemies <strong id="enemies">0</strong></div>
           <div class="pill">District <strong id="theme">Prism Lock</strong></div>
         </div>
         <div class="hud-group">
           <div class="pill">Exit <strong id="exitState">Locked</strong></div>
           <div class="pill">Chain <strong id="combo">x1</strong></div>
+          <div class="pill">Flow <strong id="flow">0%</strong></div>
           <div class="pill">Clock <strong id="timer">60</strong></div>
         </div>
       </div>
@@ -186,6 +188,8 @@
     const enemiesEl = document.getElementById('enemies');
     const exitStateEl = document.getElementById('exitState');
     const comboEl = document.getElementById('combo');
+    const rankEl = document.getElementById('rank');
+    const comboFlowEl = document.getElementById('flow');
     const themeEl = document.getElementById('theme');
     const timerEl = document.getElementById('timer');
     const districtNameEl = document.getElementById('districtName');
@@ -220,10 +224,19 @@
     ];
 
     const THEMES = [
-      { name:'Prism Lock', wallA:'rgba(90,169,255,.24)', wallB:'rgba(36,72,130,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(99,242,255,.034)', glow:'hsla(193,100%,60%,.12)', key:'#ffd86f', core:'#ff9f67', hue:193 },
-      { name:'Ion Bloom', wallA:'rgba(84,255,196,.24)', wallB:'rgba(21,105,98,.48)', wallC:'rgba(99,242,255,.2)', floor:'rgba(69,224,196,.038)', glow:'hsla(164,100%,56%,.11)', key:'#a6ff7b', core:'#63f2ff', hue:164 },
-      { name:'Velvet Circuit', wallA:'rgba(255,101,212,.22)', wallB:'rgba(116,39,117,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(255,101,212,.034)', glow:'hsla(319,100%,64%,.11)', key:'#ffb1f5', core:'#ffd86f', hue:319 },
-      { name:'Solar Breach', wallA:'rgba(255,190,92,.25)', wallB:'rgba(127,67,28,.5)', wallC:'rgba(255,113,113,.22)', floor:'rgba(255,183,77,.032)', glow:'hsla(30,100%,58%,.11)', key:'#ffd86f', core:'#ff7272', hue:28 }
+      { name:'Prism Lock', wallA:'rgba(90,169,255,.24)', wallB:'rgba(36,72,130,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(99,242,255,.034)', glow:'hsla(193,100%,60%,.12)', key:'#ffd86f', core:'#ff9f67', hue:193, rule:'Flux gates cycle fast — keep your route moving.' },
+      { name:'Ion Bloom', wallA:'rgba(84,255,196,.24)', wallB:'rgba(21,105,98,.48)', wallC:'rgba(99,242,255,.2)', floor:'rgba(69,224,196,.038)', glow:'hsla(164,100%,56%,.11)', key:'#a6ff7b', core:'#63f2ff', hue:164, rule:'Core pickups jam security doors open for a breather.' },
+      { name:'Velvet Circuit', wallA:'rgba(255,101,212,.22)', wallB:'rgba(116,39,117,.48)', wallC:'rgba(156,124,255,.22)', floor:'rgba(255,101,212,.034)', glow:'hsla(319,100%,64%,.11)', key:'#ffb1f5', core:'#ffd86f', hue:319, rule:'Long flow chains matter more here — stay clean.' },
+      { name:'Solar Breach', wallA:'rgba(255,190,92,.25)', wallB:'rgba(127,67,28,.5)', wallC:'rgba(255,113,113,.22)', floor:'rgba(255,183,77,.032)', glow:'hsla(30,100%,58%,.11)', key:'#ffd86f', core:'#ff7272', hue:28, rule:'Lockdown turns vicious late — bank time early.' }
+    ];
+
+    const RANKS = [
+      { score: 0, name: 'Rookie' },
+      { score: 1500, name: 'Runner' },
+      { score: 4500, name: 'Vault Fox' },
+      { score: 9000, name: 'Ghost' },
+      { score: 16000, name: 'Ace' },
+      { score: 26000, name: 'Legend' }
     ];
 
     const state = {
@@ -234,11 +247,17 @@
       level:1,
       lives:3,
       combo:1,
+      comboTimer:0,
+      comboWindow:6.5,
       keysCollected:0,
       keysTotal:0,
       coresCollected:0,
       coresTotal:0,
       pulseCharge:0,
+      scorePulse:0,
+      securityDoors:[],
+      doorJam:0,
+      doorTick:0,
       best:Number(localStorage.getItem(BEST_KEY)||0),
       leaderboard:JSON.parse(localStorage.getItem(BOARD_KEY) || '[]'),
       difficulty:'normal',
@@ -258,6 +277,7 @@
       lastTs:0,
       flash:0,
       cameraShake:0,
+      districtLabel:'',
       audioOn:true,
       audioStarted:false,
       exitUnlocked:false,
@@ -276,6 +296,12 @@
     const dist = (a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
     const vibrate = ms => navigator.vibrate && navigator.vibrate(ms);
     const cellCenter = (cx,cy)=>({x:cx*TILE+TILE/2,y:cy*TILE+TILE/2,cx,cy});
+    const shuffle = arr => arr.map(v=>({v,s:Math.random()})).sort((a,b)=>a.s-b.s).map(o=>o.v);
+    const getRankName = score => {
+      let current = RANKS[0].name;
+      for (const rank of RANKS) if (score >= rank.score) current = rank.name;
+      return current;
+    };
 
     function initAudio(){
       if(audioCtx) return;
@@ -355,6 +381,19 @@
       if(cx<0||cy<0||cx>=GRID||cy>=GRID) return true;
       return state.maze[cy][cx]===1;
     }
+    function doorAt(cx,cy){
+      return state.securityDoors.find(door => door.cx===cx && door.cy===cy);
+    }
+    function isDoorClosed(cx,cy){
+      const door = doorAt(cx,cy);
+      if(!door) return false;
+      if(state.doorJam > 0) return false;
+      const cycle = (state.doorTick + door.phase) % door.period;
+      return cycle > door.openSpan;
+    }
+    function isBlocked(cx,cy){
+      return isWall(cx,cy) || isDoorClosed(cx,cy);
+    }
     function randomOpenCell(){
       let c;
       do c = cellCenter(randi(1,GRID-2),randi(1,GRID-2)); while(isWall(c.cx,c.cy));
@@ -362,10 +401,10 @@
     }
     function canMoveTo(x,y,r){
       const pts=[{x:x-r,y:y-r},{x:x+r,y:y-r},{x:x-r,y:y+r},{x:x+r,y:y+r}];
-      return pts.every(p=>!isWall(Math.floor(p.x/TILE),Math.floor(p.y/TILE)));
+      return pts.every(p=>!isBlocked(Math.floor(p.x/TILE),Math.floor(p.y/TILE)));
     }
     function pathOptions(cx,cy){
-      return [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}].filter(d=>!isWall(cx+d.x,cy+d.y));
+      return [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}].filter(d=>!isBlocked(cx+d.x,cy+d.y));
     }
     function nearestCell(x,y){ return {cx:Math.floor(x/TILE), cy:Math.floor(y/TILE)}; }
 
@@ -401,7 +440,7 @@
         addPopup('NEW BEST', canvas.width/2, 110, '#ffd86f');
         sfx('best');
       }
-      const label = `${state.theme.name} • ${state.difficulty}`;
+      const label = `${getRankName(state.score)} • ${state.theme.name} • ${state.difficulty}`;
       state.leaderboard.push({score:state.score, level:`L${state.level}`, label});
       state.leaderboard.sort((a,b)=>b.score-a.score);
       state.leaderboard = state.leaderboard.slice(0,5);
@@ -409,8 +448,54 @@
       renderLeaderboard();
     }
 
+    function spawnSecurityDoors(level){
+      state.securityDoors = [];
+      const desired = Math.min(5, 2 + Math.floor(level / 2));
+      const blockedCells = new Set([
+        '1,1',
+        `${GRID-2},${GRID-2}`,
+        ...state.keyOrbs.map(k => `${k.cx},${k.cy}`),
+        ...state.vaultCores.map(k => `${k.cx},${k.cy}`)
+      ]);
+      const candidates = [];
+      for(let y=2; y<GRID-2; y++) for(let x=2; x<GRID-2; x++){
+        if(state.maze[y][x] === 1 || blockedCells.has(`${x},${y}`)) continue;
+        const opts = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}].filter(d => !isWall(x+d.x, y+d.y));
+        if(opts.length !== 2) continue;
+        const straight = (opts[0].x === -opts[1].x && opts[0].y === -opts[1].y);
+        if(!straight) continue;
+        if(Math.abs(x-1) + Math.abs(y-1) < 6) continue;
+        if(Math.abs(x-(GRID-2)) + Math.abs(y-(GRID-2)) < 4) continue;
+        candidates.push({cx:x, cy:y});
+      }
+      for(const cell of shuffle(candidates)){
+        if(state.securityDoors.length >= desired) break;
+        if(state.securityDoors.some(door => Math.abs(door.cx-cell.cx) + Math.abs(door.cy-cell.cy) < 4)) continue;
+        state.securityDoors.push({
+          ...cell,
+          phase: rand(0, 2.6),
+          period: clamp(3.15 - Math.min(1.1, level * .09) + rand(-.18,.22), 1.9, 3.4),
+          openSpan: clamp(1.1 - Math.min(.2, level * .02) + rand(-.08,.12), .78, 1.22),
+          hue: state.theme.hue + rand(-18, 18)
+        });
+      }
+    }
+
+    function feedCombo(seconds, bonus=0){
+      state.comboTimer = clamp(state.comboTimer + seconds, 0, state.comboWindow);
+      if(bonus) state.combo = clamp(state.combo + bonus, 1, 12);
+    }
+
+    function breakFlow(levels=1){
+      const oldCombo = state.combo;
+      state.combo = Math.max(1, state.combo - levels);
+      state.comboTimer = state.combo > 1 ? state.comboWindow * .38 : 0;
+      if(oldCombo > state.combo) addPopup('FLOW BROKE', state.player.x, state.player.y - 34, '#ff9f67');
+    }
+
     function setupLevel(level){
       state.theme = THEMES[(level - 1) % THEMES.length];
+      state.districtLabel = state.theme.rule;
       state.maze = layouts[(level-1)%layouts.length].map(r=>r.split('').map(Number));
       state.player = {x:cellCenter(1,1).x,y:cellCenter(1,1).y,radius:TILE*.29,speed:3.55,dir:{x:0,y:0},nextDir:{x:0,y:0},hitCooldown:0,trail:[],dashGlow:0};
       state.keysCollected = 0;
@@ -419,13 +504,17 @@
       state.keyOrbs = [];
       state.vaultCores = [];
       state.enemies = [];
+      state.securityDoors = [];
       state.ribbons = [];
       state.particles = [];
       state.popups = [];
       state.waves = [];
       state.nearMissCooldown = 0;
-      const totalKeys = 5 + Math.min(6, level-1);
-      const totalCores = 2 + Math.floor((level-1) % 2);
+      state.comboTimer = Math.min(state.comboWindow * .65, state.comboTimer + 1.6);
+      state.doorJam = 0;
+      state.doorTick = 0;
+      const totalKeys = 5 + Math.min(7, level-1);
+      const totalCores = 2 + Math.floor((level-1) % 3 === 2 ? 2 : 1);
       state.keysTotal = totalKeys;
       state.coresTotal = totalCores;
       for(let i=0;i<totalKeys;i++){
@@ -438,9 +527,10 @@
         while((Math.abs(c.cx-1)<5&&Math.abs(c.cy-1)<5) || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.vaultCores.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
         state.vaultCores.push({...c,rot:rand(0,Math.PI*2),pulse:rand(0,Math.PI*2),value:350 + level*60});
       }
+      spawnSecurityDoors(level);
       state.exit = {...cellCenter(GRID-2, GRID-2), active:false, pulse:0};
-      state.pulseCharge = 0;
-      state.levelClock = DIFF[state.difficulty].timer + Math.max(0, 8 - level * 2);
+      state.pulseCharge = clamp(state.pulseCharge * .4 + 18, 0, 100);
+      state.levelClock = DIFF[state.difficulty].timer + Math.max(0, 10 - level * 2);
       const cfg = DIFF[state.difficulty];
       const enemyCount = cfg.enemyCount + Math.floor((level-1)/2);
       for(let i=0;i<enemyCount;i++) spawnEnemy(i);
@@ -473,6 +563,8 @@
       state.flash=0;
       state.cameraShake=0;
       state.newBestGlow = 0;
+      state.scorePulse = 0;
+      state.comboTimer = 0;
       setupLevel(1);
       overlay.classList.remove('hidden');
       overlayCard.innerHTML = `<h2>Quantum Vault</h2><p>A brighter, greedier arcade run: clean the district, gamble on side-route cores, and hit pulse burst when the room gets mean. Built to read cleanly and feel snappy on mobile.</p><div class="actions"><button id="restartAction" class="primary">Enter Vault</button></div>`;
@@ -488,10 +580,12 @@
       keysEl.textContent = `${state.keysCollected} / ${state.keysTotal}`;
       coresEl.textContent = `${state.coresCollected} / ${state.coresTotal}`;
       stateEl.textContent = state.over ? 'Run Lost' : state.paused ? 'Paused' : state.running ? 'Active' : 'Standby';
-      bestEl.textContent = state.best.toLocaleString();
+      bestEl.textContent = state.score >= state.best && state.score > 0 ? `★ ${state.best.toLocaleString()}` : state.best.toLocaleString();
       enemiesEl.textContent = state.enemies.length;
-      exitStateEl.textContent = state.exitUnlocked ? 'Online' : 'Locked';
+      exitStateEl.textContent = state.exitUnlocked ? 'Online' : `${state.securityDoors.length} Gates`;
       comboEl.textContent = `x${state.combo}`;
+      comboFlowEl.textContent = `${Math.round((state.comboTimer / state.comboWindow) * 100)}%`;
+      rankEl.textContent = getRankName(state.score);
       themeEl.textContent = state.theme.name;
       districtNameEl.textContent = state.theme.name;
       timerEl.textContent = Math.ceil(state.levelClock);
@@ -509,21 +603,25 @@
 
     function awardScore(amount, text, x, y, color='#fff'){
       state.score += amount;
+      state.scorePulse = Math.min(1, state.scorePulse + .18);
       addPopup(text || `+${amount}`, x, y, color, true);
       if(state.score > state.best) localStorage.setItem(BEST_KEY, String(state.score));
       syncHud();
     }
 
     function nextLevel(){
-      const timeBonus = Math.max(0, Math.floor(state.levelClock * 16));
-      const integrityBonus = state.lives * 220;
-      const chainBonus = state.combo * 110;
-      awardScore(timeBonus + integrityBonus + chainBonus + 450, 'DISTRICT CLEAR', state.exit.x, state.exit.y - 50, '#a6ff7b');
+      const timeBonus = Math.max(0, Math.floor(state.levelClock * 18));
+      const integrityBonus = state.lives * 240;
+      const chainBonus = state.combo * 140;
+      const coreSweepBonus = state.coresCollected >= state.coresTotal ? 520 : state.coresCollected * 120;
+      awardScore(timeBonus + integrityBonus + chainBonus + coreSweepBonus + 500, 'DISTRICT CLEAR', state.exit.x, state.exit.y - 50, '#a6ff7b');
       state.level += 1;
-      state.combo = clamp(state.combo + 1, 1, 9);
+      state.combo = clamp(state.combo + 1, 1, 12);
+      feedCombo(2.2);
       setupLevel(state.level);
       state.running = true;
       addWave(state.player.x, state.player.y, '#63f2ff', 20, 100);
+      addPopup('FLOW BANKED', state.player.x, state.player.y - 30, '#63f2ff');
       sfx('exit');
       syncHud();
     }
@@ -533,7 +631,7 @@
       state.running = false;
       maybeRecordBest();
       overlay.classList.remove('hidden');
-      overlayCard.innerHTML = `<h2>${reason}</h2><p>You reached <strong>level ${state.level}</strong> with <strong>${state.score.toLocaleString()}</strong> credits. Best local score: <strong>${state.best.toLocaleString()}</strong>.</p><div class="actions"><button id="restartBtn" class="primary">Run Again</button></div>`;
+      overlayCard.innerHTML = `<h2>${reason}</h2><p>You reached <strong>level ${state.level}</strong> with <strong>${state.score.toLocaleString()}</strong> credits as a <strong>${getRankName(state.score)}</strong>. Best local score: <strong>${state.best.toLocaleString()}</strong>.</p><p style="margin-top:10px;color:rgba(255,255,255,.66)">${state.theme.rule}</p><div class="actions"><button id="restartBtn" class="primary">Run Again</button></div>`;
       document.getElementById('restartBtn').addEventListener('click', startGame);
       syncHud();
     }
@@ -541,10 +639,11 @@
     function collectKeys(){
       state.keyOrbs = state.keyOrbs.filter(k => {
         if(Math.hypot(k.x-state.player.x,k.y-state.player.y) < TILE*.34){
-          state.combo = clamp(state.combo + 1, 1, 9);
+          state.combo = clamp(state.combo + 1, 1, 12);
+          feedCombo(1.65);
           state.pulseCharge = clamp(state.pulseCharge + 28, 0, 100);
           state.keysCollected += 1;
-          awardScore(100 * state.combo, `KEY x${state.combo}`, k.x, k.y - 18, state.theme.key);
+          awardScore((110 + Math.max(0, Math.floor(state.levelClock * .7))) * state.combo, `KEY x${state.combo}`, k.x, k.y - 18, state.theme.key);
           addParticles(k.x,k.y,state.theme.key,24,5,1.2);
           addWave(k.x,k.y,state.theme.key,18,68);
           sfx('key');
@@ -567,10 +666,14 @@
         if(Math.hypot(core.x-state.player.x,core.y-state.player.y) < TILE*.36){
           state.coresCollected += 1;
           state.pulseCharge = clamp(state.pulseCharge + 40, 0, 100);
+          state.doorJam = Math.max(state.doorJam, 4.4);
           state.cameraShake = .12;
-          awardScore(core.value * state.combo, `CORE ${core.value * state.combo}`, core.x, core.y - 20, state.theme.core);
+          state.combo = clamp(state.combo + 1, 1, 12);
+          feedCombo(2.25);
+          awardScore((core.value + Math.floor(state.levelClock * 6)) * state.combo, `CORE ${(core.value + Math.floor(state.levelClock * 6)) * state.combo}`, core.x, core.y - 20, state.theme.core);
           addParticles(core.x,core.y,state.theme.core,34,6.6,1.35);
           addWave(core.x,core.y,state.theme.core,24,90);
+          addPopup('GATES JAMMED', state.player.x, state.player.y - 42, '#63f2ff');
           sfx('core');
           return false;
         }
@@ -598,6 +701,7 @@
       addParticles(state.player.x, state.player.y, '#63f2ff', 44, 6.2, 1.3);
       addWave(state.player.x, state.player.y, '#63f2ff', 24, 126);
       state.cameraShake = .18;
+      feedCombo(1.1);
       awardScore(90 * state.combo, 'PULSE BURST', state.player.x, state.player.y - 20, '#63f2ff');
       sfx('burst');
       syncHud();
@@ -670,8 +774,9 @@
         const d = dist(enemy, state.player);
         if(d < enemy.radius + state.player.radius + TILE * .18 && d > enemy.radius + state.player.radius && state.nearMissCooldown <= 0 && !enemy.stunned){
           state.nearMissCooldown = .45;
-          state.combo = clamp(state.combo + 1, 1, 9);
-          awardScore(35 * state.combo, 'NEAR MISS', state.player.x, state.player.y - 22, '#ffb1f5');
+          state.combo = clamp(state.combo + 1, 1, 12);
+          feedCombo(1.05);
+          awardScore(40 * state.combo, 'NEAR MISS', state.player.x, state.player.y - 22, '#ffb1f5');
           state.pulseCharge = clamp(state.pulseCharge + 10, 0, 100);
           sfx('miss');
         }
@@ -679,7 +784,7 @@
         if(d < enemy.radius + state.player.radius && state.player.hitCooldown <= 0 && !enemy.stunned){
           state.player.hitCooldown = 1.2;
           state.lives -= 1;
-          state.combo = Math.max(1, Math.floor(state.combo / 2));
+          breakFlow(Math.max(1, Math.ceil(state.combo / 3)));
           state.flash = .65;
           state.cameraShake = .24;
           addParticles(state.player.x,state.player.y,'#ff7272',34,6,1.2);
@@ -701,8 +806,25 @@
       state.waves = state.waves.filter(w => { w.life -= dt * .9; w.r += dt * (w.max * .8); return w.life > 0; });
     }
 
+    function updateFlow(dt){
+      if(state.combo > 1 || state.comboTimer > 0){
+        state.comboTimer = Math.max(0, state.comboTimer - dt * (state.exitUnlocked ? 1.2 : 1));
+        if(state.comboTimer === 0 && state.combo > 1){
+          state.combo -= 1;
+          state.comboTimer = state.combo > 1 ? state.comboWindow * .42 : 0;
+          addPopup('FLOW -1', state.player.x, state.player.y - 30, '#ffb1f5');
+        }
+      }
+      state.scorePulse = Math.max(0, state.scorePulse - dt * 1.4);
+      state.doorTick += dt;
+      state.doorJam = Math.max(0, state.doorJam - dt);
+    }
+
     function updateClock(dt){
       state.levelClock = Math.max(0, state.levelClock - dt);
+      if(state.levelClock < 10 && Math.random() < dt * 5){
+        addRibbon(state.player.x + rand(-14,14), state.player.y + rand(-14,14), 'rgba(255,114,114,.2)', 16);
+      }
       if(state.levelClock === 0 && !state.over){
         state.lives -= 1;
         state.levelClock = 12;
@@ -720,6 +842,7 @@
       state.cameraShake = Math.max(0, state.cameraShake - dt);
       state.newBestGlow = Math.max(0, state.newBestGlow - dt);
       state.exit.pulse += dt * 3.4;
+      updateFlow(dt);
       updateClock(dt);
       updatePlayer(dt);
       updateEnemies(dt);
@@ -801,6 +924,30 @@
           }
         }
       }
+    }
+
+    function drawDoors(){
+      state.securityDoors.forEach(door => {
+        const px = door.cx * TILE, py = door.cy * TILE;
+        const closed = isDoorClosed(door.cx, door.cy);
+        const pulse = Math.sin(state.doorTick * 4 + door.phase) * .5 + .5;
+        ctx.save();
+        ctx.translate(px + TILE/2, py + TILE/2);
+        ctx.shadowBlur = closed ? 30 : 14;
+        ctx.shadowColor = `hsla(${door.hue},100%,60%,.9)`;
+        ctx.strokeStyle = closed ? `hsla(${door.hue},100%,65%,${.82 - pulse*.16})` : 'rgba(99,242,255,.26)';
+        ctx.lineWidth = closed ? 6 : 3;
+        for(let i=-1;i<=1;i++){
+          ctx.beginPath();
+          ctx.moveTo(-TILE*.23, i * TILE*.12);
+          ctx.lineTo(TILE*.23, i * TILE*.12);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = closed ? .22 : .1;
+        ctx.fillStyle = closed ? `hsla(${door.hue},100%,60%,.35)` : 'rgba(99,242,255,.12)';
+        ctx.fillRect(-TILE*.22,-TILE*.22,TILE*.44,TILE*.44);
+        ctx.restore();
+      });
     }
 
     function drawKeys(){
@@ -895,6 +1042,16 @@
 
     function drawPlayer(){
       const p = state.player;
+      if(state.combo > 1){
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.strokeStyle = `rgba(255,216,111,${.28 + (state.comboTimer/state.comboWindow)*.32})`;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.arc(0,0,p.radius*1.7,-Math.PI/2,-Math.PI/2 + Math.PI*2*(state.comboTimer/state.comboWindow));
+        ctx.stroke();
+        ctx.restore();
+      }
       p.trail.forEach((t,idx)=>{
         ctx.fillStyle=`rgba(99,242,255,${idx/p.trail.length*.24})`;
         ctx.beginPath();
@@ -1005,30 +1162,41 @@
       grad.addColorStop(1, '#ffd86f');
       ctx.fillStyle = grad;
       rr(x, y, w * (state.pulseCharge/100), h, 8, true);
+      const fx = x, fy = y - 26, fh = 8;
+      ctx.fillStyle = 'rgba(255,255,255,.06)';
+      rr(fx, fy, w, fh, 8, true);
+      ctx.fillStyle = 'rgba(255,177,245,.78)';
+      rr(fx, fy, w * (state.comboTimer / state.comboWindow), fh, 8, true);
       ctx.fillStyle = 'rgba(255,255,255,.78)';
       ctx.font = '800 18px Inter, system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(state.pulseCharge >= 100 ? 'PULSE BURST READY' : 'PULSE CHARGE', canvas.width/2, y - 10);
+      ctx.fillText(state.pulseCharge >= 100 ? 'PULSE BURST READY' : 'PULSE CHARGE', canvas.width/2, y - 40);
+      ctx.font = '700 14px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,177,245,.86)';
+      ctx.fillText(state.combo > 1 ? `FLOW ${Math.round((state.comboTimer / state.comboWindow) * 100)}%` : 'FLOW DORMANT', canvas.width/2, y - 12);
     }
 
     function drawTopBanner(){
       ctx.save();
-      ctx.globalAlpha = .92;
-      const w = 420, h = 76, x = canvas.width/2 - w/2, y = 18;
+      ctx.globalAlpha = .94;
+      const w = 560, h = 108, x = canvas.width/2 - w/2, y = 18;
       const g = ctx.createLinearGradient(x,y,x+w,y+h);
-      g.addColorStop(0,'rgba(7,18,38,.72)');
-      g.addColorStop(1,'rgba(7,18,38,.38)');
+      g.addColorStop(0,'rgba(7,18,38,.78)');
+      g.addColorStop(1,'rgba(7,18,38,.42)');
       ctx.fillStyle = g;
-      rr(x,y,w,h,22,true);
+      rr(x,y,w,h,24,true);
       ctx.strokeStyle = 'rgba(99,242,255,.18)';
-      rr(x,y,w,h,22,false);
-      ctx.fillStyle = 'rgba(255,255,255,.94)';
+      rr(x,y,w,h,24,false);
+      ctx.fillStyle = 'rgba(255,255,255,.96)';
       ctx.textAlign = 'center';
-      ctx.font = '900 32px Inter, system-ui, sans-serif';
-      ctx.fillText(state.theme.name, canvas.width/2, y + 31);
-      ctx.font = '700 17px Inter, system-ui, sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,.7)';
-      ctx.fillText(`Level ${state.level} • ${state.keysCollected}/${state.keysTotal} keys • ${state.coresCollected}/${state.coresTotal} cores`, canvas.width/2, y + 56);
+      ctx.font = '900 34px Inter, system-ui, sans-serif';
+      ctx.fillText(state.theme.name, canvas.width/2, y + 34);
+      ctx.font = `900 ${40 + Math.round(state.scorePulse * 10)}px Inter, system-ui, sans-serif`;
+      ctx.fillStyle = state.score >= state.best && state.score > 0 ? '#ffd86f' : 'rgba(255,255,255,.96)';
+      ctx.fillText(state.score.toLocaleString(), canvas.width/2, y + 76);
+      ctx.font = '700 16px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,.72)';
+      ctx.fillText(`Level ${state.level} • ${getRankName(state.score)} • ${state.keysCollected}/${state.keysTotal} keys • ${state.coresCollected}/${state.coresTotal} cores`, canvas.width/2, y + 98);
       ctx.restore();
     }
 
@@ -1040,6 +1208,10 @@
       ctx.fillRect(0,0,canvas.width,canvas.height);
       drawTopBanner();
       drawBurstMeter();
+      ctx.fillStyle = 'rgba(255,255,255,.72)';
+      ctx.font = '700 14px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(state.districtLabel || '', canvas.width/2, canvas.height - 74);
       if(state.newBestGlow > 0){
         ctx.fillStyle = `rgba(255,216,111,${state.newBestGlow*.05})`;
         ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -1056,6 +1228,7 @@
       ctx.save();
       ctx.translate(rand(-shake,shake), rand(-shake,shake));
       drawMaze();
+      drawDoors();
       drawExit();
       drawRibbons();
       drawKeys();

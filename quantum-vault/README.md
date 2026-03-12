@@ -9,13 +9,13 @@ Quantum Vault is a mobile-first neon arcade maze game.
 - Reach the exit before lockdown pressure drains the run
 
 ## What changed in this polish pass
-- Added a more arcade-style scoring model with chain growth, near-miss rewards, district clear bonuses, integrity bonuses, and speed bonuses
-- Added optional **vault cores** to create better route decisions instead of a single obvious path every level
-- Added a **local leaderboard** and much stronger best-score presentation
-- Added a visible **district timer / lockdown pressure** for pacing and urgency
-- Added a fourth enemy type (**hunter**) with telegraphed surge behavior
-- Improved motion, particles, score popups, overlays, district themes, and HUD readability
-- Improved mobile controls with a dedicated **Pulse Burst** action button
+- Added a stronger **arcade score feel** with live rank titles, a visible flow meter, better best-score presentation, and score-pulse feedback when runs heat up
+- Added rotating **flux gates** that open and close on a cycle, creating timing-based route decisions instead of every lane feeling equally safe
+- Made **vault cores** more meaningful: they now pay larger rewards and temporarily jam the gate grid open so risky detours can become smart tempo plays
+- Added a more addictive **flow/combo system** with decay pressure, near-miss rewards, and level-clear banking to encourage fast, clean routing
+- Expanded district identity with theme rules / pacing flavor so levels feel more distinct instead of just recolored mazes
+- Improved motion and presentation with new HUD data, richer top-banner score presentation, combo-ring feedback, gate visuals, and more animated moment-to-moment juice
+- Kept the game fully local and mobile-first, including swipe / D-pad movement and a dedicated **Pulse Burst** action button
 
 ## Controls
 - **Desktop:** WASD / Arrow keys to move, Space for Pulse Burst

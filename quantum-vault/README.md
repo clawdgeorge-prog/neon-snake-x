@@ -11,17 +11,19 @@ Quantum Vault is a mobile-first neon arcade maze game.
 - Reach the exit before lockdown pressure drains the run
 
 ## What changed in this polish pass
-- Added **real risky route decisions** with bonus credit caches that expire fast and pay best when you grab them early
+- Added **score surge pickups** that temporarily juice every score event, give the HUD a clearer arcade multiplier readout, and create stronger route temptation mid-run
+- Added a late-level **Vault Jackpot** that appears when the exit comes online, creating a real greed-vs-escape decision instead of every finish feeling the same
 - Added glowing **boost lanes** that make certain routes faster and more aggressive, especially in Solar Breach
 - Turned district themes into real gameplay modifiers instead of just color swaps:
   - **Prism Lock:** faster gate cadence
   - **Ion Bloom:** longer core-based gate jams and a little more clock generosity
   - **Velvet Circuit:** stronger combo/flow economy
   - **Solar Breach:** harsher timer pressure but hotter speed lanes and more volatile routing
-- Improved the **arcade score feel** with stash tracking, stronger banner presentation, better best-score emphasis, richer score popups, and a punchier run-end summary
+- Improved the **arcade score feel** with a surge multiplier, stronger top-banner score callouts, better local leaderboard treatment, board placement at run end, and better best-score signaling
 - Expanded **level-clear rewards** so exits now bank time, integrity, chain, core sweep, and cache sweep bonuses
-- Improved motion and readability with more lane signaling, more animated pickups, and clearer high-value moments inside the maze
-- Kept the game fully local and mobile-first, including swipe / D-pad movement and a dedicated **Pulse Burst** action button
+- Improved motion and readability with more animated high-value pickups, stronger jackpot/surge moments, and more obvious state messaging when the room changes
+- Improved **mobile-first control feel** by allowing drag steering during touch movement instead of waiting only for touch release
+- Kept the game fully local and mobile-first, including swipe / drag / D-pad movement and a dedicated **Pulse Burst** action button
 
 ## Controls
 - **Desktop:** WASD / Arrow keys to move, Space for Pulse Burst

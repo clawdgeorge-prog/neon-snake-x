@@ -133,7 +133,7 @@
         <div class="section">Local Leaderboard</div>
         <div id="leaderboard" class="leaderboard"></div>
       </div>
-      <div class="foot">Controls: swipe or D-pad on mobile • WASD / Arrow keys on desktop • Space / Burst for pulse stun • collect keys, decide on bonus cores, then escape.</div>
+      <div class="foot">Controls: drag / swipe or D-pad on mobile • WASD / Arrow keys on desktop • Space / Burst for pulse stun • hit score surges, decide on the jackpot greed route, then escape.</div>
     </aside>
     <main class="panel game-shell">
       <div class="hud">
@@ -148,6 +148,7 @@
           <div class="pill">Exit <strong id="exitState">Locked</strong></div>
           <div class="pill">Chain <strong id="combo">x1</strong></div>
           <div class="pill">Flow <strong id="flow">0%</strong></div>
+          <div class="pill">Surge <strong id="surge">x1.0</strong></div>
           <div class="pill">Stash <strong id="stash">0</strong></div>
           <div class="pill">Clock <strong id="timer">60</strong></div>
         </div>
@@ -195,6 +196,7 @@
     const rankEl = document.getElementById('rank');
     const comboFlowEl = document.getElementById('flow');
     const stashEl = document.getElementById('stash');
+    const surgeEl = document.getElementById('surge');
     const themeEl = document.getElementById('theme');
     const timerEl = document.getElementById('timer');
     const districtNameEl = document.getElementById('districtName');
@@ -275,6 +277,8 @@
       vaultCores:[],
       bonusCaches:[],
       speedPads:[],
+      surgeNodes:[],
+      jackpot:null,
       exit:null,
       particles:[],
       ribbons:[],
@@ -287,6 +291,7 @@
       flash:0,
       cameraShake:0,
       districtLabel:'',
+      surge:0,
       audioOn:true,
       audioStarted:false,
       exitUnlocked:false,
@@ -436,14 +441,15 @@
     function renderLeaderboard(){
       const rows = state.leaderboard.slice(0,3);
       leaderboardEl.innerHTML = rows.length ? rows.map((row,i)=>`
-        <div class="leader-item">
-          <div class="leader-rank">${i+1}</div>
+        <div class="leader-item" style="${i===0 ? 'border-color:rgba(255,216,111,.25);background:linear-gradient(180deg, rgba(255,216,111,.08), rgba(255,255,255,.04));' : ''}">
+          <div class="leader-rank">${['👑','2','3'][i] || i+1}</div>
           <div class="leader-meta"><strong>${row.score.toLocaleString()}</strong><small>${row.label}</small></div>
           <div>${row.level}</div>
         </div>`).join('') : '<div class="leader-item"><div class="leader-rank">—</div><div class="leader-meta"><strong>No runs yet</strong><small>Your best local scores will land here.</small></div><div></div></div>';
     }
     function maybeRecordBest(){
-      if(state.score > state.best){
+      const wasNewBest = state.score > state.best;
+      if(wasNewBest){
         state.best = state.score;
         state.newBestGlow = 2.6;
         localStorage.setItem(BEST_KEY, String(state.best));
@@ -454,8 +460,10 @@
       state.leaderboard.push({score:state.score, level:`L${state.level}`, label});
       state.leaderboard.sort((a,b)=>b.score-a.score);
       state.leaderboard = state.leaderboard.slice(0,5);
+      const place = Math.max(1, state.leaderboard.findIndex(row => row.score === state.score && row.level === `L${state.level}` && row.label === label) + 1);
       saveLeaderboard();
       renderLeaderboard();
+      return { wasNewBest, place };
     }
 
     function spawnSecurityDoors(level){
@@ -516,6 +524,8 @@
       state.vaultCores = [];
       state.bonusCaches = [];
       state.speedPads = [];
+      state.surgeNodes = [];
+      state.jackpot = null;
       state.enemies = [];
       state.securityDoors = [];
       state.ribbons = [];
@@ -553,6 +563,12 @@
         let c=randomOpenCell();
         while((Math.abs(c.cx-1)<3&&Math.abs(c.cy-1)<3) || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.vaultCores.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.bonusCaches.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.speedPads.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
         state.speedPads.push({...c,pulse:rand(0,Math.PI*2)});
+      }
+      const surgeCount = 1 + (level % 3 === 0 ? 1 : 0);
+      for(let i=0;i<surgeCount;i++){
+        let c=randomOpenCell();
+        while((Math.abs(c.cx-1)<4&&Math.abs(c.cy-1)<4) || Math.abs(c.cx-(GRID-2)) + Math.abs(c.cy-(GRID-2)) < 5 || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.vaultCores.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.bonusCaches.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.speedPads.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.surgeNodes.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
+        state.surgeNodes.push({...c,rot:rand(0,Math.PI*2),pulse:rand(0,Math.PI*2),life:9.8 + level * .18});
       }
       spawnSecurityDoors(level);
       state.exit = {...cellCenter(GRID-2, GRID-2), active:false, pulse:0};
@@ -599,6 +615,8 @@
       syncHud();
     }
 
+    const scoreMultiplier = () => 1 + (state.surge > 0 ? 0.85 + Math.min(.55, state.level * .04) : 0);
+
     function syncHud(){
       scoreEl.textContent = state.score.toLocaleString();
       bestHeroEl.textContent = state.best.toLocaleString();
@@ -607,13 +625,14 @@
       keysEl.textContent = `${state.keysCollected} / ${state.keysTotal}`;
       coresEl.textContent = `${state.coresCollected} / ${state.coresTotal}`;
       cachesEl.textContent = `${state.cachesCollected} / ${state.cachesTotal}`;
-      stateEl.textContent = state.over ? 'Run Lost' : state.paused ? 'Paused' : state.running ? 'Active' : 'Standby';
+      stateEl.textContent = state.over ? 'Run Lost' : state.paused ? 'Paused' : state.running ? (state.jackpot ? 'Jackpot Live' : state.surge > 0 ? 'Surging' : 'Active') : 'Standby';
       bestEl.textContent = state.score >= state.best && state.score > 0 ? `★ ${state.best.toLocaleString()}` : state.best.toLocaleString();
       enemiesEl.textContent = state.enemies.length;
-      exitStateEl.textContent = state.exitUnlocked ? 'Online' : `${state.securityDoors.length} Gates`;
+      exitStateEl.textContent = state.exitUnlocked ? (state.jackpot ? `Jackpot ${Math.ceil(state.jackpot.life)}` : 'Online') : `${state.securityDoors.length} Gates`;
       comboEl.textContent = `x${state.combo}`;
       comboFlowEl.textContent = `${Math.round((state.comboTimer / state.comboWindow) * 100)}%`;
-      stashEl.textContent = state.bonusCaches.length ? `${state.bonusCaches.length}` : `${state.cachesCollected}`;
+      surgeEl.textContent = `x${scoreMultiplier().toFixed(1)}`;
+      stashEl.textContent = state.jackpot ? `JP ${Math.ceil(state.jackpot.life)}s` : state.bonusCaches.length ? `${state.bonusCaches.length}` : `${state.cachesCollected}`;
       rankEl.textContent = getRankName(state.score);
       themeEl.textContent = state.theme.name;
       districtNameEl.textContent = state.theme.name;
@@ -631,11 +650,14 @@
     }
 
     function awardScore(amount, text, x, y, color='#fff'){
-      state.score += amount;
-      state.scorePulse = Math.min(1, state.scorePulse + .18);
-      addPopup(text || `+${amount}`, x, y, color, true);
+      const mult = scoreMultiplier();
+      const total = Math.round(amount * mult);
+      state.score += total;
+      state.scorePulse = Math.min(1, state.scorePulse + .18 + Math.max(0, mult - 1) * .06);
+      addPopup(text ? `${text}${mult > 1 ? ` ×${mult.toFixed(1)}` : ''}` : `+${total}`, x, y, color, true);
       if(state.score > state.best) localStorage.setItem(BEST_KEY, String(state.score));
       syncHud();
+      return total;
     }
 
     function nextLevel(){
@@ -659,11 +681,11 @@
     function gameOver(reason='Vault Breached'){
       state.over = true;
       state.running = false;
-      maybeRecordBest();
+      const result = maybeRecordBest();
       overlay.classList.remove('hidden');
-      const medal = state.score >= state.best ? '🏆 New local best' : state.score >= Math.max(2500, state.best * .7) ? '✨ Hot run' : '⚡ Warm-up run';
+      const medal = result.wasNewBest ? '🏆 New local best' : result.place === 2 ? '🥈 Second-best local run' : result.place === 3 ? '🥉 Third-best local run' : state.score >= Math.max(2500, state.best * .7) ? '✨ Hot run' : '⚡ Warm-up run';
       const cacheLine = `${state.cachesCollected}/${state.cachesTotal} caches • ${state.coresCollected}/${state.coresTotal} cores • chain x${state.combo}`;
-      overlayCard.innerHTML = `<h2>${reason}</h2><p><strong>${medal}</strong></p><p>You reached <strong>level ${state.level}</strong> with <strong>${state.score.toLocaleString()}</strong> credits as a <strong>${getRankName(state.score)}</strong>. Best local score: <strong>${state.best.toLocaleString()}</strong>.</p><p style="margin-top:10px;color:rgba(255,255,255,.8)">${cacheLine}</p><p style="margin-top:10px;color:rgba(255,255,255,.66)">${state.theme.rule}</p><div class="actions"><button id="restartBtn" class="primary">Run Again</button></div>`;
+      overlayCard.innerHTML = `<h2>${reason}</h2><p><strong>${medal}</strong></p><p>You reached <strong>level ${state.level}</strong> with <strong>${state.score.toLocaleString()}</strong> credits as a <strong>${getRankName(state.score)}</strong>. Local board place: <strong>#${result.place}</strong>. Best local score: <strong>${state.best.toLocaleString()}</strong>.</p><p style="margin-top:10px;color:rgba(255,255,255,.8)">${cacheLine}</p><p style="margin-top:10px;color:rgba(255,255,255,.66)">${state.theme.rule}</p><div class="actions"><button id="restartBtn" class="primary">Run Again</button></div>`;
       document.getElementById('restartBtn').addEventListener('click', startGame);
       syncHud();
     }
@@ -682,6 +704,7 @@
           if(state.keysCollected >= state.keysTotal){
             state.exitUnlocked = true;
             state.exit.active = true;
+            if(!state.jackpot) spawnJackpot();
             addParticles(state.exit.x,state.exit.y,'#63f2ff',40,6,1.4);
             addWave(state.exit.x,state.exit.y,'#63f2ff',18,96);
             addPopup('EXIT ONLINE', state.exit.x, state.exit.y - 24, '#63f2ff');
@@ -743,6 +766,66 @@
       state.bonusCaches = kept;
     }
 
+    function spawnJackpot(){
+      let c=randomOpenCell();
+      while((Math.abs(c.cx-state.player.x/TILE)<3&&Math.abs(c.cy-state.player.y/TILE)<3) || Math.abs(c.cx-(GRID-2)) + Math.abs(c.cy-(GRID-2)) < 4 || state.keyOrbs.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.vaultCores.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.bonusCaches.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.speedPads.some(k=>k.cx===c.cx&&k.cy===c.cy) || state.surgeNodes.some(k=>k.cx===c.cx&&k.cy===c.cy)) c=randomOpenCell();
+      state.jackpot = {...c, rot:rand(0, Math.PI*2), pulse:rand(0, Math.PI*2), life:8.8 + Math.min(2.2, state.level * .15), value:Math.round(920 + state.level * 170)};
+      addPopup('JACKPOT LIVE', c.x, c.y - 22, '#ffd86f');
+      addWave(c.x, c.y, '#ffd86f', 20, 92);
+    }
+
+    function collectSurges(dt){
+      const kept = [];
+      for (const surge of state.surgeNodes){
+        surge.life -= dt;
+        surge.rot += .045;
+        surge.pulse += .08;
+        if(Math.hypot(surge.x-state.player.x,surge.y-state.player.y) < TILE*.35){
+          state.surge = Math.max(state.surge, 9.5 + state.level * .35);
+          state.pulseCharge = clamp(state.pulseCharge + 34, 0, 100);
+          state.levelClock = Math.min(state.levelClock + 2.2, DIFF[state.difficulty].timer + 18);
+          feedCombo(2.1, 1);
+          awardScore(180 + state.level * 38, 'SURGE ONLINE', surge.x, surge.y - 22, '#ffd86f');
+          addParticles(surge.x, surge.y, '#ffd86f', 28, 5.6, 1.15);
+          addWave(surge.x, surge.y, '#ffd86f', 20, 84);
+          sfx('unlock');
+          continue;
+        }
+        if(surge.life <= 0){
+          addPopup('SURGE GONE', surge.x, surge.y - 18, '#ff9f67');
+          continue;
+        }
+        kept.push(surge);
+      }
+      state.surgeNodes = kept;
+    }
+
+    function collectJackpot(dt){
+      if(!state.jackpot) return;
+      state.jackpot.life -= dt;
+      state.jackpot.rot += .055;
+      state.jackpot.pulse += .09;
+      if(Math.hypot(state.jackpot.x-state.player.x,state.jackpot.y-state.player.y) < TILE*.42){
+        const payout = state.jackpot.value + Math.floor(state.jackpot.life * 95) + state.combo * 70;
+        state.levelClock = Math.min(state.levelClock + 6.5, DIFF[state.difficulty].timer + 18);
+        state.pulseCharge = clamp(state.pulseCharge + 52, 0, 100);
+        state.surge = Math.max(state.surge, 8.4 + state.level * .2);
+        feedCombo(2.8, 1);
+        awardScore(payout, 'VAULT JACKPOT', state.jackpot.x, state.jackpot.y - 28, '#ffd86f');
+        addParticles(state.jackpot.x, state.jackpot.y, '#ffd86f', 42, 6.8, 1.35);
+        addWave(state.jackpot.x, state.jackpot.y, '#ffd86f', 28, 120);
+        addPopup('+TIME', state.jackpot.x, state.jackpot.y + 24, '#63f2ff');
+        sfx('best');
+        state.jackpot = null;
+        return;
+      }
+      if(state.jackpot.life <= 0){
+        addPopup('JACKPOT SEALED', state.jackpot.x, state.jackpot.y - 20, '#ff7272');
+        addParticles(state.jackpot.x, state.jackpot.y, 'rgba(255,114,114,.85)', 16, 4.6, .9);
+        state.jackpot = null;
+      }
+    }
+
     function applySpeedPads(){
       const cell = nearestCell(state.player.x, state.player.y);
       const onPad = state.speedPads.find(pad => pad.cx === cell.cx && pad.cy === cell.cy);
@@ -782,7 +865,7 @@
       const p = state.player;
       p.hitCooldown = Math.max(0, p.hitCooldown - dt);
       p.dashGlow = Math.max(0, p.dashGlow - dt);
-      const speedMul = 1 + (state.pulseCharge >= 100 ? .11 : 0) + p.dashGlow * .06 + (p.padBoost || 0) * (state.theme.speedBoost - 1);
+      const speedMul = 1 + (state.pulseCharge >= 100 ? .11 : 0) + p.dashGlow * .06 + (p.padBoost || 0) * (state.theme.speedBoost - 1) + (state.surge > 0 ? .08 : 0);
       const dx = p.nextDir.x * p.speed * speedMul;
       const dy = p.nextDir.y * p.speed * speedMul;
       if((p.nextDir.x || p.nextDir.y) && canMoveTo(p.x+dx,p.y+dy,p.radius)) p.dir = {...p.nextDir};
@@ -831,7 +914,9 @@
         const opts = pathOptions(ec.cx, ec.cy);
         let choice = chooseEnemyStep(enemy, ec, pc, opts);
         const rush = enemy.type==='hunter' && enemy.charge > 0 ? 2.1 : 1;
-        const speed = enemy.speed * (enemy.stunned ? .35 : 1) * rush * dt * TILE;
+        const alarmBoost = state.exitUnlocked ? 1.05 : 1;
+        const jackpotBoost = state.jackpot ? 1.08 : 1;
+        const speed = enemy.speed * (enemy.stunned ? .35 : 1) * rush * alarmBoost * jackpotBoost * dt * TILE;
         const nx = enemy.x + choice.x * speed;
         const ny = enemy.y + choice.y * speed;
         if(canMoveTo(nx,ny,enemy.radius)){
@@ -886,6 +971,7 @@
           addPopup('FLOW -1', state.player.x, state.player.y - 30, '#ffb1f5');
         }
       }
+      state.surge = Math.max(0, state.surge - dt);
       state.scorePulse = Math.max(0, state.scorePulse - dt * 1.4);
       state.doorTick += dt;
       state.doorJam = Math.max(0, state.doorJam - dt);
@@ -922,6 +1008,8 @@
       collectKeys();
       collectCores();
       collectCaches(dt);
+      collectSurges(dt);
+      collectJackpot(dt);
       tryExit();
       syncHud();
     }
@@ -1128,6 +1216,58 @@
       });
     }
 
+    function drawSurges(){
+      state.surgeNodes.forEach(surge => {
+        const life = clamp(surge.life / (9.8 + state.level * .18), 0, 1);
+        ctx.save();
+        ctx.translate(surge.x, surge.y);
+        ctx.rotate(surge.rot);
+        ctx.shadowBlur = 34;
+        ctx.shadowColor = '#ffd86f';
+        ctx.globalAlpha = .35 + life * .65;
+        ctx.strokeStyle = '#ffd86f';
+        ctx.lineWidth = 4;
+        for(let i=0;i<3;i++){
+          ctx.beginPath();
+          ctx.moveTo(0, -TILE*(.22 + i*.06));
+          ctx.lineTo(TILE*(.12 + i*.05), 0);
+          ctx.lineTo(0, TILE*(.22 + i*.06));
+          ctx.lineTo(-TILE*(.12 + i*.05), 0);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+    }
+
+    function drawJackpot(){
+      if(!state.jackpot) return;
+      const jp = state.jackpot;
+      ctx.save();
+      ctx.translate(jp.x, jp.y);
+      ctx.rotate(jp.rot);
+      ctx.shadowBlur = 46;
+      ctx.shadowColor = '#ffd86f';
+      ctx.strokeStyle = '#ffd86f';
+      ctx.lineWidth = 5;
+      for(let i=0;i<4;i++){
+        ctx.globalAlpha = .9 - i * .18;
+        ctx.beginPath();
+        ctx.arc(0, 0, TILE*(.12 + i*.08 + Math.sin(jp.pulse + i)*.02), 0, Math.PI*2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#fff4b2';
+      ctx.beginPath();
+      ctx.moveTo(0, -TILE*.2);
+      ctx.lineTo(TILE*.18, 0);
+      ctx.lineTo(0, TILE*.2);
+      ctx.lineTo(-TILE*.18, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
     function drawExit(){
       const e = state.exit;
       const active = state.exitUnlocked;
@@ -1321,7 +1461,8 @@
       ctx.fillText(`Level ${state.level} • ${getRankName(state.score)} • ${state.keysCollected}/${state.keysTotal} keys • ${state.coresCollected}/${state.coresTotal} cores • ${state.bonusCaches.length} live caches`, canvas.width/2, y + 98);
       ctx.font = '700 14px Inter, system-ui, sans-serif';
       ctx.fillStyle = state.score >= state.best && state.score > 0 ? '#ffd86f' : 'rgba(99,242,255,.78)';
-      ctx.fillText(`BEST ${state.best.toLocaleString()} • STASH ${state.cachesCollected}/${state.cachesTotal}`, canvas.width/2, y + 118);
+      const modeLabel = state.jackpot ? `JACKPOT ${Math.ceil(state.jackpot.life)}s` : state.surge > 0 ? `SURGE ×${scoreMultiplier().toFixed(1)}` : `BEST ${state.best.toLocaleString()}`;
+      ctx.fillText(`${modeLabel} • STASH ${state.cachesCollected}/${state.cachesTotal}`, canvas.width/2, y + 118);
       ctx.restore();
     }
 
@@ -1336,7 +1477,15 @@
       ctx.fillStyle = 'rgba(255,255,255,.72)';
       ctx.font = '700 14px Inter, system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(state.districtLabel || '', canvas.width/2, canvas.height - 74);
+      ctx.fillText(state.jackpot ? 'Jackpot is live — greed the detour or cash the exit.' : state.surge > 0 ? `Surge active — every score pop is amplified ×${scoreMultiplier().toFixed(1)}.` : (state.districtLabel || ''), canvas.width/2, canvas.height - 74);
+      if(state.surge > 0){
+        ctx.fillStyle = `rgba(255,216,111,${Math.min(.08, state.surge * .006)})`;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+      }
+      if(state.exitUnlocked && state.jackpot){
+        ctx.fillStyle = `rgba(255,114,114,${.03 + Math.sin(state.exit.pulse*2)*.02})`;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+      }
       if(state.newBestGlow > 0){
         ctx.fillStyle = `rgba(255,216,111,${state.newBestGlow*.05})`;
         ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -1357,9 +1506,11 @@
       drawExit();
       drawRibbons();
       drawSpeedPads();
+      drawSurges();
       drawKeys();
       drawCores();
       drawCaches();
+      drawJackpot();
       drawEnemies();
       drawPlayer();
       drawParticles();
@@ -1390,13 +1541,28 @@
     document.querySelectorAll('[data-dir]').forEach(btn => btn.addEventListener('click',()=> setDir(dirLookup[btn.dataset.dir])));
 
     let swipe = null;
-    canvas.addEventListener('touchstart', e => { const t=e.touches[0]; swipe={x:t.clientX,y:t.clientY}; }, {passive:true});
+    const applyTouchDir = (dx, dy) => {
+      if(Math.abs(dx)<18 && Math.abs(dy)<18) return false;
+      if(Math.abs(dx)>Math.abs(dy)) setDir(dx>0?dirLookup.right:dirLookup.left); else setDir(dy>0?dirLookup.down:dirLookup.up);
+      return true;
+    };
+    canvas.addEventListener('touchstart', e => { const t=e.touches[0]; swipe={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,moved:false}; }, {passive:true});
+    canvas.addEventListener('touchmove', e => {
+      if(!swipe) return;
+      const t=e.touches[0];
+      const dx=t.clientX-swipe.lastX, dy=t.clientY-swipe.lastY;
+      if(applyTouchDir(dx,dy)){
+        swipe.moved = true;
+        swipe.lastX = t.clientX;
+        swipe.lastY = t.clientY;
+      }
+    }, {passive:true});
     canvas.addEventListener('touchend', e => {
       if(!swipe) return;
       const t=e.changedTouches[0];
       const dx=t.clientX-swipe.x, dy=t.clientY-swipe.y;
-      if(Math.abs(dx)<12 && Math.abs(dy)<12){ if(!state.running || state.over) startGame(); else triggerBurst(); swipe=null; return; }
-      if(Math.abs(dx)>Math.abs(dy)) setDir(dx>0?dirLookup.right:dirLookup.left); else setDir(dy>0?dirLookup.down:dirLookup.up);
+      if(!swipe.moved && Math.abs(dx)<12 && Math.abs(dy)<12){ if(!state.running || state.over) startGame(); else triggerBurst(); swipe=null; return; }
+      applyTouchDir(dx,dy);
       swipe=null;
     }, {passive:true});
 

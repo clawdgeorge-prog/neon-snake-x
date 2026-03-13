@@ -126,8 +126,22 @@
     }
     .district-banner.visible { opacity:1; transform:translateX(-50%) translateY(0); }
     .overlay h2 { margin:0 0 10px; font-size:clamp(2.1rem,5vw,3.6rem); line-height:.95; letter-spacing:-.05em; }
+    .overlay h2.title-anim { animation:titlePulse 3s ease-in-out infinite; }
+    @keyframes titlePulse { 0%,100%{ text-shadow:0 0 26px rgba(99,242,255,.22),0 0 52px rgba(99,242,255,.12); } 50%{ text-shadow:0 0 42px rgba(99,242,255,.38),0 0 84px rgba(99,242,255,.22),0 0 126px rgba(159,116,255,.14); } }
     .overlay p { margin:0; color:var(--muted); line-height:1.6; font-size:1rem; }
-    .title-actions { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:16px; }
+    .title-screen-stats { display:flex; justify-content:center; gap:24px; margin:20px 0; flex-wrap:wrap; }
+    .title-stat { text-align:center; }
+    .title-stat-label { display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.18em; color:var(--muted); margin-bottom:4px; }
+    .title-stat-value { font-size:2rem; font-weight:900; letter-spacing:-.02em; }
+    .title-stat-value.gold { color:var(--gold); text-shadow:0 0 18px rgba(255,215,106,.32); }
+    .title-stat-value.cyan { color:var(--cyan); text-shadow:0 0 18px rgba(99,242,255,.32); }
+    .title-controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:18px 0; text-align:left; }
+    .title-control { display:flex; align-items:center; gap:10px; font-size:.85rem; color:var(--muted); }
+    .title-control kbd { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:26px; padding:0 8px; border-radius:6px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); font-size:.72rem; font-weight:700; color:var(--ink); }
+    .title-settings { display:flex; justify-content:center; gap:14px; margin-top:16px; flex-wrap:wrap; }
+    .title-toggle { display:flex; align-items:center; gap:8px; font-size:.82rem; color:var(--muted); cursor:pointer; }
+    .title-toggle input { accent-color:var(--cyan); width:16px; height:16px; }
+    .title-actions { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px; }
     .touch-pad { display:none; justify-content:center; grid-template-columns:repeat(4,72px); gap:10px; margin-top:2px; }
     .touch-pad button { min-height:64px; font-size:1.15rem; border-radius:20px; }
     .touch-pulse { box-shadow:0 0 24px rgba(99,242,255,.18); }
@@ -362,7 +376,7 @@
   ].map(r => r.split('').map(Number));
   const state = {
     running:false, paused:false, over:false, introPulse:0,
-    score:0, level:1, health:3, charge:0, shards:0, levelShards:0, objectiveTarget:4, best:Number(localStorage.getItem(STORAGE_KEY) || 0), difficulty:'normal',
+    score:0, level:1, health:3, charge:0, shards:0, levelShards:0, objectiveTarget:4, best:Number(localStorage.getItem(STORAGE_KEY) || 0), districtsCleared:Number(localStorage.getItem('maze-sentinel-districts') || 0), difficulty:'normal',
     player:null, drones:[], particles:[], ribbons:[], pulses:[], decoys:[], links:[], shard:null, gate:null, exitPortal:null, ambience:[], sparks:[],
     routePath:[], routeType:'shard', routePulse:0,
     lastTs:0, spawnTimer:0, flash:0, cameraShake:0, shardGlow:0, pulseCounter:0, decoyCharges:1, waveType:'Scout', audioEnabled:true, audioStarted:false,
@@ -760,6 +774,8 @@
     awardScore(350 + state.level * 120 + breachBonus, state.player.x, state.player.y - 18, breachBonus ? 'Breach Flow' : 'District Breach', state.currentTheme.shardB);
     boostFlow(.34 + breachUrgency * .42 + (state.exitRelocations === 0 ? .16 : 0), state.player.x, state.player.y - 28, state.exitRelocations === 0 ? 'Perfect Breach' : 'Exit Secured');
     state.level += 1;
+    state.districtsCleared += 1;
+    localStorage.setItem('maze-sentinel-districts', String(state.districtsCleared));
     state.levelShards = 0;
     state.objectiveTarget = Math.min(8, 3 + state.level);
     state.exitPortal = null;
@@ -1162,7 +1178,25 @@
       syncHud();
     }
   }
-  function gameOver(){ state.running=false; state.over=true; overlay.classList.remove('hidden'); overlayCard.innerHTML = `<h2>Signal Lost</h2><p>You reached <strong>${state.score}</strong> points on level <strong>${state.level}</strong>. This build now has a real breach loop: collect enough shards to open the district exit, then survive the sprint to the portal while drones collapse the route.</p><div class="title-actions"><button id="overlayRestart" class="primary">Run Again</button></div>`; document.getElementById('overlayRestart').addEventListener('click', startGame); syncHud(); }
+  function gameOver(){ state.running=false; state.over=true; overlay.classList.remove('hidden'); overlayCard.innerHTML = `
+    <h2>Signal Lost</h2>
+    <p>You reached <strong>${state.score.toLocaleString()}</strong> points on level <strong>${state.level}</strong>.</p>
+    <div class="title-screen-stats">
+      <div class="title-stat">
+        <span class="title-stat-label">Score</span>
+        <span class="title-stat-value cyan">${state.score.toLocaleString()}</span>
+      </div>
+      <div class="title-stat">
+        <span class="title-stat-label">Districts</span>
+        <span class="title-stat-value gold">${state.districtsCleared}</span>
+      </div>
+      <div class="title-stat">
+        <span class="title-stat-label">Best</span>
+        <span class="title-stat-value cyan">${state.best.toLocaleString()}</span>
+      </div>
+    </div>
+    <div class="title-actions"><button id="overlayRestart" class="primary">Run Again</button><button id="overlayTitle">Title</button></div>
+  `; document.getElementById('overlayRestart').addEventListener('click', startGame); document.getElementById('overlayTitle').addEventListener('click', showTitleScreen); syncHud(); }
   function update(dt){ state.introPulse += dt; state.routePulse += dt; state.districtBannerTimer=Math.max(0,state.districtBannerTimer-dt); if(state.districtBannerTimer<=0) districtBanner.classList.remove('visible'); if(!state.running||state.paused||state.over) return; state.spawnTimer+=dt; state.flash=Math.max(0,state.flash-dt); state.cameraShake=Math.max(0,state.cameraShake-dt); state.shardGlow=Math.max(0,state.shardGlow-dt*1.6); updateOverdrive(dt); if(state.gate){ state.gate.cooldown=Math.max(0,state.gate.cooldown-dt); state.gate.pulse+=dt*2.8; }
     if(state.transitionTimer > 0){
       state.transitionTimer = Math.max(0, state.transitionTimer - dt);
@@ -1818,7 +1852,36 @@
   });
   fullscreenBtn.addEventListener('click', async()=>{ const root=document.documentElement; if(!document.fullscreenElement&&root.requestFullscreen) await root.requestFullscreen(); else if(document.exitFullscreen) await document.exitFullscreen(); });
   refreshPreferenceButtons();
-  bestScoreEl.textContent=state.best; resetGame(); render(); requestAnimationFrame(frame);
+  function showTitleScreen(){ overlay.classList.remove('hidden'); overlayCard.innerHTML = `
+    <h2 class="title-anim">Maze Sentinel</h2>
+    <p>A neon route-control maze chase. Slip through security districts, bend drone pursuit, and breach the exit.</p>
+    <div class="title-screen-stats">
+      <div class="title-stat">
+        <span class="title-stat-label">Best Score</span>
+        <span class="title-stat-value gold">${state.best.toLocaleString()}</span>
+      </div>
+      <div class="title-stat">
+        <span class="title-stat-label">Districts Cleared</span>
+        <span class="title-stat-value cyan">${state.districtsCleared || 0}</span>
+      </div>
+    </div>
+    <div class="title-controls">
+      <div class="title-control"><kbd>↑↓←→</kbd> Move</div>
+      <div class="title-control"><kbd>Space</kbd> Pulse burst</div>
+      <div class="title-control"><kbd>Shift</kbd> Deploy decoy</div>
+      <div class="title-control"><kbd>Enter</kbd> Start / Resume</div>
+    </div>
+    <div class="title-settings">
+      <label class="title-toggle"><input type="checkbox" id="titleMotion" ${state.settings.reducedMotion ? 'checked' : ''}> Reduced motion</label>
+      <label class="title-toggle"><input type="checkbox" id="titleContrast" ${state.settings.highContrast ? 'checked' : ''}> High contrast</label>
+    </div>
+    <div class="title-actions">
+      <button id="overlayStart" class="primary">Enter District</button>
+      <button id="audioBtn">Audio ${state.audioEnabled ? 'On' : 'Off'}</button>
+    </div>
+  `; document.getElementById('overlayStart').addEventListener('click', startGame); document.getElementById('audioBtn').addEventListener('click', ()=>{ state.audioEnabled=!state.audioEnabled; showTitleScreen(); }); document.getElementById('titleMotion').addEventListener('change',e=>{ state.settings.reducedMotion=e.target.checked; savePreferences(); applyPreferences(); }); document.getElementById('titleContrast').addEventListener('change',e=>{ state.settings.highContrast=e.target.checked; savePreferences(); applyPreferences(); }); }
+  function applyPreferences(){ if(state.settings.reducedMotion) document.body.classList.add('no-motion'); else document.body.classList.remove('no-motion'); if(state.settings.highContrast) document.body.classList.add('high-contrast'); else document.body.classList.remove('high-contrast'); }
+  savePreferences(); applyPreferences(); showTitleScreen(); bestScoreEl.textContent=state.best; state.running=false; render(); requestAnimationFrame(frame);
 })();
 </script>
 </body>

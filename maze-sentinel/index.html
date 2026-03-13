@@ -771,7 +771,7 @@
       c = randomOpenCell();
       tries += 1;
     }
-    state.exitPortal = {...c, pulse:0, flare:1};
+    state.exitPortal = {...c, pulse:0, flare:1, spawnAnim:0};
     state.exitTimerMax = Math.max(7.5, 10.5 - Math.min(2.5, state.level * 0.2));
     state.exitTimer = state.exitTimerMax;
     state.exitAlarmTimer = 0;
@@ -799,7 +799,7 @@
       tries += 1;
     }
     addParticles(old.x, old.y, state.currentTheme.gateB, 28, 5.5, 1.1);
-    state.exitPortal = {...c, pulse:0, flare:1};
+    state.exitPortal = {...c, pulse:0, flare:1, spawnAnim:0};
     state.exitTimer = Math.max(5.8, state.exitTimerMax - 1.2 - state.exitRelocations * .35);
     state.exitAlarmTimer = .15;
     state.exitRelocations += 1;
@@ -1272,6 +1272,10 @@
     if(state.exitPortal){
       state.exitPortal.pulse += dt * (2.4 + (state.exitTimer <= 4 ? 1.6 : 0));
       state.exitPortal.flare = Math.max(0, (state.exitPortal.flare || 0) - dt * 1.8);
+      // Animate spawn bloom effect (0 to 1 with ease-out bounce)
+      if(state.exitPortal.spawnAnim !== undefined && state.exitPortal.spawnAnim < 1){
+        state.exitPortal.spawnAnim = Math.min(1, state.exitPortal.spawnAnim + dt * 3.2);
+      }
       state.exitTimer = Math.max(0, state.exitTimer - dt);
       state.exitAlarmTimer -= dt;
       const urgency = state.exitTimerMax ? 1 - state.exitTimer / state.exitTimerMax : 0;
@@ -1322,37 +1326,83 @@
     const pulse = p.pulse || 0;
     const urgency = state.exitTimerMax ? 1 - state.exitTimer / state.exitTimerMax : 0;
     const flare = p.flare || 0;
+    // Spawn bloom animation: ease-out with slight overshoot
+    let spawnScale = 1;
+    if(p.spawnAnim !== undefined && p.spawnAnim < 1){
+      const t = p.spawnAnim;
+      spawnScale = t < 0.5 ? 4 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+    // More dramatic urgency: faster pulse rate, increased glow
+    const urgencyPulseBoost = 1 + urgency * 1.8;
+    const urgencyGlowBoost = urgency * 18;
     ctx.save();
     ctx.translate(p.x, p.y);
+    ctx.scale(spawnScale, spawnScale);
+    // Draw anchor beams to maze edges for visual grounding
+    if(spawnScale > 0.6){
+      const beamAlpha = Math.min(0.14, (spawnScale - 0.6) * 0.35) * (1 - urgency * 0.3);
+      const edgeDist = TILE * 5.5;
+      for(let i = 0; i < 4; i++){
+        const angle = Math.PI * 0.5 * i + pulse * 0.12;
+        ctx.save();
+        ctx.rotate(angle);
+        const beamGrad = ctx.createLinearGradient(0, 0, edgeDist, 0);
+        beamGrad.addColorStop(0, i % 2 === 0 ? state.currentTheme.gateA : state.currentTheme.gateB);
+        beamGrad.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.strokeStyle = beamGrad;
+        ctx.globalAlpha = beamAlpha;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(TILE * 0.5, 0);
+        ctx.lineTo(edgeDist, 0);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+    // Outer expanding bloom ring during spawn
+    if(p.spawnAnim !== undefined && p.spawnAnim < 1){
+      const bloomR = TILE * (0.3 + p.spawnAnim * 2.5);
+      const bloomGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, bloomR);
+      bloomGrad.addColorStop(0, state.currentTheme.gateA);
+      bloomGrad.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+      bloomGrad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.globalAlpha = (1 - p.spawnAnim) * 0.45;
+      ctx.fillStyle = bloomGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, bloomR, 0, Math.PI * 2);
+      ctx.fill();
+    }
     for(let i = 0; i < 3; i++){
-      const ring = TILE * (.24 + i * .1 + Math.sin(pulse + i) * (.018 + urgency * .01));
+      const ring = TILE * (.24 + i * .1 + Math.sin(pulse * urgencyPulseBoost + i) * (.018 + urgency * .014));
       ctx.strokeStyle = i % 2 === 0 ? state.currentTheme.gateA : state.currentTheme.gateB;
-      ctx.globalAlpha = .28 + i * .12 + urgency * .08;
+      ctx.globalAlpha = .28 + i * .12 + urgency * .12;
       ctx.lineWidth = 5 - i;
-      ctx.shadowBlur = 28 + urgency * 12;
+      ctx.shadowBlur = 28 + urgencyGlowBoost + (i * 6);
       ctx.shadowColor = i % 2 === 0 ? state.currentTheme.gateA : state.currentTheme.gateB;
       ctx.beginPath();
       ctx.arc(0, 0, ring, 0, Math.PI * 2);
       ctx.stroke();
     }
+    // Rotating energy beams
     for(let i = 0; i < 4; i++){
       ctx.save();
-      ctx.rotate(Math.PI * .5 * i + pulse * .45);
-      const beam = TILE * (1.8 + urgency * .75 + flare * .25);
+      ctx.rotate(Math.PI * .5 * i + pulse * .45 * urgencyPulseBoost);
+      const beam = TILE * (1.8 + urgency * 1.1 + flare * .35);
       const beamGrad = ctx.createLinearGradient(0, 0, beam, 0);
       beamGrad.addColorStop(0, 'rgba(255,255,255,0)');
       beamGrad.addColorStop(.2, i % 2 === 0 ? state.currentTheme.gateA : state.currentTheme.gateB);
       beamGrad.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.strokeStyle = beamGrad;
-      ctx.globalAlpha = .18 + urgency * .18 + flare * .22;
+      ctx.globalAlpha = .18 + urgency * .24 + flare * .28;
       ctx.lineWidth = 8 - i;
-      ctx.shadowBlur = 24;
+      ctx.shadowBlur = 24 + urgencyGlowBoost;
       ctx.beginPath();
       ctx.moveTo(-beam, 0);
       ctx.lineTo(beam, 0);
       ctx.stroke();
       ctx.restore();
     }
+    // Countdown ring with urgency coloring
     const countdownR = TILE * .42;
     ctx.save();
     ctx.rotate(-Math.PI * .5);
@@ -1361,20 +1411,25 @@
     ctx.beginPath();
     ctx.arc(0, 0, countdownR, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.strokeStyle = urgency > .72 ? '#ff8d8d' : '#fff0b0';
-    ctx.shadowBlur = 18;
-    ctx.shadowColor = ctx.strokeStyle;
+    const urgencyColor = urgency > .72 ? '#ff8d8d' : urgency > .45 ? '#ffd76a' : '#fff0b0';
+    ctx.strokeStyle = urgencyColor;
+    ctx.shadowBlur = 18 + urgencyGlowBoost;
+    ctx.shadowColor = urgencyColor;
     ctx.beginPath();
     ctx.arc(0, 0, countdownR, 0, Math.PI * 2 * clamp(state.exitTimer / Math.max(.001, state.exitTimerMax), 0, 1));
     ctx.stroke();
     ctx.restore();
-    ctx.rotate(pulse * (0.9 + urgency * .6));
-    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    // Center diamond core
+    const coreScale = 1 + urgency * 0.25;
+    ctx.rotate(pulse * (0.9 + urgency * .8) * urgencyPulseBoost);
+    ctx.fillStyle = urgency > .72 ? '#ffffff' : 'rgba(255,255,255,.92)';
+    ctx.shadowBlur = 22 + urgencyGlowBoost;
+    ctx.shadowColor = urgencyColor;
     ctx.beginPath();
-    ctx.moveTo(0, -TILE * .18);
-    ctx.lineTo(TILE * .18, 0);
-    ctx.lineTo(0, TILE * .18);
-    ctx.lineTo(-TILE * .18, 0);
+    ctx.moveTo(0, -TILE * .18 * coreScale);
+    ctx.lineTo(TILE * .18 * coreScale, 0);
+    ctx.lineTo(0, TILE * .18 * coreScale);
+    ctx.lineTo(-TILE * .18 * coreScale, 0);
     ctx.closePath();
     ctx.fill();
     ctx.restore();

@@ -205,7 +205,7 @@
           <div id="districtBanner" class="district-banner">District Shift</div>
           <div class="overlay-card" id="overlayCard">
             <h2>Maze Sentinel</h2>
-            <p>Slip through a luminous security lattice, charge your pulse core, and bend pursuit lines to your advantage. This build now has a cinematic intro, adaptive audio, telegraphed hunter surges, richer environmental FX, a decoy-to-pulse arc lash, a proper breach objective, and district traits that change the run rules each level.</p>
+            <p>Slip through a luminous security lattice, charge your pulse core, and bend pursuit lines to your advantage. This build now has a cinematic intro, a district-reactive soundtrack that swells during hunter locks and exit rushes, telegraphed hunter surges, richer environmental FX, a decoy-to-pulse arc lash, a proper breach objective, and district traits that change the run rules each level.</p>
             <div class="title-actions">
               <button id="overlayStart" class="primary">Enter District</button>
               <button id="audioBtn">Audio On</button>
@@ -308,7 +308,7 @@
     transitionTimer:0, transitionMax:0, transitionTitle:'', transitionText:'', transitionAccent:'#63f2ff',
     settings:{ reducedMotion: localStorage.getItem(MOTION_KEY) === '1', highContrast: localStorage.getItem(CONTRAST_KEY) === '1' }
   };
-  let audioCtx = null, masterGain = null, musicGain = null;
+  let audioCtx = null, masterGain = null, musicGain = null, musicTimer = null, musicStep = 0;
   function rand(min,max){ return Math.random()*(max-min)+min; }
   function randi(min,max){ return Math.floor(rand(min,max+1)); }
   function clamp(v,min,max){ return Math.max(min, Math.min(max,v)); }
@@ -361,41 +361,92 @@
   function initAudio(){
     if(audioCtx) return;
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    masterGain = audioCtx.createGain(); musicGain = audioCtx.createGain();
-    masterGain.gain.value = .14; musicGain.gain.value = .08;
-    musicGain.connect(masterGain); masterGain.connect(audioCtx.destination);
-    startMusic();
+    masterGain = audioCtx.createGain();
+    musicGain = audioCtx.createGain();
+    masterGain.gain.value = .14;
+    musicGain.gain.value = .09;
+    musicGain.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
     state.audioStarted = true;
+    startMusic();
   }
-  function tone(freq, type, duration, when=0, gain=.06){
-    if(!audioCtx || !state.audioEnabled) return;
+  function clearMusicTimer(){
+    if(musicTimer){
+      clearTimeout(musicTimer);
+      musicTimer = null;
+    }
+  }
+  function tone(freq, type, duration, when=0, gain=.06, destination=masterGain){
+    if(!audioCtx || !state.audioEnabled || !destination) return;
     const t = audioCtx.currentTime + when;
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    osc.type = type; osc.frequency.setValueAtTime(freq, t);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t+.01); g.gain.exponentialRampToValueAtTime(0.0001, t+duration);
-    osc.connect(g).connect(masterGain); osc.start(t); osc.stop(t+duration+.02);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + .01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+    osc.connect(g).connect(destination);
+    osc.start(t);
+    osc.stop(t + duration + .02);
   }
   function noiseBurst(duration=.12, gain=.04){
     if(!audioCtx || !state.audioEnabled) return;
     const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * duration, audioCtx.sampleRate);
-    const data = buffer.getChannelData(0); for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1-i/data.length);
-    const src = audioCtx.createBufferSource(); const filter = audioCtx.createBiquadFilter(); const g = audioCtx.createGain();
-    filter.type='bandpass'; filter.frequency.value=1400; g.gain.value=gain; src.buffer=buffer; src.connect(filter).connect(g).connect(masterGain); src.start();
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1-i/data.length);
+    const src = audioCtx.createBufferSource();
+    const filter = audioCtx.createBiquadFilter();
+    const g = audioCtx.createGain();
+    filter.type='bandpass';
+    filter.frequency.value=1400;
+    g.gain.value=gain;
+    src.buffer=buffer;
+    src.connect(filter).connect(g).connect(masterGain);
+    src.start();
+  }
+  function districtSequence(){
+    const sequences = {
+      Astra: [220, 330, 294, 392, 330, 440, 392, 294],
+      Velour: [196, 294, 349, 392, 349, 523, 392, 294],
+      Sol: [247, 370, 330, 494, 440, 587, 494, 370],
+      Nyx: [174, 261, 311, 349, 311, 466, 392, 261]
+    };
+    return sequences[state.currentTheme?.name] || sequences.Astra;
+  }
+  function playMusicStep(){
+    if(!audioCtx || !state.audioEnabled || !state.audioStarted || !musicGain) return;
+    const seq = districtSequence();
+    const freq = seq[musicStep % seq.length];
+    const runningMix = state.running && !state.paused && !state.over ? 1 : .65;
+    const urgency = state.exitPortal ? clamp(1 - state.exitTimer / Math.max(.001, state.exitTimerMax), 0, 1) : 0;
+    const hot = state.hunterPressure || state.dangerLevel > .54;
+    const accent = musicStep % 4 === 0;
+    const shimmer = musicStep % 8 === 4;
+    tone(Math.max(82, freq * .5), 'triangle', .34, 0, (.018 + urgency * .006) * runningMix, musicGain);
+    tone(freq, hot ? 'sawtooth' : 'triangle', .26, .01, (accent ? .032 : .024) * runningMix, musicGain);
+    tone(freq * 1.5, 'sine', .19, .07, (accent ? .018 : .012) * runningMix, musicGain);
+    if(shimmer) tone(freq * 2, 'triangle', .15, .1, (.012 + urgency * .006) * runningMix, musicGain);
+    if(hot) tone(freq * 2.02, 'square', .08, .02, (.008 + urgency * .006) * runningMix, musicGain);
+    if(state.exitPortal && urgency > .44) tone(freq * 1.12, 'triangle', .1, .12, (.01 + urgency * .01) * runningMix, musicGain);
+    if(state.transitionTimer > 0) tone(freq * 2, 'sine', .2, .03, .014, musicGain);
+  }
+  function scheduleMusicStep(){
+    clearMusicTimer();
+    if(!audioCtx || !state.audioEnabled || !state.audioStarted) return;
+    playMusicStep();
+    const urgency = state.exitPortal ? clamp(1 - state.exitTimer / Math.max(.001, state.exitTimerMax), 0, 1) : 0;
+    const hot = state.hunterPressure || state.dangerLevel > .54;
+    const interval = state.running && !state.paused && !state.over
+      ? (hot ? 290 : urgency > .6 ? 330 : 420)
+      : 560;
+    musicStep += 1;
+    musicTimer = setTimeout(scheduleMusicStep, interval);
   }
   function startMusic(){
     if(!audioCtx) return;
-    const seq = [220, 330, 294, 392, 330, 440, 392, 294];
-    let i = 0;
-    setInterval(() => {
-      if(!audioCtx || !state.audioEnabled || !state.audioStarted) return;
-      const t = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator(); const g = audioCtx.createGain(); const lfo = audioCtx.createOscillator(); const lfoG = audioCtx.createGain();
-      osc.type = 'triangle'; osc.frequency.value = seq[i % seq.length];
-      lfo.frequency.value = .2; lfoG.gain.value = 6; lfo.connect(lfoG).connect(osc.frequency);
-      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.03,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+.42);
-      osc.connect(g).connect(musicGain); osc.start(t); lfo.start(t); osc.stop(t+.44); lfo.stop(t+.44); i++;
-    }, 430);
+    musicStep = 0;
+    scheduleMusicStep();
   }
   function playSfx(kind){
     if(!state.audioEnabled) return;
@@ -1287,7 +1338,18 @@
   }, {passive:true});
   startBtn.addEventListener('click', startGame); overlayStart.addEventListener('click', startGame); pauseBtn.addEventListener('click', togglePause); boostBtn.addEventListener('click', triggerPulse); decoyBtn.addEventListener('click', deployDecoy);
   difficultySelect.addEventListener('change',e=>{ state.difficulty=e.target.value; if(!state.running||state.over) resetGame(); syncHud(); });
-  audioBtn.addEventListener('click', ()=>{ state.audioEnabled=!state.audioEnabled; audioBtn.textContent = state.audioEnabled ? 'Audio On' : 'Audio Off'; if(state.audioEnabled) initAudio(); if(masterGain) masterGain.gain.value = state.audioEnabled ? .14 : 0.0001; });
+  audioBtn.addEventListener('click', ()=>{
+    state.audioEnabled=!state.audioEnabled;
+    audioBtn.textContent = state.audioEnabled ? 'Audio On' : 'Audio Off';
+    if(state.audioEnabled){
+      initAudio();
+      if(masterGain) masterGain.gain.value = .14;
+      startMusic();
+    } else {
+      clearMusicTimer();
+      if(masterGain) masterGain.gain.value = 0.0001;
+    }
+  });
   motionBtn.addEventListener('click', ()=>{
     state.settings.reducedMotion = !state.settings.reducedMotion;
     buildAmbience();

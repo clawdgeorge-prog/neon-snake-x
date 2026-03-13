@@ -32,6 +32,7 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
   - **Velour / Mirage Grid** — decoys last longer and recharge faster
   - **Sol / Overcharge Lattice** — pulse expands farther and stuns longer
   - **Nyx / Blink Mesh** — gates recycle faster after warps
+- Level clears now get a short premium-feeling breach transition with a celebratory audio stinger, district confirmation card, and a cleaner handoff into the next themed sector instead of abruptly snapping into the next run state
 
 ## Next polish ideas
 - richer soundtrack / SFX system

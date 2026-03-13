@@ -205,6 +205,7 @@
           <li>Each district now carries a live gameplay trait, not just a palette swap</li>
           <li>Distinct enemy classes now force different route choices</li>
           <li>Hunter drones now telegraph lock-ons before a high-speed surge</li>
+          <li>Skim drones to trigger Overdrive, converting close calls into temporary speed, charge, and score pressure</li>
         </ul>
       </div>
       <div class="footnote">Controls: WASD / Arrow keys • Space = Pulse • Shift / X = Decoy • Drag anywhere on mobile to steer continuously with turn assist • Tap the arena to start or pulse.</div>
@@ -217,6 +218,7 @@
           <div class="pill">Shards <strong id="shardCount">0</strong></div>
           <div class="pill">Objective <strong id="objectiveCount">0 / 4</strong></div>
           <div class="pill">Flow <strong id="flowLabel">x1.0</strong></div>
+          <div class="pill">Overdrive <strong id="overdriveLabel">Idle</strong></div>
         </div>
         <div class="hud-right">
           <div class="pill">Bursts <strong id="pulseCells">0</strong></div>
@@ -296,6 +298,7 @@
   const intelLabelEl = document.getElementById('intelLabel');
   const dangerLabelEl = document.getElementById('dangerLabel');
   const flowLabelEl = document.getElementById('flowLabel');
+  const overdriveLabelEl = document.getElementById('overdriveLabel');
   const pulseCard = document.getElementById('pulseCard');
   const pulseStateEl = document.getElementById('pulseState');
   const pulseSubEl = document.getElementById('pulseSub');
@@ -365,7 +368,7 @@
     lastTs:0, spawnTimer:0, flash:0, cameraShake:0, shardGlow:0, pulseCounter:0, decoyCharges:1, waveType:'Scout', audioEnabled:true, audioStarted:false,
     themeIndex:0, currentTheme:districts[0], districtBannerTimer:0, dangerLevel:0, dangerLabel:'Clear', hunterPressure:false, threatVectors:[], intelLabel:'Pursuit',
     exitTimer:0, exitTimerMax:0, exitAlarmTimer:0, exitRelocations:0,
-    flow:1, flowTimer:0, flowPeak:1, callouts:[],
+    flow:1, flowTimer:0, flowPeak:1, callouts:[], overdrive:0, overdriveTimer:0, nearMissPulse:0,
     transitionTimer:0, transitionMax:0, transitionTitle:'', transitionText:'', transitionAccent:'#63f2ff',
     settings:{ reducedMotion: localStorage.getItem(MOTION_KEY) === '1', highContrast: localStorage.getItem(CONTRAST_KEY) === '1' }
   };
@@ -524,6 +527,7 @@
     if(kind==='breach'){ tone(392,'triangle',.16,0,.05 * motionGain); tone(587,'triangle',.18,.08,.046 * motionGain); tone(784,'sine',.22,.16,.04 * motionGain); tone(1174,'sine',.28,.26,.028 * motionGain); noiseBurst(.11,.022 * motionGain); }
     if(kind==='flow'){ tone(660,'triangle',.08,0,.024 * motionGain); tone(990,'sine',.12,.03,.018 * motionGain); }
     if(kind==='flowBreak'){ tone(210,'square',.12,0,.024 * motionGain); tone(168,'triangle',.16,.04,.02 * motionGain); }
+    if(kind==='dodge'){ tone(840,'triangle',.09,0,.022 * motionGain); tone(1260,'sine',.11,.03,.016 * motionGain); tone(1680,'triangle',.12,.06,.012 * motionGain); }
   }
   function addParticles(x,y,color,count,spread=3.2,life=1){
     const scaledCount = Math.max(4, Math.round(count * (state.settings.reducedMotion ? 0.45 : 1)));
@@ -575,6 +579,27 @@
       state.flow = Math.max(1, state.flow - dt * 0.22);
     }
   }
+  function triggerCloseCall(drone){
+    const gain = drone.type === 'hunter' ? 0.34 : drone.type === 'scout' ? 0.22 : 0.26;
+    state.overdrive = clamp(state.overdrive + gain, 0, 1.8);
+    state.overdriveTimer = Math.max(state.overdriveTimer, 1.55 + gain * 1.5);
+    state.nearMissPulse = 1;
+    state.charge = clamp(state.charge + 8 + gain * 10, 0, 100);
+    awardScore(28 + gain * 40, state.player.x, state.player.y - 14, drone.type === 'hunter' ? 'Hunter Slip' : 'Close Call', '#8feeff');
+    boostFlow(0.07 + gain * 0.08, state.player.x, state.player.y - 30, 'Overdrive');
+    addParticles(state.player.x, state.player.y, 'rgba(143,238,255,.92)', 16, 3.5, .72);
+    playSfx('dodge');
+  }
+  function updateOverdrive(dt){
+    state.nearMissPulse = Math.max(0, state.nearMissPulse - dt * 1.7);
+    if(state.overdriveTimer > 0){
+      state.overdriveTimer = Math.max(0, state.overdriveTimer - dt);
+      const floor = 0.18;
+      state.overdrive = Math.max(floor, state.overdrive - dt * 0.12);
+    } else {
+      state.overdrive = Math.max(0, state.overdrive - dt * 0.55);
+    }
+  }
   function updateCallouts(dt){
     state.callouts = state.callouts.filter(callout => {
       callout.life -= dt;
@@ -614,7 +639,7 @@
   function advanceDistrict(){
     setDistrictTheme(state.themeIndex + 1, true);
   }
-  function initPlayer(){ const c = cellCenter(1,1); return {x:c.x,y:c.y,radius:TILE*.31,speed:3.35,dir:{x:0,y:0},nextDir:{x:0,y:0},hitCooldown:0,trail:[]}; }
+  function initPlayer(){ const c = cellCenter(1,1); return {x:c.x,y:c.y,radius:TILE*.31,baseSpeed:3.35,speed:3.35,dir:{x:0,y:0},nextDir:{x:0,y:0},hitCooldown:0,trail:[]}; }
   function spawnShard(){ let c; do c=randomOpenCell(); while(Math.abs(c.cx-1)<3&&Math.abs(c.cy-1)<3); state.shard={...c,rot:rand(0,Math.PI*2)}; }
   function spawnGate(){ let a=randomOpenCell(), b=randomOpenCell(); while(Math.abs(a.cx-b.cx)+Math.abs(a.cy-b.cy)<8) b=randomOpenCell(); state.gate={a,b,cooldown:0,pulse:0}; }
   function spawnExitPortal(){
@@ -708,12 +733,12 @@
     }[type];
     state.waveType = type[0].toUpperCase() + type.slice(1);
     state.drones.push({
-      x:c.x, y:c.y, radius:config.radius, speed:config.speed, hue:config.hue, stunned:0, trail:[], wobble:rand(0,Math.PI*2), type, intent:'Pursuit',
+      x:c.x, y:c.y, radius:config.radius, speed:config.speed, hue:config.hue, stunned:0, trail:[], wobble:rand(0,Math.PI*2), type, intent:'Pursuit', nearMissCooldown:0,
       surgeCooldown: rand(1.8, 3.4), surgeTelegraph:0, surgeBurst:0, surgeTarget:{x:c.x,y:c.y}
     });
   }
   function resetGame(){
-    state.running=false; state.paused=false; state.over=false; state.score=0; state.level=1; state.health=3; state.charge=0; state.shards=0; state.levelShards=0; state.objectiveTarget=4; state.drones=[]; state.particles=[]; state.ribbons=[]; state.pulses=[]; state.decoys=[]; state.links=[]; state.routePath=[]; state.routeType='shard'; state.routePulse=0; state.spawnTimer=0; state.flash=0; state.cameraShake=0; state.shardGlow=0; state.pulseCounter=0; state.decoyCharges=1; state.waveType='Scout'; state.districtBannerTimer=0; state.exitPortal=null; state.dangerLevel=0; state.dangerLabel='Clear'; state.hunterPressure=false; state.threatVectors=[]; state.intelLabel='Pursuit'; state.exitTimer=0; state.exitTimerMax=0; state.exitAlarmTimer=0; state.exitRelocations=0; state.flow=1; state.flowTimer=0; state.flowPeak=1; state.callouts=[]; state.transitionTimer=0; state.transitionMax=0; state.transitionTitle=''; state.transitionText=''; state.transitionAccent=state.currentTheme?.gateA || '#63f2ff';
+    state.running=false; state.paused=false; state.over=false; state.score=0; state.level=1; state.health=3; state.charge=0; state.shards=0; state.levelShards=0; state.objectiveTarget=4; state.drones=[]; state.particles=[]; state.ribbons=[]; state.pulses=[]; state.decoys=[]; state.links=[]; state.routePath=[]; state.routeType='shard'; state.routePulse=0; state.spawnTimer=0; state.flash=0; state.cameraShake=0; state.shardGlow=0; state.pulseCounter=0; state.decoyCharges=1; state.waveType='Scout'; state.districtBannerTimer=0; state.exitPortal=null; state.dangerLevel=0; state.dangerLabel='Clear'; state.hunterPressure=false; state.threatVectors=[]; state.intelLabel='Pursuit'; state.exitTimer=0; state.exitTimerMax=0; state.exitAlarmTimer=0; state.exitRelocations=0; state.flow=1; state.flowTimer=0; state.flowPeak=1; state.callouts=[]; state.overdrive=0; state.overdriveTimer=0; state.nearMissPulse=0; state.transitionTimer=0; state.transitionMax=0; state.transitionTitle=''; state.transitionText=''; state.transitionAccent=state.currentTheme?.gateA || '#63f2ff';
     state.player=initPlayer(); setDistrictTheme(0, false); spawnShard(); spawnGate(); for(let i=0;i<3;i++) spawnDrone(); updateRouteAssist(); syncHud();
     overlay.classList.remove('hidden');
   }
@@ -724,6 +749,12 @@
     flowLabelEl.parentElement.style.borderColor = flowMult > 1.05 ? `rgba(99,242,255,${0.14 + (flowMult - 1) * 0.15})` : 'rgba(255,255,255,.1)';
     flowLabelEl.parentElement.style.boxShadow = flowMult > 1.05 ? `0 0 ${12 + (flowMult - 1) * 10}px rgba(99,242,255,.14)` : 'inset 0 1px 0 rgba(255,255,255,.04)';
     flowLabelEl.parentElement.title = flowMult >= 2.5 ? 'Locked-in flow: shard, lash, and breach score are heavily amplified.' : flowMult >= 1.5 ? 'Clean risky play is amplifying score rewards.' : 'Flow rises when you collect shards under pressure, stun drones cleanly, and breach exits quickly.';
+    const overdrivePct = Math.round(clamp(state.overdrive / 1.8, 0, 1) * 100);
+    overdriveLabelEl.textContent = overdrivePct > 0 ? `${overdrivePct}%` : 'Idle';
+    overdriveLabelEl.style.color = overdrivePct > 72 ? '#ffe08d' : overdrivePct > 36 ? '#8feeff' : '#d9f4ff';
+    overdriveLabelEl.parentElement.style.borderColor = overdrivePct > 0 ? `rgba(143,238,255,${0.16 + overdrivePct / 180})` : 'rgba(255,255,255,.1)';
+    overdriveLabelEl.parentElement.style.boxShadow = overdrivePct > 0 ? `0 0 ${10 + overdrivePct / 7}px rgba(99,242,255,.15)` : 'inset 0 1px 0 rgba(255,255,255,.04)';
+    overdriveLabelEl.parentElement.title = overdrivePct > 0 ? 'Close calls convert danger into a temporary speed and charge surge.' : 'Skim a drone without taking a hit to build Overdrive.';
     const pulseCost = currentPulseCost();
     const pulseReady = state.charge >= pulseCost;
     const pulseProgress = clamp(state.charge / Math.max(1, pulseCost), 0, 1);
@@ -766,6 +797,7 @@
   function updatePlayer(dt){
     const p=state.player;
     p.hitCooldown=Math.max(0,p.hitCooldown-dt);
+    p.speed = p.baseSpeed * (1 + state.overdrive * 0.16);
 
     const cell = nearestCell(p.x, p.y);
     const center = cellCenter(cell.cx, cell.cy);
@@ -794,7 +826,11 @@
     const desiredX=p.x+p.nextDir.x*p.speed, desiredY=p.y+p.nextDir.y*p.speed;
     if((p.nextDir.x||p.nextDir.y)&&canMoveTo(desiredX,desiredY,p.radius)) p.dir={...p.nextDir};
     const nx=p.x+p.dir.x*p.speed, ny=p.y+p.dir.y*p.speed;
-    if(canMoveTo(nx,ny,p.radius)){ p.x=nx; p.y=ny; addRibbon(p.x,p.y,'rgba(99,242,255,.22)'); }
+    if(canMoveTo(nx,ny,p.radius)){
+      p.x=nx; p.y=ny;
+      const trailAlpha = 0.22 + state.overdrive * 0.08;
+      addRibbon(p.x,p.y, state.overdrive > 0.2 ? `rgba(255,215,106,${Math.min(0.34, trailAlpha)})` : `rgba(99,242,255,${trailAlpha})`);
+    }
     p.trail.push({x:p.x,y:p.y}); if(p.trail.length>18) p.trail.shift();
     if(state.gate&&state.gate.cooldown<=0){ for(const [from,to,col] of [[state.gate.a,state.gate.b,'#63f2ff'],[state.gate.b,state.gate.a,'#ff63d4']]){ if(Math.hypot(p.x-from.x,p.y-from.y)<TILE*.34){ p.x=to.x; p.y=to.y; state.gate.cooldown=currentGateCooldown(); state.cameraShake=.12; addParticles(to.x,to.y,col,24,4.5,1.2); playSfx('gate'); vibrate(16); break; } } }
   }
@@ -881,6 +917,7 @@
     state.drones.forEach(drone=>{
       drone.wobble += dt*(drone.type==='glimmer'?6:4);
       drone.stunned=Math.max(0,drone.stunned-dt);
+      drone.nearMissCooldown = Math.max(0, (drone.nearMissCooldown || 0) - dt);
       if(drone.type==='hunter'){
         if(drone.stunned>0){
           drone.surgeTelegraph = 0;
@@ -933,7 +970,14 @@
       const speed=(drone.speed*speedScale)*dt*TILE; const nx=drone.x+choice.x*speed, ny=drone.y+choice.y*speed; if(canMoveTo(nx,ny,drone.radius)){ drone.x=nx; drone.y=ny; }
       drone.trail.push({x:drone.x,y:drone.y}); if(drone.trail.length>(drone.type==='hunter'&&drone.surgeBurst>0?16:10)) drone.trail.shift();
       if(state.gate&&state.gate.cooldown<=0){ if(Math.hypot(drone.x-state.gate.a.x,drone.y-state.gate.a.y)<TILE*.28){ drone.x=state.gate.b.x; drone.y=state.gate.b.y; state.gate.cooldown=currentGateCooldown(); } else if(Math.hypot(drone.x-state.gate.b.x,drone.y-state.gate.b.y)<TILE*.28){ drone.x=state.gate.a.x; drone.y=state.gate.a.y; state.gate.cooldown=currentGateCooldown(); } }
-      if(dist(drone,state.player)<drone.radius+state.player.radius&&state.player.hitCooldown<=0){ state.player.hitCooldown=1.3; state.health-=1; state.flash=.55; state.cameraShake=.22; addParticles(state.player.x,state.player.y,'#ff7272',38,6,1.3); breakFlow('Flow Broken'); playSfx('hit'); vibrate([24,40,24]); if(state.health<=0) gameOver(); }
+      const separation = dist(drone,state.player);
+      const hitRadius = drone.radius + state.player.radius;
+      const closeRadius = hitRadius + TILE * (drone.type === 'hunter' ? .24 : .17);
+      if(separation < closeRadius && separation > hitRadius + TILE * .02 && state.player.hitCooldown <= 0 && drone.stunned <= 0 && drone.nearMissCooldown <= 0){
+        drone.nearMissCooldown = drone.type === 'hunter' ? 1.45 : 1.05;
+        triggerCloseCall(drone);
+      }
+      if(separation<hitRadius&&state.player.hitCooldown<=0){ state.player.hitCooldown=1.3; state.health-=1; state.flash=.55; state.cameraShake=.22; state.overdrive = Math.max(0, state.overdrive - .6); state.overdriveTimer = 0; addParticles(state.player.x,state.player.y,'#ff7272',38,6,1.3); breakFlow('Flow Broken'); playSfx('hit'); vibrate([24,40,24]); if(state.health<=0) gameOver(); }
     });
   }
   function updatePulses(dt){ state.pulses=state.pulses.filter(p=>{ p.life-=dt; p.radius+=p.growth*dt; state.drones.forEach(drone=>{ if(dist(drone,p)<p.radius) drone.stunned=Math.max(drone.stunned, (drone.type==='hunter'?1.05:1.5) + currentPulseStunBonus()); }); return p.life>0; }); }
@@ -1055,7 +1099,7 @@
     }
   }
   function gameOver(){ state.running=false; state.over=true; overlay.classList.remove('hidden'); overlayCard.innerHTML = `<h2>Signal Lost</h2><p>You reached <strong>${state.score}</strong> points on level <strong>${state.level}</strong>. This build now has a real breach loop: collect enough shards to open the district exit, then survive the sprint to the portal while drones collapse the route.</p><div class="title-actions"><button id="overlayRestart" class="primary">Run Again</button></div>`; document.getElementById('overlayRestart').addEventListener('click', startGame); syncHud(); }
-  function update(dt){ state.introPulse += dt; state.routePulse += dt; state.districtBannerTimer=Math.max(0,state.districtBannerTimer-dt); if(state.districtBannerTimer<=0) districtBanner.classList.remove('visible'); if(!state.running||state.paused||state.over) return; state.spawnTimer+=dt; state.flash=Math.max(0,state.flash-dt); state.cameraShake=Math.max(0,state.cameraShake-dt); state.shardGlow=Math.max(0,state.shardGlow-dt*1.6); if(state.gate){ state.gate.cooldown=Math.max(0,state.gate.cooldown-dt); state.gate.pulse+=dt*2.8; }
+  function update(dt){ state.introPulse += dt; state.routePulse += dt; state.districtBannerTimer=Math.max(0,state.districtBannerTimer-dt); if(state.districtBannerTimer<=0) districtBanner.classList.remove('visible'); if(!state.running||state.paused||state.over) return; state.spawnTimer+=dt; state.flash=Math.max(0,state.flash-dt); state.cameraShake=Math.max(0,state.cameraShake-dt); state.shardGlow=Math.max(0,state.shardGlow-dt*1.6); updateOverdrive(dt); if(state.gate){ state.gate.cooldown=Math.max(0,state.gate.cooldown-dt); state.gate.pulse+=dt*2.8; }
     if(state.transitionTimer > 0){
       state.transitionTimer = Math.max(0, state.transitionTimer - dt);
       updateDecoys(dt);
@@ -1564,7 +1608,8 @@
     }
     ctx.restore();
   }
-  function drawPlayer(){ const p=state.player; p.trail.forEach((t,idx)=>{ ctx.fillStyle=`rgba(255,255,255,${idx/p.trail.length*.12})`; ctx.beginPath(); ctx.arc(t.x,t.y,p.radius*(idx/p.trail.length)*.9,0,Math.PI*2); ctx.fill(); }); ctx.save(); ctx.translate(p.x,p.y); ctx.shadowBlur=54; ctx.shadowColor=state.currentTheme.gateA; const outer=ctx.createRadialGradient(0,0,2,0,0,p.radius*1.2); outer.addColorStop(0,'#ffffff'); outer.addColorStop(.45,state.currentTheme.playerA); outer.addColorStop(1,state.currentTheme.playerB); ctx.fillStyle=outer; ctx.beginPath(); ctx.arc(0,0,p.radius,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='rgba(255,255,255,.78)'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,p.radius*1.22,0,Math.PI*2); ctx.stroke(); ctx.fillStyle='rgba(255,255,255,.94)'; ctx.beginPath(); ctx.arc(p.radius*.22,-p.radius*.28,p.radius*.18,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+  function drawPlayer(){ const p=state.player; p.trail.forEach((t,idx)=>{ const alpha = idx/p.trail.length*(state.overdrive > 0.15 ? .2 : .12); ctx.fillStyle=state.overdrive > 0.15 ? `rgba(255,215,106,${alpha})` : `rgba(255,255,255,${alpha})`; ctx.beginPath(); ctx.arc(t.x,t.y,p.radius*(idx/p.trail.length)*(state.overdrive > 0.15 ? 1.1 : .9),0,Math.PI*2); ctx.fill(); }); ctx.save(); ctx.translate(p.x,p.y); const overdriveGlow = state.overdrive > 0 ? clamp(state.overdrive / 1.8, 0, 1) : 0; if(overdriveGlow > 0){ ctx.globalAlpha = .22 + overdriveGlow * .26 + state.nearMissPulse * .12; ctx.shadowBlur = 46 + overdriveGlow * 30; ctx.shadowColor = 'rgba(255,215,106,.9)'; ctx.strokeStyle = `rgba(255,215,106,${0.35 + overdriveGlow * 0.35})`; ctx.lineWidth = 4 + overdriveGlow * 2.5; ctx.beginPath(); ctx.arc(0,0,p.radius*(1.65 + overdriveGlow*.18 + Math.sin(state.introPulse*16)*.03),0,Math.PI*2); ctx.stroke(); ctx.globalAlpha = .16 + overdriveGlow * .18; ctx.fillStyle = 'rgba(255,215,106,.32)'; ctx.beginPath(); ctx.arc(0,0,p.radius*(2.1 + state.nearMissPulse*.22),0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1; }
+    ctx.shadowBlur=54 + overdriveGlow * 14; ctx.shadowColor=overdriveGlow > .02 ? 'rgba(255,215,106,.78)' : state.currentTheme.gateA; const outer=ctx.createRadialGradient(0,0,2,0,0,p.radius*1.2); outer.addColorStop(0,'#ffffff'); outer.addColorStop(.45,overdriveGlow > .1 ? '#ffe08d' : state.currentTheme.playerA); outer.addColorStop(1,overdriveGlow > .1 ? '#ff9f57' : state.currentTheme.playerB); ctx.fillStyle=outer; ctx.beginPath(); ctx.arc(0,0,p.radius,0,Math.PI*2); ctx.fill(); ctx.strokeStyle=overdriveGlow > .1 ? 'rgba(255,245,198,.9)' : 'rgba(255,255,255,.78)'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,p.radius*1.22,0,Math.PI*2); ctx.stroke(); ctx.fillStyle='rgba(255,255,255,.94)'; ctx.beginPath(); ctx.arc(p.radius*.22,-p.radius*.28,p.radius*.18,0,Math.PI*2); ctx.fill(); ctx.restore(); }
   function drawDrones(){ state.drones.forEach(drone=>{ drone.trail.forEach((t,idx)=>{ const trailBoost = drone.type==='hunter' && drone.surgeBurst>0 ? .34 : .18; ctx.fillStyle=`hsla(${drone.hue}, 100%, 65%, ${idx/drone.trail.length*trailBoost})`; ctx.beginPath(); ctx.arc(t.x,t.y,drone.radius*(idx/drone.trail.length)*(drone.type==='hunter'&&drone.surgeBurst>0?1.5:1),0,Math.PI*2); ctx.fill(); }); const hover=Math.sin(drone.wobble)*(drone.type==='glimmer'?4:2.5); ctx.save(); ctx.translate(drone.x,drone.y+hover); ctx.shadowBlur=drone.type==='hunter'&&drone.surgeBurst>0?44:28; ctx.shadowColor=`hsla(${drone.hue},100%,60%,.9)`; ctx.fillStyle=drone.stunned>0?'#ffffff':`hsl(${drone.hue} 100% 64%)`; ctx.globalAlpha=drone.stunned>0?0.8:1; if(drone.type==='hunter' && drone.surgeTelegraph>0){ ctx.strokeStyle='rgba(255,214,247,.85)'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(0,0,drone.radius*1.8 + Math.sin(state.introPulse*24)*2,0,Math.PI*2); ctx.stroke(); } if(drone.type==='hunter'){ ctx.beginPath(); ctx.moveTo(0,-drone.radius*1.35); ctx.lineTo(drone.radius*1.12,drone.radius*.95); ctx.lineTo(-drone.radius*1.12,drone.radius*.95); ctx.closePath(); ctx.fill(); }
       else if(drone.type==='glimmer'){ ctx.beginPath(); for(let i=0;i<6;i++){ const a=Math.PI/3*i; const r=i%2===0?drone.radius*1.15:drone.radius*.55; const x=Math.cos(a)*r, y=Math.sin(a)*r; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.closePath(); ctx.fill(); }
       else { ctx.beginPath(); ctx.moveTo(0,-drone.radius*1.25); ctx.lineTo(drone.radius*1.08,drone.radius*.9); ctx.lineTo(0,drone.radius*.45); ctx.lineTo(-drone.radius*1.08,drone.radius*.9); ctx.closePath(); ctx.fill(); }
@@ -1588,7 +1633,7 @@
       ctx.restore();
     });
   }
-  function drawVignette(){ const g=ctx.createRadialGradient(canvas.width*.5,canvas.height*.5,canvas.width*.22,canvas.width*.5,canvas.height*.5,canvas.width*.78); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,state.currentTheme.vignette); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height); if(state.flow > 1.08){ const flowAlpha = Math.min(.16, (state.flow - 1) * .09) * (state.settings.reducedMotion ? .72 : 1); ctx.fillStyle = `rgba(99,242,255,${flowAlpha})`; ctx.fillRect(0,0,canvas.width,canvas.height); } if(state.flash>0){ ctx.fillStyle=`rgba(255,80,80,${state.flash*.22})`; ctx.fillRect(0,0,canvas.width,canvas.height); } }
+  function drawVignette(){ const g=ctx.createRadialGradient(canvas.width*.5,canvas.height*.5,canvas.width*.22,canvas.width*.5,canvas.height*.5,canvas.width*.78); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,state.currentTheme.vignette); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height); if(state.flow > 1.08){ const flowAlpha = Math.min(.16, (state.flow - 1) * .09) * (state.settings.reducedMotion ? .72 : 1); ctx.fillStyle = `rgba(99,242,255,${flowAlpha})`; ctx.fillRect(0,0,canvas.width,canvas.height); } if(state.overdrive > 0.06){ const overdriveAlpha = Math.min(.12, state.overdrive * .06) * (state.settings.reducedMotion ? .72 : 1); ctx.fillStyle = `rgba(255,196,92,${overdriveAlpha})`; ctx.fillRect(0,0,canvas.width,canvas.height); } if(state.flash>0){ ctx.fillStyle=`rgba(255,80,80,${state.flash*.22})`; ctx.fillRect(0,0,canvas.width,canvas.height); } }
   function drawTransitionOverlay(){
     if(state.transitionTimer <= 0 || !state.transitionMax) return;
     const progress = clamp(state.transitionTimer / state.transitionMax, 0, 1);

@@ -12,9 +12,10 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - `index.html` — playable prototype
 
 ## Current systems
-- Three drone classes: Scout, Hunter, and Glimmer
+- Four drone classes: Scout, Hunter, Glimmer, and Wraith
 - Path-based pursuit so enemies can pressure routes more intelligently
 - Hunter drones telegraph a lock-on reticle, then burst into short high-speed surges
+- Wraith drones can phase through walls briefly, becoming intangible and faster while passing through obstacles — adding unpredictable movement patterns that force players to adapt routes on the fly
 - Decoy beacon ability: place a temporary lure on your tile to bend pursuit lines and open safer escape lanes
 - Arc-lash combo: trigger a pulse while a decoy is active to fire a crackling trap lane that stuns drones caught along the link
 - District breach loop: collect a shard quota to open an exit portal, then reach it alive to clear the district

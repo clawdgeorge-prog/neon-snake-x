@@ -102,6 +102,25 @@
     .touch-pad button { min-height:64px; font-size:1.15rem; border-radius:20px; }
     .touch-pulse { box-shadow:0 0 24px rgba(99,242,255,.18); }
     .footnote { color:rgba(255,255,255,.56); font-size:.82rem; line-height:1.45; }
+    body.high-contrast .pill,
+    body.high-contrast .stat-card,
+    body.high-contrast .box,
+    body.high-contrast button,
+    body.high-contrast select {
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 0 26px rgba(99,242,255,.08);
+    }
+    body.high-contrast .tagline,
+    body.high-contrast ul,
+    body.high-contrast .footnote,
+    body.high-contrast .label,
+    body.high-contrast .sub,
+    body.high-contrast .pill {
+      color: rgba(238,247,255,.9);
+    }
+    body.high-contrast .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05)), linear-gradient(180deg, rgba(6,18,39,.97), rgba(3,8,19,.97));
+    }
     @media (max-width:1040px) { .app { grid-template-columns:1fr; } .sidebar { order:2; } .game-shell { order:1; } }
     @media (max-width:720px) { body { padding:10px; } .sidebar, .game-shell { padding:14px; } .touch-pad { display:grid; } .canvas-wrap { min-height:320px; } .stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   </style>
@@ -130,6 +149,8 @@
         </div>
         <div class="controls-row" style="margin-top:10px;">
           <select id="difficultySelect"><option value="cinematic">Cinematic</option><option value="normal" selected>Normal</option><option value="arcade">Arcade</option></select>
+          <button id="motionBtn">Motion On</button>
+          <button id="contrastBtn">Contrast Std</button>
           <button id="fullscreenBtn">Fullscreen</button>
         </div>
       </div>
@@ -156,7 +177,7 @@
           <li>Hunter drones now telegraph lock-ons before a high-speed surge</li>
         </ul>
       </div>
-      <div class="footnote">Controls: WASD / Arrow keys • Space = Pulse • Shift / X = Decoy • Swipe on mobile • Tap the arena to start or pulse.</div>
+      <div class="footnote">Controls: WASD / Arrow keys • Space = Pulse • Shift / X = Decoy • Drag on mobile to steer with continuous turn assist • Tap the arena to start or pulse.</div>
     </aside>
     <main class="panel game-shell">
       <div class="hud">
@@ -228,10 +249,14 @@
   const boostBtn = document.getElementById('boostBtn');
   const decoyBtn = document.getElementById('decoyBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const motionBtn = document.getElementById('motionBtn');
+  const contrastBtn = document.getElementById('contrastBtn');
   const difficultySelect = document.getElementById('difficultySelect');
   const GRID = 21;
   const TILE = canvas.width / GRID;
   const STORAGE_KEY = 'maze-sentinel-best';
+  const MOTION_KEY = 'maze-sentinel-reduced-motion';
+  const CONTRAST_KEY = 'maze-sentinel-high-contrast';
   const difficulties = {
     cinematic: { enemySpeed: 0.56, pulseCost: 40, spawnEvery: 4.9 },
     normal:    { enemySpeed: 0.67, pulseCost: 50, spawnEvery: 4.1 },
@@ -277,12 +302,34 @@
     routePath:[], routeType:'shard', routePulse:0,
     lastTs:0, spawnTimer:0, flash:0, cameraShake:0, shardGlow:0, pulseCounter:0, decoyCharges:1, waveType:'Scout', audioEnabled:true, audioStarted:false,
     themeIndex:0, currentTheme:districts[0], districtBannerTimer:0, dangerLevel:0, dangerLabel:'Clear', hunterPressure:false, threatVectors:[],
-    exitTimer:0, exitTimerMax:0, exitAlarmTimer:0, exitRelocations:0
+    exitTimer:0, exitTimerMax:0, exitAlarmTimer:0, exitRelocations:0,
+    settings:{ reducedMotion: localStorage.getItem(MOTION_KEY) === '1', highContrast: localStorage.getItem(CONTRAST_KEY) === '1' }
   };
   let audioCtx = null, masterGain = null, musicGain = null;
   function rand(min,max){ return Math.random()*(max-min)+min; }
   function randi(min,max){ return Math.floor(rand(min,max+1)); }
   function clamp(v,min,max){ return Math.max(min, Math.min(max,v)); }
+  function motionScale(){ return state.settings.reducedMotion ? 0.45 : 1; }
+  function contrastBoost(){ return state.settings.highContrast ? 1 : 0; }
+  function refreshPreferenceButtons(){
+    motionBtn.textContent = state.settings.reducedMotion ? 'Motion Reduced' : 'Motion On';
+    contrastBtn.textContent = state.settings.highContrast ? 'Contrast High' : 'Contrast Std';
+    motionBtn.style.borderColor = state.settings.reducedMotion ? 'rgba(255,215,106,.42)' : 'rgba(255,255,255,.12)';
+    contrastBtn.style.borderColor = state.settings.highContrast ? 'rgba(99,242,255,.52)' : 'rgba(255,255,255,.12)';
+    motionBtn.style.boxShadow = state.settings.reducedMotion ? '0 0 22px rgba(255,215,106,.16)' : 'none';
+    contrastBtn.style.boxShadow = state.settings.highContrast ? '0 0 22px rgba(99,242,255,.18)' : 'none';
+    document.body.classList.toggle('high-contrast', state.settings.highContrast);
+  }
+  function savePreferences(){
+    localStorage.setItem(MOTION_KEY, state.settings.reducedMotion ? '1' : '0');
+    localStorage.setItem(CONTRAST_KEY, state.settings.highContrast ? '1' : '0');
+    refreshPreferenceButtons();
+  }
+  function approach(value, target, delta){
+    if(value < target) return Math.min(target, value + delta);
+    if(value > target) return Math.max(target, value - delta);
+    return value;
+  }
   function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
   function distanceToSegment(px, py, ax, ay, bx, by){
     const dx = bx - ax, dy = by - ay;
@@ -348,17 +395,22 @@
   }
   function playSfx(kind){
     if(!state.audioEnabled) return;
-    if(kind==='shard'){ tone(880,'triangle',.12,0,.06); tone(1320,'sine',.16,.03,.035); }
-    if(kind==='pulse'){ tone(180,'sawtooth',.25,0,.05); tone(360,'triangle',.2,.04,.035); noiseBurst(.09,.03); }
-    if(kind==='hit'){ tone(120,'square',.22,0,.055); noiseBurst(.12,.045); }
-    if(kind==='gate'){ tone(620,'sine',.1,0,.045); tone(930,'sine',.16,.05,.03); }
-    if(kind==='surge'){ tone(240,'sawtooth',.18,0,.04); tone(480,'triangle',.24,.05,.03); tone(920,'sine',.14,.1,.022); }
-    if(kind==='decoy'){ tone(510,'triangle',.12,0,.04); tone(760,'sine',.2,.04,.03); tone(1140,'triangle',.18,.08,.022); }
-    if(kind==='link'){ tone(260,'sawtooth',.16,0,.038); tone(520,'triangle',.22,.03,.03); tone(1040,'sine',.24,.08,.018); noiseBurst(.08,.025); }
-    if(kind==='alarm'){ tone(980,'square',.08,0,.022); tone(740,'triangle',.14,.05,.018); }
-    if(kind==='start'){ tone(392,'triangle',.12,0,.04); tone(523,'triangle',.14,.06,.04); tone(784,'triangle',.18,.12,.03); }
+    const motionGain = state.settings.reducedMotion ? .82 : 1;
+    if(kind==='shard'){ tone(880,'triangle',.12,0,.06 * motionGain); tone(1320,'sine',.16,.03,.035 * motionGain); }
+    if(kind==='pulse'){ tone(180,'sawtooth',.25,0,.05 * motionGain); tone(360,'triangle',.2,.04,.035 * motionGain); noiseBurst(.09,.03 * motionGain); }
+    if(kind==='hit'){ tone(120,'square',.22,0,.055 * motionGain); noiseBurst(.12,.045 * motionGain); }
+    if(kind==='gate'){ tone(620,'sine',.1,0,.045 * motionGain); tone(930,'sine',.16,.05,.03 * motionGain); }
+    if(kind==='surge'){ tone(240,'sawtooth',.18,0,.04 * motionGain); tone(480,'triangle',.24,.05,.03 * motionGain); tone(920,'sine',.14,.1,.022 * motionGain); }
+    if(kind==='decoy'){ tone(510,'triangle',.12,0,.04 * motionGain); tone(760,'sine',.2,.04,.03 * motionGain); tone(1140,'triangle',.18,.08,.022 * motionGain); }
+    if(kind==='link'){ tone(260,'sawtooth',.16,0,.038 * motionGain); tone(520,'triangle',.22,.03,.03 * motionGain); tone(1040,'sine',.24,.08,.018 * motionGain); noiseBurst(.08,.025 * motionGain); }
+    if(kind==='alarm'){ tone(980,'square',.08,0,.022 * motionGain); tone(740,'triangle',.14,.05,.018 * motionGain); }
+    if(kind==='start'){ tone(392,'triangle',.12,0,.04 * motionGain); tone(523,'triangle',.14,.06,.04 * motionGain); tone(784,'triangle',.18,.12,.03 * motionGain); }
   }
-  function addParticles(x,y,color,count,spread=3.2,life=1){ for(let i=0;i<count;i++) state.particles.push({x,y,vx:rand(-spread,spread),vy:rand(-spread,spread),size:rand(2,6),life:rand(life*.55,life),maxLife:life,color}); }
+  function addParticles(x,y,color,count,spread=3.2,life=1){
+    const scaledCount = Math.max(4, Math.round(count * (state.settings.reducedMotion ? 0.45 : 1)));
+    const sizeMax = state.settings.reducedMotion ? 4.2 : 6;
+    for(let i=0;i<scaledCount;i++) state.particles.push({x,y,vx:rand(-spread,spread),vy:rand(-spread,spread),size:rand(2,sizeMax),life:rand(life*.55,life),maxLife:life,color});
+  }
   function addRibbon(x,y,color){ state.ribbons.push({x,y,color,life:1,maxLife:1,size:rand(10,22)}); }
   function applyThemeCss(theme){
     document.documentElement.style.setProperty('--cyan', theme.gateA);
@@ -383,8 +435,9 @@
   }
   function buildAmbience(){
     const hues = state.currentTheme.blobHues;
-    state.ambience = Array.from({length:28},()=>({x:rand(0,canvas.width),y:rand(0,canvas.height),r:rand(60,180),hue:hues[randi(0,hues.length-1)],alpha:rand(.035,.08),drift:rand(-.25,.25)}));
-    state.sparks = Array.from({length:50},()=>({x:rand(0,canvas.width), y:rand(0,canvas.height), a:rand(.05,.3), speed:rand(.3,1.3)}));
+    const motion = motionScale();
+    state.ambience = Array.from({length: state.settings.reducedMotion ? 14 : 28},()=>({x:rand(0,canvas.width),y:rand(0,canvas.height),r:rand(60,180),hue:hues[randi(0,hues.length-1)],alpha:rand(.035,.08),drift:rand(-.25,.25) * motion}));
+    state.sparks = Array.from({length: state.settings.reducedMotion ? 22 : 50},()=>({x:rand(0,canvas.width), y:rand(0,canvas.height), a:rand(.05,.3), speed:rand(.3,1.3) * (state.settings.reducedMotion ? 0.55 : 1)}));
   }
   function advanceDistrict(){
     setDistrictTheme(state.themeIndex + 1, true);
@@ -484,9 +537,37 @@
   function syncHud(){ scoreEl.textContent=state.score; levelEl.textContent=state.level; healthEl.textContent=state.health; chargeEl.textContent=`${Math.round(state.charge)}%`; bestScoreEl.textContent=state.best; shardCountEl.textContent=state.shards; objectiveCountEl.textContent = state.exitPortal ? `Escape ${Math.max(0, state.exitTimer).toFixed(1)}s` : `${state.levelShards} / ${state.objectiveTarget}`; objectiveCountEl.parentElement.title = state.exitPortal ? 'Exit breach window before the portal relocates.' : 'Collect enough shards to breach the district exit.'; pulseCellsEl.textContent=state.pulseCounter; decoyCountEl.textContent=state.decoyCharges; droneCountEl.textContent=state.drones.length; districtNameEl.textContent=state.currentTheme.name; districtTraitEl.textContent=state.currentTheme.trait; districtTraitEl.parentElement.title = state.currentTheme.traitDesc; navLabelEl.textContent = state.routeType === 'exit' ? 'Exit' : 'Shard'; navLabelEl.parentElement.title = state.routeType === 'exit' ? 'Breadcrumb line is guiding you to the open portal before it shifts.' : 'Breadcrumb line is guiding you to the next shard.'; waveTypeEl.textContent=state.waveType; dangerLabelEl.textContent = state.dangerLabel; dangerLabelEl.style.color = state.hunterPressure ? '#ffd1f0' : state.dangerLevel > .68 ? '#ff8a8a' : state.dangerLevel > .38 ? '#ffd76a' : '#bfffee'; dangerLabelEl.parentElement.title = state.hunterPressure ? 'Hunter surge telegraph is active.' : state.dangerLevel > .68 ? 'Multiple drones are in striking range.' : state.dangerLevel > .38 ? 'Nearby drone pressure rising.' : 'Nearby routes are relatively safe.'; stateLabelEl.textContent=state.over?'Run Lost':state.paused?'Paused':state.running?(state.exitPortal?'Exit Open':'Active'):'Standby'; }
   function tryChangeDir(dir){ state.player.nextDir=dir; }
   function updatePlayer(dt){
-    const p=state.player; p.hitCooldown=Math.max(0,p.hitCooldown-dt);
-    const desiredX=p.x+p.nextDir.x*p.speed, desiredY=p.y+p.nextDir.y*p.speed; if((p.nextDir.x||p.nextDir.y)&&canMoveTo(desiredX,desiredY,p.radius)) p.dir={...p.nextDir};
-    const nx=p.x+p.dir.x*p.speed, ny=p.y+p.dir.y*p.speed; if(canMoveTo(nx,ny,p.radius)){ p.x=nx; p.y=ny; addRibbon(p.x,p.y,'rgba(99,242,255,.22)'); }
+    const p=state.player;
+    p.hitCooldown=Math.max(0,p.hitCooldown-dt);
+
+    const cell = nearestCell(p.x, p.y);
+    const center = cellCenter(cell.cx, cell.cy);
+    const assistTolerance = TILE * .24;
+    const assistSnap = p.speed * (1.15 + dt * 18);
+    const changingAxis = (p.nextDir.x && !p.dir.x) || (p.nextDir.y && !p.dir.y);
+
+    if(p.dir.x){
+      p.y = approach(p.y, center.y, assistSnap);
+    } else if(p.dir.y){
+      p.x = approach(p.x, center.x, assistSnap);
+    }
+
+    if((p.nextDir.x || p.nextDir.y) && changingAxis){
+      if(p.nextDir.x && Math.abs(p.y - center.y) <= assistTolerance){
+        p.y = center.y;
+        const turnX = p.x + p.nextDir.x * p.speed;
+        if(canMoveTo(turnX, p.y, p.radius)) p.dir = {...p.nextDir};
+      } else if(p.nextDir.y && Math.abs(p.x - center.x) <= assistTolerance){
+        p.x = center.x;
+        const turnY = p.y + p.nextDir.y * p.speed;
+        if(canMoveTo(p.x, turnY, p.radius)) p.dir = {...p.nextDir};
+      }
+    }
+
+    const desiredX=p.x+p.nextDir.x*p.speed, desiredY=p.y+p.nextDir.y*p.speed;
+    if((p.nextDir.x||p.nextDir.y)&&canMoveTo(desiredX,desiredY,p.radius)) p.dir={...p.nextDir};
+    const nx=p.x+p.dir.x*p.speed, ny=p.y+p.dir.y*p.speed;
+    if(canMoveTo(nx,ny,p.radius)){ p.x=nx; p.y=ny; addRibbon(p.x,p.y,'rgba(99,242,255,.22)'); }
     p.trail.push({x:p.x,y:p.y}); if(p.trail.length>18) p.trail.shift();
     if(state.gate&&state.gate.cooldown<=0){ for(const [from,to,col] of [[state.gate.a,state.gate.b,'#63f2ff'],[state.gate.b,state.gate.a,'#ff63d4']]){ if(Math.hypot(p.x-from.x,p.y-from.y)<TILE*.34){ p.x=to.x; p.y=to.y; state.gate.cooldown=currentGateCooldown(); state.cameraShake=.12; addParticles(to.x,to.y,col,24,4.5,1.2); playSfx('gate'); vibrate(16); break; } } }
   }
@@ -742,7 +823,7 @@
     for(let i=0;i<58;i++){ const y=i/58*canvas.height; ctx.fillStyle=i%2===0?'rgba(255,255,255,.012)':'rgba(99,242,255,.006)'; ctx.fillRect(0,y,canvas.width,1.2); }
   }
   function roundedRect(x,y,w,h,r,fill){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); fill?ctx.fill():ctx.stroke(); }
-  function drawMaze(){ const theme = state.currentTheme; for(let y=0;y<GRID;y++){ for(let x=0;x<GRID;x++){ const px=x*TILE, py=y*TILE; if(maze[y][x]===1){ const g=ctx.createLinearGradient(px,py,px+TILE,py+TILE); g.addColorStop(0,theme.wallA); g.addColorStop(.5,theme.wallB); g.addColorStop(1,theme.wallC); ctx.fillStyle=g; roundedRect(px+3,py+3,TILE-6,TILE-6,8,true); ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1.4; roundedRect(px+3,py+3,TILE-6,TILE-6,8,false); ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.beginPath(); ctx.moveTo(px+8,py+10); ctx.lineTo(px+TILE-10,py+10); ctx.stroke(); } else { ctx.fillStyle=theme.pathFill; ctx.fillRect(px,py,TILE,TILE); ctx.strokeStyle=theme.pathLine; ctx.strokeRect(px+.5,py+.5,TILE-1,TILE-1); } } } }
+  function drawMaze(){ const theme = state.currentTheme; const boost = contrastBoost(); for(let y=0;y<GRID;y++){ for(let x=0;x<GRID;x++){ const px=x*TILE, py=y*TILE; if(maze[y][x]===1){ const g=ctx.createLinearGradient(px,py,px+TILE,py+TILE); g.addColorStop(0,theme.wallA); g.addColorStop(.5,theme.wallB); g.addColorStop(1,theme.wallC); ctx.fillStyle=g; roundedRect(px+3,py+3,TILE-6,TILE-6,8,true); ctx.strokeStyle=boost ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.12)'; ctx.lineWidth=boost ? 1.9 : 1.4; roundedRect(px+3,py+3,TILE-6,TILE-6,8,false); ctx.strokeStyle=boost ? 'rgba(255,255,255,.11)' : 'rgba(255,255,255,.05)'; ctx.beginPath(); ctx.moveTo(px+8,py+10); ctx.lineTo(px+TILE-10,py+10); ctx.stroke(); } else { ctx.fillStyle=theme.pathFill; ctx.fillRect(px,py,TILE,TILE); ctx.strokeStyle=boost ? 'rgba(255,255,255,.12)' : theme.pathLine; ctx.lineWidth = boost ? 1.3 : 1; ctx.strokeRect(px+.5,py+.5,TILE-1,TILE-1); } } } }
   function drawGate(){ if(!state.gate) return; const p=state.gate.pulse; [[state.gate.a,state.currentTheme.gateA,0],[state.gate.b,state.currentTheme.gateB,Math.PI]].forEach(([g,col,off])=>{ ctx.save(); ctx.translate(g.x,g.y); ctx.shadowBlur=36; ctx.shadowColor=col; ctx.strokeStyle=col; ctx.lineWidth=4; for(let i=0;i<3;i++){ ctx.globalAlpha=.9-i*.22; ctx.beginPath(); ctx.arc(0,0,TILE*(.18+i*.08+Math.sin(p+off)*.01),0,Math.PI*2); ctx.stroke(); } ctx.restore(); }); ctx.save(); ctx.setLineDash([9,9]); ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(state.gate.a.x,state.gate.a.y); ctx.lineTo(state.gate.b.x,state.gate.b.y); ctx.stroke(); ctx.restore(); }
   function drawShard(){ if(!state.shard) return; state.shard.rot+=.03; const s=state.shard; ctx.save(); ctx.translate(s.x,s.y); ctx.rotate(s.rot); ctx.shadowBlur=34; ctx.shadowColor=state.currentTheme.shardB; const scale=1.08+state.shardGlow*.15; ctx.scale(scale,scale); const grad=ctx.createLinearGradient(-10,-10,12,12); grad.addColorStop(0,state.currentTheme.shardA); grad.addColorStop(1,state.currentTheme.shardB); ctx.fillStyle=grad; ctx.beginPath(); for(let i=0;i<8;i++){ const a=Math.PI/4*i; const r=i%2===0?TILE*.2:TILE*.09; const x=Math.cos(a)*r, y=Math.sin(a)*r; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.closePath(); ctx.fill(); ctx.restore(); }
   function drawExitPortal(){
@@ -875,6 +956,7 @@
     if(!state.routePath.length || !state.player) return;
     const hueA = state.routeType === 'exit' ? state.currentTheme.gateA : state.currentTheme.shardA;
     const hueB = state.routeType === 'exit' ? state.currentTheme.gateB : state.currentTheme.shardB;
+    const boost = contrastBoost();
     ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -884,9 +966,9 @@
     grad.addColorStop(0, hueA);
     grad.addColorStop(1, hueB);
     ctx.strokeStyle = grad;
-    ctx.globalAlpha = state.routeType === 'exit' ? .5 : .34;
-    ctx.lineWidth = state.routeType === 'exit' ? 6 : 4;
-    ctx.shadowBlur = 24;
+    ctx.globalAlpha = state.routeType === 'exit' ? (.5 + boost * .18) : (.34 + boost * .2);
+    ctx.lineWidth = state.routeType === 'exit' ? (6 + boost * 2) : (4 + boost * 2);
+    ctx.shadowBlur = 24 + boost * 10;
     ctx.shadowColor = hueA;
     ctx.beginPath();
     ctx.moveTo(state.player.x, state.player.y);
@@ -955,6 +1037,7 @@
   }
   function drawThreatCompass(){
     if(!state.player || !state.threatVectors.length) return;
+    const boost = contrastBoost();
     const centerX = canvas.width * .5;
     const centerY = canvas.height * .5;
     const compassR = canvas.width * .43;
@@ -962,7 +1045,7 @@
       const angle = Math.atan2(threat.dy, threat.dx);
       const x = centerX + Math.cos(angle) * compassR;
       const y = centerY + Math.sin(angle) * compassR;
-      const size = 16 + threat.pressure * 16 - idx * 2;
+      const size = 16 + threat.pressure * 16 - idx * 2 + boost * 3;
       const color = threat.hunterTelegraph ? 'rgba(255,150,226,.92)' : threat.drone.type === 'glimmer' ? 'rgba(255,214,112,.86)' : 'rgba(99,242,255,.82)';
       ctx.save();
       ctx.translate(x, y);
@@ -970,7 +1053,7 @@
       ctx.shadowBlur = 18;
       ctx.shadowColor = color;
       ctx.fillStyle = color;
-      ctx.globalAlpha = .38 + threat.pressure * .56;
+      ctx.globalAlpha = .38 + threat.pressure * .56 + boost * .08;
       ctx.beginPath();
       ctx.moveTo(0, -size);
       ctx.lineTo(size * .68, size * .7);
@@ -991,7 +1074,7 @@
       ctx.restore(); }); }
   function drawParticles(){ state.particles.forEach(p=>{ const alpha=p.life/p.maxLife; ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size*alpha,0,Math.PI*2); ctx.fill(); ctx.restore(); }); }
   function drawVignette(){ const g=ctx.createRadialGradient(canvas.width*.5,canvas.height*.5,canvas.width*.22,canvas.width*.5,canvas.height*.5,canvas.width*.78); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,state.currentTheme.vignette); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height); if(state.flash>0){ ctx.fillStyle=`rgba(255,80,80,${state.flash*.22})`; ctx.fillRect(0,0,canvas.width,canvas.height); } }
-  function render(){ drawSceneBackground(); const shake=state.cameraShake*8; ctx.save(); ctx.translate(rand(-shake,shake), rand(-shake,shake)); drawMaze(); drawGate(); drawRibbons(); drawRouteAssist(); drawShard(); drawExitPortal(); drawDecoys(); drawLinks(); drawPulses(); drawThreatTelegraphs(); drawThreatCompass(); drawDrones(); drawDangerHalo(); drawPlayer(); drawParticles(); ctx.restore(); drawVignette(); }
+  function render(){ drawSceneBackground(); const shake=state.cameraShake*8*motionScale(); ctx.save(); ctx.translate(rand(-shake,shake), rand(-shake,shake)); drawMaze(); drawGate(); drawRibbons(); drawRouteAssist(); drawShard(); drawExitPortal(); drawDecoys(); drawLinks(); drawPulses(); drawThreatTelegraphs(); drawThreatCompass(); drawDrones(); drawDangerHalo(); drawPlayer(); drawParticles(); ctx.restore(); drawVignette(); }
   function frame(ts){ if(!state.lastTs) state.lastTs=ts; const dt=Math.min((ts-state.lastTs)/1000,.033); state.lastTs=ts; update(dt); render(); requestAnimationFrame(frame); }
   function startGame(){ initAudio(); if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); resetGame(); state.running=true; overlay.classList.add('hidden'); playSfx('start'); syncHud(); }
   function togglePause(){ if(!state.running||state.over) return; state.paused=!state.paused; syncHud(); }
@@ -1004,7 +1087,17 @@
   startBtn.addEventListener('click', startGame); overlayStart.addEventListener('click', startGame); pauseBtn.addEventListener('click', togglePause); boostBtn.addEventListener('click', triggerPulse); decoyBtn.addEventListener('click', deployDecoy);
   difficultySelect.addEventListener('change',e=>{ state.difficulty=e.target.value; if(!state.running||state.over) resetGame(); syncHud(); });
   audioBtn.addEventListener('click', ()=>{ state.audioEnabled=!state.audioEnabled; audioBtn.textContent = state.audioEnabled ? 'Audio On' : 'Audio Off'; if(state.audioEnabled) initAudio(); if(masterGain) masterGain.gain.value = state.audioEnabled ? .14 : 0.0001; });
+  motionBtn.addEventListener('click', ()=>{
+    state.settings.reducedMotion = !state.settings.reducedMotion;
+    buildAmbience();
+    savePreferences();
+  });
+  contrastBtn.addEventListener('click', ()=>{
+    state.settings.highContrast = !state.settings.highContrast;
+    savePreferences();
+  });
   fullscreenBtn.addEventListener('click', async()=>{ const root=document.documentElement; if(!document.fullscreenElement&&root.requestFullscreen) await root.requestFullscreen(); else if(document.exitFullscreen) await document.exitFullscreen(); });
+  refreshPreferenceButtons();
   bestScoreEl.textContent=state.best; resetGame(); render(); requestAnimationFrame(frame);
 })();
 </script>

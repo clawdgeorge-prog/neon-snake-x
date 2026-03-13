@@ -5,7 +5,7 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 ## Direction
 - Not Pac-Man themed
 - Strong neon / premium arcade visuals
-- Mobile-friendly touch controls
+- Mobile-friendly touch controls with drag steering and forgiving lane turn assist
 - Built as the real target for the hourly OpenAI polishing cron
 
 ## Files
@@ -21,7 +21,9 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - Exit breach climax: once the portal opens you get a short visible escape window before it shifts somewhere else, making the end of each level feel more like a deliberate sprint than a cleanup lap
 - Compact in-run HUD now shows breach progress alongside score / drones / district state
 - Route-assist breadcrumb line now guides you toward the live objective (next shard or open exit), improving readability on touch screens without adding clutter
+- New mobile handling pass adds continuous drag steering on the arena plus forgiving lane-follow turn assist so quick thumb corrections land more reliably in tight corridors
 - New danger-sense readability pass adds a live danger meter, edge-of-screen threat arrows, and a player danger halo so nearby pressure and hunter surge setups are easier to read on mobile
+- Accessibility pass adds one-tap reduced-motion and high-contrast toggles, persisted locally for repeat runs across mobile and desktop
 - District theme rotation is now mechanical as well as visual:
   - **Astra / Flux Reserve** — pulse costs less charge
   - **Velour / Mirage Grid** — decoys last longer and recharge faster

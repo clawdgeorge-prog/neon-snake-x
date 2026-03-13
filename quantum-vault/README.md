@@ -10,12 +10,12 @@ Quantum Vault is a mobile-first neon maze arcade game built around one clean obj
 
 ## Current direction
 This pass leans even harder into a fast, readable phone arcade loop:
-- only one or two sentries at a time, with softer speed scaling
-- fewer shards per room so levels read instantly on a phone
+- only one sentry early on, with the second enemy held back for later zones
+- 4 to 6 shards per room so each layout reads quickly on a phone
 - bigger shard pickup radius, faster Burst charging, and 4 lives for a more forgiving flow
 - simpler scoring: shard points, escape bonus, zone clear, and clean escape reward
-- improved local score chase with Best Zone tracking plus cleaner top-run labels
-- richer animated backgrounds, brighter portal presentation, and smoother visual motion
+- improved local score chase with Best Zone tracking plus cleaner zone-first top-run labels
+- richer animated backgrounds, brighter portal presentation, larger mobile play space, and smoother visual motion
 
 ## Controls
 - **Desktop:** WASD / Arrow keys to move, Space for Pulse Burst

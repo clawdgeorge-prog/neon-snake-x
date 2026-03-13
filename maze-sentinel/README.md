@@ -42,7 +42,10 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - Game over screen now displays score, districts cleared, and best score with option to return to title
 - Audio layering pass adds distinct sound effects for drone spawns, overdrive activation, and upgrade purchases — giving better aural feedback for key gameplay moments
 - Wall collision feedback: bumping into walls now triggers themed particle sparks, a subtle dual-tone audio bump, micro screen shake, and haptic vibration on supported devices — adding tactile responsiveness to movement
+- Portal warp cinematics: when you reach the exit, your character spirals into the portal with a shrink animation, swirling vortex effects, and screen glow before the district transition
+- District arrival celebration: enhanced particle bursts with new district colors, stronger camera shake, screen flash, and a celebratory callout announcing the new district when you breach
+- Enhanced ability visual effects: pulse burst now has multi-ring expansion with shockwave and radiating particles, decoy beacon features rotating energy rays and pulsing energy field, arc-lash combo has electric crackling with branching sparks and traveling energy pulses plus screen flash on hit
+- Additional particle burst upgrades on ability activation for more tactile feedback
 
 ## Next polish ideas
-- stronger portal presentation / completion cinematics
-- richer district arrival / completion stingers
+- more enemy variety

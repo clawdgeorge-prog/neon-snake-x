@@ -1059,8 +1059,11 @@
     state.charge-=cost;
     state.pulses.push({x:state.player.x,y:state.player.y,radius:18 * currentPulseRadiusMult(),life:.55,maxLife:.55,growth:630 * currentPulseRadiusMult()});
     state.pulseCounter+=1;
-    state.cameraShake=.18;
-    addParticles(state.player.x,state.player.y,'#63f2ff',34,5.5,1.1);
+    state.cameraShake=.22;
+    // Enhanced pulse burst particles
+    addParticles(state.player.x,state.player.y,'#63f2ff',42,6.2,1.3);
+    addParticles(state.player.x,state.player.y,'rgba(255,255,255,.92)',28,4.8,1.0);
+    addParticles(state.player.x,state.player.y,'rgba(85,167,255,.88)',18,3.5,0.85);
     playSfx('pulse');
     const activeDecoy = state.decoys.length ? state.decoys[state.decoys.length - 1] : null;
     if(activeDecoy){
@@ -1078,9 +1081,14 @@
       if(hits){
         awardScore(hits * 60, activeDecoy.x, activeDecoy.y - 18, hits > 1 ? 'Arc Lash' : 'Stun', state.currentTheme.gateB);
         boostFlow(Math.min(.36, hits * .08), activeDecoy.x, activeDecoy.y - 28, hits > 1 ? 'Chain Held' : 'Tight Line');
+        addCallout(activeDecoy.x, activeDecoy.y - 45, hits > 1 ? 'ARC LASH!' : 'ZAP!', '#ffffff', state.currentTheme.gateB, 1.1, 1.15);
       }
-      addParticles(activeDecoy.x, activeDecoy.y, state.currentTheme.gateB, 22, 4.6, .9);
-      state.cameraShake = Math.max(state.cameraShake, .24);
+      // Enhanced arc-lash explosion particles
+      addParticles(activeDecoy.x, activeDecoy.y, state.currentTheme.gateB, 32, 5.2,1.0);
+      addParticles(activeDecoy.x, activeDecoy.y, '#ffffff', 22, 4.0,0.85);
+      addParticles(activeDecoy.x, activeDecoy.y, 'rgba(255,99,212,.85)', 16, 3.2,0.7);
+      state.flash = Math.max(state.flash, 0.14);
+      state.cameraShake = Math.max(state.cameraShake, .28);
       playSfx('link');
       vibrate([12, 18, 28]);
     } else {
@@ -1096,10 +1104,13 @@
     const decoyLife = currentDecoyLife();
     state.decoys.push({x:spot.x, y:spot.y, cx:cell.cx, cy:cell.cy, life:decoyLife, maxLife:decoyLife, pulse:0});
     state.decoyCharges = Math.max(0, state.decoyCharges - 1);
-    state.cameraShake = Math.max(state.cameraShake, .1);
-    addParticles(spot.x, spot.y, state.currentTheme.gateB, 28, 4.6, 1.1);
+    state.cameraShake = Math.max(state.cameraShake, .12);
+    // Enhanced decoy deploy particles
+    addParticles(spot.x, spot.y, state.currentTheme.gateB, 36, 5.2, 1.2);
+    addParticles(spot.x, spot.y, '#ffffff', 24, 4.0, 1.0);
+    addParticles(spot.x, spot.y, 'rgba(255,99,212,.8)', 18, 3.5, 0.85);
     playSfx('decoy');
-    vibrate(12);
+    vibrate(14);
     syncHud();
   }
   function objectiveCell(){
@@ -1514,65 +1525,224 @@
     ctx.restore();
   }
   function drawRibbons(){ state.ribbons.forEach(r=>{ ctx.fillStyle=r.color.replace('.22', String(r.life*.28)); ctx.beginPath(); ctx.arc(r.x,r.y,r.size*r.life*.36,0,Math.PI*2); ctx.fill(); }); }
-  function drawPulses(){ state.pulses.forEach(p=>{ const alpha=p.life/p.maxLife; const hue = p.hueShift !== undefined ? p.hueShift : 190; const color = `hsla(${hue}, 100%, 68%, ${alpha})`; const glow = `hsla(${hue}, 100%, 58%, ${alpha})`; ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=10; ctx.shadowBlur=40; ctx.shadowColor=glow; ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.stroke(); ctx.restore(); }); }
+  function drawPulses(){
+    state.pulses.forEach(p=>{
+      const alpha=p.life/p.maxLife;
+      const hue = p.hueShift !== undefined ? p.hueShift : 190;
+      const baseColor = `hsla(${hue}, 100%, 68%, ${alpha})`;
+      const glowColor = `hsla(${hue}, 100%, 58%, ${alpha})`;
+      const brightColor = `hsla(${hue}, 100%, 85%, ${alpha * 0.9})`;
+      ctx.save();
+      // Inner bright core
+      ctx.shadowBlur = 50;
+      ctx.shadowColor = brightColor;
+      ctx.strokeStyle = brightColor;
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius * 0.3, 0, Math.PI * 2);
+      ctx.stroke();
+      // Main ring
+      ctx.shadowBlur = 44;
+      ctx.shadowColor = glowColor;
+      ctx.strokeStyle = baseColor;
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      // Secondary expanding ring
+      const expandFactor = 1 - alpha;
+      ctx.globalAlpha = alpha * 0.6;
+      ctx.strokeStyle = glowColor;
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius + expandFactor * 90, 0, Math.PI * 2);
+      ctx.stroke();
+      // Outer shockwave ring
+      ctx.globalAlpha = alpha * 0.35;
+      ctx.strokeStyle = `hsla(${hue}, 90%, 72%, ${alpha * 0.3})`;
+      ctx.lineWidth = 16;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius * 0.65 + expandFactor * 40, 0, Math.PI * 2);
+      ctx.stroke();
+      // Energy particles radiating outward
+      const particleCount = 8;
+      for(let i = 0; i < particleCount; i++) {
+        const angle = (Math.PI * 2 / particleCount) * i + p.radius * 0.02;
+        const dist = p.radius * 0.5 + expandFactor * p.radius * 0.8;
+        const px = p.x + Math.cos(angle) * dist;
+        const py = p.y + Math.sin(angle) * dist;
+        ctx.globalAlpha = alpha * 0.7 * (1 - expandFactor * 0.5);
+        ctx.fillStyle = brightColor;
+        ctx.beginPath();
+        ctx.arc(px, py, 3 + (1 - alpha) * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+  }
   function drawDecoys(){
     state.decoys.forEach(decoy => {
       const lifeAlpha = decoy.life / decoy.maxLife;
       const pulseR = TILE * (0.2 + Math.sin(decoy.pulse) * 0.04 + (1 - lifeAlpha) * 0.08);
       ctx.save();
       ctx.translate(decoy.x, decoy.y);
-      ctx.shadowBlur = 34;
+      
+      // Outer energy field ring
+      ctx.shadowBlur = 38;
       ctx.shadowColor = state.currentTheme.gateB;
-      ctx.strokeStyle = `rgba(255,99,212,${0.4 + lifeAlpha * 0.45})`;
-      ctx.lineWidth = 4;
+      ctx.strokeStyle = `rgba(255,99,212,${0.25 + lifeAlpha * 0.35})`;
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(0, 0, pulseR * 1.8, 0, Math.PI * 2);
+      ctx.arc(0, 0, pulseR * 2.4, 0, Math.PI * 2);
       ctx.stroke();
+      
+      // Inner pulsing ring
+      ctx.strokeStyle = `rgba(255,99,212,${0.5 + lifeAlpha * 0.4})`;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(0, 0, pulseR * 1.6 + Math.sin(decoy.pulse * 2.5) * 8, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Beacon rays rotating
       ctx.rotate(decoy.pulse * 0.7);
+      const rayCount = 6;
+      for(let i = 0; i < rayCount; i++) {
+        const rayAngle = (Math.PI * 2 / rayCount) * i;
+        ctx.save();
+        ctx.rotate(rayAngle);
+        ctx.globalAlpha = 0.4 + lifeAlpha * 0.4;
+        ctx.strokeStyle = state.currentTheme.gateB;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(pulseR * 0.5, 0);
+        ctx.lineTo(pulseR * 1.1, 0);
+        ctx.stroke();
+        // Ray tip
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(pulseR * 1.1, 0, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      
+      // Main diamond shape with gradient
       const grad = ctx.createLinearGradient(-14, -14, 14, 14);
       grad.addColorStop(0, '#ffffff');
-      grad.addColorStop(1, state.currentTheme.gateB);
+      grad.addColorStop(0.5, state.currentTheme.gateB);
+      grad.addColorStop(1, 'rgba(255,99,212,0.8)');
       ctx.fillStyle = grad;
+      ctx.shadowBlur = 28;
       ctx.beginPath();
-      ctx.moveTo(0, -pulseR * 1.22);
-      ctx.lineTo(pulseR * .88, 0);
-      ctx.lineTo(0, pulseR * 1.22);
-      ctx.lineTo(-pulseR * .88, 0);
+      ctx.moveTo(0, -pulseR * 1.3);
+      ctx.lineTo(pulseR * .92, 0);
+      ctx.lineTo(0, pulseR * 1.3);
+      ctx.lineTo(-pulseR * .92, 0);
       ctx.closePath();
       ctx.fill();
+      
+      // Inner glow
+      ctx.globalAlpha = 0.6;
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.beginPath();
+      ctx.moveTo(0, -pulseR * 0.7);
+      ctx.lineTo(pulseR * .5, 0);
+      ctx.lineTo(0, pulseR * 0.7);
+      ctx.lineTo(-pulseR * .5, 0);
+      ctx.closePath();
+      ctx.fill();
+      
       ctx.restore();
     });
   }
   function drawLinks(){
     state.links.forEach(link => {
       const alpha = link.life / link.maxLife;
+      const dx = link.bx - link.ax;
+      const dy = link.by - link.ay;
+      const length = Math.hypot(dx, dy);
+      const nx = -dy / length;
+      const ny = dx / length;
       ctx.save();
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.setLineDash([18, 12]);
-      ctx.lineDashOffset = -state.introPulse * 180;
+      
+      // Electric main beam
       const grad = ctx.createLinearGradient(link.ax, link.ay, link.bx, link.by);
       grad.addColorStop(0, link.hueA);
       grad.addColorStop(1, link.hueB);
       ctx.strokeStyle = grad;
-      ctx.globalAlpha = .3 + alpha * .7;
-      ctx.lineWidth = 7 + alpha * 8;
-      ctx.shadowBlur = 24;
+      ctx.globalAlpha = .4 + alpha * .6;
+      ctx.lineWidth = 6 + alpha * 6;
+      ctx.shadowBlur = 32;
       ctx.shadowColor = link.hueB;
       ctx.beginPath();
       ctx.moveTo(link.ax, link.ay);
       ctx.lineTo(link.bx, link.by);
       ctx.stroke();
-      ctx.setLineDash([]);
-      for(let i = 0; i < 3; i++){
-        const t = (i / 2 + state.introPulse * 1.7) % 1;
-        const x = link.ax + (link.bx - link.ax) * t;
-        const y = link.ay + (link.by - link.ay) * t;
-        ctx.fillStyle = i % 2 === 0 ? '#ffffff' : link.hueB;
+      
+      // Electric core - bright center line
+      ctx.strokeStyle = '#ffffff';
+      ctx.globalAlpha = alpha * 0.7;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(link.ax, link.ay);
+      ctx.lineTo(link.bx, link.by);
+      ctx.stroke();
+      
+      // Electric branching sparks - perpendicular
+      ctx.setLineDash([18, 14]);
+      ctx.lineDashOffset = -state.introPulse * 220;
+      ctx.strokeStyle = grad;
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.lineWidth = 3;
+      for(let i = 0; i < 5; i++) {
+        const t = 0.2 + i * 0.15;
+        const cx = link.ax + dx * t;
+        const cy = link.ay + dy * t;
+        const offset = (Math.sin(state.introPulse * 12 + i * 1.3) * 0.5 + 0.5) * 30 - 15;
         ctx.beginPath();
-        ctx.arc(x, y, 4 + alpha * 3, 0, Math.PI * 2);
+        ctx.moveTo(cx + nx * offset, cy + ny * offset);
+        ctx.lineTo(cx - nx * offset, cy - ny * offset);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      
+      // Traveling energy pulses along the line
+      for(let i = 0; i < 4; i++){
+        const t = (i / 3 + state.introPulse * 1.9) % 1;
+        const x = link.ax + dx * t;
+        const y = link.ay + dy * t;
+        const pulseSize = 5 + alpha * 4 + Math.sin(state.introPulse * 18 + i) * 2;
+        ctx.fillStyle = i % 2 === 0 ? '#ffffff' : link.hueB;
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.beginPath();
+        ctx.arc(x, y, pulseSize, 0, Math.PI * 2);
+        ctx.fill();
+        // Glow for pulse
+        ctx.globalAlpha = alpha * 0.4;
+        ctx.beginPath();
+        ctx.arc(x, y, pulseSize * 1.8, 0, Math.PI * 2);
         ctx.fill();
       }
+      
+      // Endpoint burst effects
+      const endpointGlow = alpha * 0.7;
+      [link.ax, link.bx].forEach((ex, idx) => {
+        const ey = idx === 0 ? link.ay : link.by;
+        const hue = idx === 0 ? link.hueA : link.hueB;
+        ctx.shadowBlur = 40;
+        ctx.shadowColor = hue;
+        ctx.fillStyle = '#ffffff';
+        ctx.globalAlpha = endpointGlow;
+        ctx.beginPath();
+        ctx.arc(ex, ey, 6 + alpha * 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = endpointGlow * 0.5;
+        ctx.beginPath();
+        ctx.arc(ex, ey, 10 + alpha * 5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      
       ctx.restore();
     });
   }

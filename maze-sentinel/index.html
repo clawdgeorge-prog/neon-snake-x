@@ -216,6 +216,7 @@
           <div class="pill">Best <strong id="bestScore">0</strong></div>
           <div class="pill">Shards <strong id="shardCount">0</strong></div>
           <div class="pill">Objective <strong id="objectiveCount">0 / 4</strong></div>
+          <div class="pill">Flow <strong id="flowLabel">x1.0</strong></div>
         </div>
         <div class="hud-right">
           <div class="pill">Bursts <strong id="pulseCells">0</strong></div>
@@ -294,6 +295,7 @@
   const waveTypeEl = document.getElementById('waveType');
   const intelLabelEl = document.getElementById('intelLabel');
   const dangerLabelEl = document.getElementById('dangerLabel');
+  const flowLabelEl = document.getElementById('flowLabel');
   const pulseCard = document.getElementById('pulseCard');
   const pulseStateEl = document.getElementById('pulseState');
   const pulseSubEl = document.getElementById('pulseSub');
@@ -363,6 +365,7 @@
     lastTs:0, spawnTimer:0, flash:0, cameraShake:0, shardGlow:0, pulseCounter:0, decoyCharges:1, waveType:'Scout', audioEnabled:true, audioStarted:false,
     themeIndex:0, currentTheme:districts[0], districtBannerTimer:0, dangerLevel:0, dangerLabel:'Clear', hunterPressure:false, threatVectors:[], intelLabel:'Pursuit',
     exitTimer:0, exitTimerMax:0, exitAlarmTimer:0, exitRelocations:0,
+    flow:1, flowTimer:0, flowPeak:1, callouts:[],
     transitionTimer:0, transitionMax:0, transitionTitle:'', transitionText:'', transitionAccent:'#63f2ff',
     settings:{ reducedMotion: localStorage.getItem(MOTION_KEY) === '1', highContrast: localStorage.getItem(CONTRAST_KEY) === '1' }
   };
@@ -519,11 +522,66 @@
     if(kind==='alarm'){ tone(980,'square',.08,0,.022 * motionGain); tone(740,'triangle',.14,.05,.018 * motionGain); }
     if(kind==='start'){ tone(392,'triangle',.12,0,.04 * motionGain); tone(523,'triangle',.14,.06,.04 * motionGain); tone(784,'triangle',.18,.12,.03 * motionGain); }
     if(kind==='breach'){ tone(392,'triangle',.16,0,.05 * motionGain); tone(587,'triangle',.18,.08,.046 * motionGain); tone(784,'sine',.22,.16,.04 * motionGain); tone(1174,'sine',.28,.26,.028 * motionGain); noiseBurst(.11,.022 * motionGain); }
+    if(kind==='flow'){ tone(660,'triangle',.08,0,.024 * motionGain); tone(990,'sine',.12,.03,.018 * motionGain); }
+    if(kind==='flowBreak'){ tone(210,'square',.12,0,.024 * motionGain); tone(168,'triangle',.16,.04,.02 * motionGain); }
   }
   function addParticles(x,y,color,count,spread=3.2,life=1){
     const scaledCount = Math.max(4, Math.round(count * (state.settings.reducedMotion ? 0.45 : 1)));
     const sizeMax = state.settings.reducedMotion ? 4.2 : 6;
     for(let i=0;i<scaledCount;i++) state.particles.push({x,y,vx:rand(-spread,spread),vy:rand(-spread,spread),size:rand(2,sizeMax),life:rand(life*.55,life),maxLife:life,color});
+  }
+  function addCallout(x, y, text, color = '#eef7ff', accent = '#63f2ff', life = 1.05, scale = 1){
+    state.callouts.push({ x, y, text, color, accent, life, maxLife:life, scale, drift:rand(-10, 10) });
+  }
+  function currentFlowMultiplier(){ return Math.round(state.flow * 10) / 10; }
+  function awardScore(base, x, y, text, accent = state.currentTheme.gateA){
+    const amount = Math.max(5, Math.round(base * currentFlowMultiplier()));
+    state.score += amount;
+    if(text){
+      addCallout(x, y, `${text} +${amount}`, '#f6fcff', accent, 1.08, amount >= 400 ? 1.16 : 1);
+    }
+    if(state.score > state.best){
+      state.best = state.score;
+      localStorage.setItem(STORAGE_KEY, String(state.best));
+    }
+    return amount;
+  }
+  function boostFlow(amount, x = state.player?.x ?? canvas.width * .5, y = state.player?.y ?? canvas.height * .5, note = 'Flow Up'){
+    const next = clamp(state.flow + amount, 1, 3);
+    const gain = next - state.flow;
+    state.flow = next;
+    state.flowTimer = Math.max(state.flowTimer, 3.6 + gain * 4.2);
+    state.flowPeak = Math.max(state.flowPeak, state.flow);
+    if(gain > 0.04){
+      addCallout(x, y - 26, `${note} • x${currentFlowMultiplier().toFixed(1)}`, '#e9fbff', state.currentTheme.gateA, .92, 1.02 + gain * .22);
+      playSfx('flow');
+    }
+  }
+  function breakFlow(reason = 'Flow Broken'){
+    if(state.flow <= 1.02){
+      state.flow = 1;
+      state.flowTimer = 0;
+      return;
+    }
+    state.flow = 1;
+    state.flowTimer = 0;
+    addCallout(state.player?.x ?? canvas.width * .5, (state.player?.y ?? canvas.height * .5) - 18, reason, '#ffd6de', '#ff7272', .95, 1.08);
+    playSfx('flowBreak');
+  }
+  function updateFlow(dt){
+    if(state.flowTimer > 0){
+      state.flowTimer = Math.max(0, state.flowTimer - dt);
+    } else if(state.flow > 1){
+      state.flow = Math.max(1, state.flow - dt * 0.22);
+    }
+  }
+  function updateCallouts(dt){
+    state.callouts = state.callouts.filter(callout => {
+      callout.life -= dt;
+      callout.y -= (48 + 10 * callout.scale) * dt;
+      callout.x += callout.drift * dt;
+      return callout.life > 0;
+    });
   }
   function addRibbon(x,y,color){ state.ribbons.push({x,y,color,life:1,maxLife:1,size:rand(10,22)}); }
   function applyThemeCss(theme){
@@ -608,7 +666,10 @@
   }
   function completeLevel(){
     const clearedTheme = state.currentTheme;
-    state.score += 350 + state.level * 120;
+    const breachUrgency = state.exitTimerMax ? clamp(state.exitTimer / state.exitTimerMax, 0, 1) : 0;
+    const breachBonus = (state.exitRelocations === 0 ? 90 : 0) + Math.round(breachUrgency * 160);
+    awardScore(350 + state.level * 120 + breachBonus, state.player.x, state.player.y - 18, breachBonus ? 'Breach Flow' : 'District Breach', state.currentTheme.shardB);
+    boostFlow(.34 + breachUrgency * .42 + (state.exitRelocations === 0 ? .16 : 0), state.player.x, state.player.y - 28, state.exitRelocations === 0 ? 'Perfect Breach' : 'Exit Secured');
     state.level += 1;
     state.levelShards = 0;
     state.objectiveTarget = Math.min(8, 3 + state.level);
@@ -652,11 +713,17 @@
     });
   }
   function resetGame(){
-    state.running=false; state.paused=false; state.over=false; state.score=0; state.level=1; state.health=3; state.charge=0; state.shards=0; state.levelShards=0; state.objectiveTarget=4; state.drones=[]; state.particles=[]; state.ribbons=[]; state.pulses=[]; state.decoys=[]; state.links=[]; state.routePath=[]; state.routeType='shard'; state.routePulse=0; state.spawnTimer=0; state.flash=0; state.cameraShake=0; state.shardGlow=0; state.pulseCounter=0; state.decoyCharges=1; state.waveType='Scout'; state.districtBannerTimer=0; state.exitPortal=null; state.dangerLevel=0; state.dangerLabel='Clear'; state.hunterPressure=false; state.threatVectors=[]; state.intelLabel='Pursuit'; state.exitTimer=0; state.exitTimerMax=0; state.exitAlarmTimer=0; state.exitRelocations=0; state.transitionTimer=0; state.transitionMax=0; state.transitionTitle=''; state.transitionText=''; state.transitionAccent=state.currentTheme?.gateA || '#63f2ff';
+    state.running=false; state.paused=false; state.over=false; state.score=0; state.level=1; state.health=3; state.charge=0; state.shards=0; state.levelShards=0; state.objectiveTarget=4; state.drones=[]; state.particles=[]; state.ribbons=[]; state.pulses=[]; state.decoys=[]; state.links=[]; state.routePath=[]; state.routeType='shard'; state.routePulse=0; state.spawnTimer=0; state.flash=0; state.cameraShake=0; state.shardGlow=0; state.pulseCounter=0; state.decoyCharges=1; state.waveType='Scout'; state.districtBannerTimer=0; state.exitPortal=null; state.dangerLevel=0; state.dangerLabel='Clear'; state.hunterPressure=false; state.threatVectors=[]; state.intelLabel='Pursuit'; state.exitTimer=0; state.exitTimerMax=0; state.exitAlarmTimer=0; state.exitRelocations=0; state.flow=1; state.flowTimer=0; state.flowPeak=1; state.callouts=[]; state.transitionTimer=0; state.transitionMax=0; state.transitionTitle=''; state.transitionText=''; state.transitionAccent=state.currentTheme?.gateA || '#63f2ff';
     state.player=initPlayer(); setDistrictTheme(0, false); spawnShard(); spawnGate(); for(let i=0;i<3;i++) spawnDrone(); updateRouteAssist(); syncHud();
     overlay.classList.remove('hidden');
   }
   function syncHud(){ scoreEl.textContent=state.score; levelEl.textContent=state.level; healthEl.textContent=state.health; chargeEl.textContent=`${Math.round(state.charge)}%`; bestScoreEl.textContent=state.best; shardCountEl.textContent=state.shards; objectiveCountEl.textContent = state.exitPortal ? `Escape ${Math.max(0, state.exitTimer).toFixed(1)}s` : `${state.levelShards} / ${state.objectiveTarget}`; objectiveCountEl.parentElement.title = state.exitPortal ? 'Exit breach window before the portal relocates.' : 'Collect enough shards to breach the district exit.'; pulseCellsEl.textContent=state.pulseCounter; decoyCountEl.textContent=state.decoyCharges; droneCountEl.textContent=state.drones.length; districtNameEl.textContent=state.currentTheme.name; districtTraitEl.textContent=state.currentTheme.trait; districtTraitEl.parentElement.title = state.currentTheme.traitDesc; navLabelEl.textContent = state.routeType === 'exit' ? 'Exit' : 'Shard'; navLabelEl.parentElement.title = state.routeType === 'exit' ? 'Breadcrumb line is guiding you to the open portal before it shifts.' : 'Breadcrumb line is guiding you to the next shard.'; waveTypeEl.textContent=state.waveType; intelLabelEl.textContent = state.intelLabel; intelLabelEl.style.color = state.intelLabel === 'Lock' ? '#ffd1f0' : state.intelLabel === 'Intercept' ? '#8feeff' : state.intelLabel === 'Anchor' ? '#ffe08d' : state.intelLabel === 'Decoy' ? '#ff9fdb' : '#d5f7ff'; intelLabelEl.parentElement.title = state.intelLabel === 'Lock' ? 'Nearest hunter is lining up a surge lane.' : state.intelLabel === 'Intercept' ? 'Scouts are cutting toward your current route.' : state.intelLabel === 'Anchor' ? 'Glimmers are guarding the live objective.' : state.intelLabel === 'Decoy' ? 'Your decoy is actively bending the drone pack.' : 'Drone pack is mostly in direct pursuit.'; dangerLabelEl.textContent = state.dangerLabel; dangerLabelEl.style.color = state.hunterPressure ? '#ffd1f0' : state.dangerLevel > .68 ? '#ff8a8a' : state.dangerLevel > .38 ? '#ffd76a' : '#bfffee'; dangerLabelEl.parentElement.title = state.hunterPressure ? 'Hunter surge telegraph is active.' : state.dangerLevel > .68 ? 'Multiple drones are in striking range.' : state.dangerLevel > .38 ? 'Nearby drone pressure rising.' : 'Nearby routes are relatively safe.'; stateLabelEl.textContent=state.over?'Run Lost':state.paused?'Paused':state.transitionTimer>0?'District Clear':state.running?(state.exitPortal?'Exit Open':'Active'):'Standby';
+    const flowMult = currentFlowMultiplier();
+    flowLabelEl.textContent = `x${flowMult.toFixed(1)}`;
+    flowLabelEl.style.color = flowMult >= 2.5 ? '#ffe08d' : flowMult >= 1.6 ? '#8feeff' : '#eef7ff';
+    flowLabelEl.parentElement.style.borderColor = flowMult > 1.05 ? `rgba(99,242,255,${0.14 + (flowMult - 1) * 0.15})` : 'rgba(255,255,255,.1)';
+    flowLabelEl.parentElement.style.boxShadow = flowMult > 1.05 ? `0 0 ${12 + (flowMult - 1) * 10}px rgba(99,242,255,.14)` : 'inset 0 1px 0 rgba(255,255,255,.04)';
+    flowLabelEl.parentElement.title = flowMult >= 2.5 ? 'Locked-in flow: shard, lash, and breach score are heavily amplified.' : flowMult >= 1.5 ? 'Clean risky play is amplifying score rewards.' : 'Flow rises when you collect shards under pressure, stun drones cleanly, and breach exits quickly.';
     const pulseCost = currentPulseCost();
     const pulseReady = state.charge >= pulseCost;
     const pulseProgress = clamp(state.charge / Math.max(1, pulseCost), 0, 1);
@@ -755,8 +822,8 @@
         }
       });
       if(hits){
-        state.score += hits * 60;
-        if(state.score>state.best){ state.best=state.score; localStorage.setItem(STORAGE_KEY,String(state.best)); }
+        awardScore(hits * 60, activeDecoy.x, activeDecoy.y - 18, hits > 1 ? 'Arc Lash' : 'Stun', state.currentTheme.gateB);
+        boostFlow(Math.min(.36, hits * .08), activeDecoy.x, activeDecoy.y - 28, hits > 1 ? 'Chain Held' : 'Tight Line');
       }
       addParticles(activeDecoy.x, activeDecoy.y, state.currentTheme.gateB, 22, 4.6, .9);
       state.cameraShake = Math.max(state.cameraShake, .24);
@@ -866,7 +933,7 @@
       const speed=(drone.speed*speedScale)*dt*TILE; const nx=drone.x+choice.x*speed, ny=drone.y+choice.y*speed; if(canMoveTo(nx,ny,drone.radius)){ drone.x=nx; drone.y=ny; }
       drone.trail.push({x:drone.x,y:drone.y}); if(drone.trail.length>(drone.type==='hunter'&&drone.surgeBurst>0?16:10)) drone.trail.shift();
       if(state.gate&&state.gate.cooldown<=0){ if(Math.hypot(drone.x-state.gate.a.x,drone.y-state.gate.a.y)<TILE*.28){ drone.x=state.gate.b.x; drone.y=state.gate.b.y; state.gate.cooldown=currentGateCooldown(); } else if(Math.hypot(drone.x-state.gate.b.x,drone.y-state.gate.b.y)<TILE*.28){ drone.x=state.gate.a.x; drone.y=state.gate.a.y; state.gate.cooldown=currentGateCooldown(); } }
-      if(dist(drone,state.player)<drone.radius+state.player.radius&&state.player.hitCooldown<=0){ state.player.hitCooldown=1.3; state.health-=1; state.flash=.55; state.cameraShake=.22; addParticles(state.player.x,state.player.y,'#ff7272',38,6,1.3); playSfx('hit'); vibrate([24,40,24]); if(state.health<=0) gameOver(); }
+      if(dist(drone,state.player)<drone.radius+state.player.radius&&state.player.hitCooldown<=0){ state.player.hitCooldown=1.3; state.health-=1; state.flash=.55; state.cameraShake=.22; addParticles(state.player.x,state.player.y,'#ff7272',38,6,1.3); breakFlow('Flow Broken'); playSfx('hit'); vibrate([24,40,24]); if(state.health<=0) gameOver(); }
     });
   }
   function updatePulses(dt){ state.pulses=state.pulses.filter(p=>{ p.life-=dt; p.radius+=p.growth*dt; state.drones.forEach(drone=>{ if(dist(drone,p)<p.radius) drone.stunned=Math.max(drone.stunned, (drone.type==='hunter'?1.05:1.5) + currentPulseStunBonus()); }); return p.life>0; }); }
@@ -967,7 +1034,9 @@
   function collectShard(){
     if(!state.shard) return;
     if(Math.hypot(state.player.x-state.shard.x,state.player.y-state.shard.y)<TILE*.38){
-      state.score+=150;
+      const pressureBonus = state.dangerLevel > .72 ? 90 : state.dangerLevel > .45 ? 45 : 0;
+      awardScore(150 + pressureBonus, state.shard.x, state.shard.y - 10, pressureBonus ? 'Hot Pickup' : 'Shard', state.currentTheme.shardB);
+      boostFlow(.16 + state.dangerLevel * .42, state.shard.x, state.shard.y - 24, pressureBonus ? 'Pressure Flow' : 'Clean Line');
       state.shards+=1;
       state.levelShards = Math.min(state.objectiveTarget, state.levelShards + 1);
       state.charge=clamp(state.charge+25,0,100);
@@ -992,6 +1061,8 @@
       updateDecoys(dt);
       updateLinks(dt);
       updateParticles(dt);
+      updateCallouts(dt);
+      updateFlow(dt);
       syncHud();
       return;
     }
@@ -1011,7 +1082,7 @@
       }
     }
     if(state.spawnTimer>=difficulties[state.difficulty].spawnEvery){ state.spawnTimer=0; if(state.drones.length<4+state.level*2) spawnDrone(); syncHud(); }
-    updatePlayer(dt); updateDrones(dt); updatePulses(dt); updateDecoys(dt); updateLinks(dt); updateParticles(dt); collectShard(); updateRouteAssist(); updateDangerState(); syncHud();
+    updatePlayer(dt); updateDrones(dt); updatePulses(dt); updateDecoys(dt); updateLinks(dt); updateParticles(dt); updateCallouts(dt); collectShard(); updateRouteAssist(); updateDangerState(); updateFlow(dt); syncHud();
     if(state.exitPortal && Math.hypot(state.player.x - state.exitPortal.x, state.player.y - state.exitPortal.y) < TILE * .44){
       completeLevel();
     }
@@ -1499,7 +1570,25 @@
       else { ctx.beginPath(); ctx.moveTo(0,-drone.radius*1.25); ctx.lineTo(drone.radius*1.08,drone.radius*.9); ctx.lineTo(0,drone.radius*.45); ctx.lineTo(-drone.radius*1.08,drone.radius*.9); ctx.closePath(); ctx.fill(); }
       ctx.restore(); }); }
   function drawParticles(){ state.particles.forEach(p=>{ const alpha=p.life/p.maxLife; ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size*alpha,0,Math.PI*2); ctx.fill(); ctx.restore(); }); }
-  function drawVignette(){ const g=ctx.createRadialGradient(canvas.width*.5,canvas.height*.5,canvas.width*.22,canvas.width*.5,canvas.height*.5,canvas.width*.78); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,state.currentTheme.vignette); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height); if(state.flash>0){ ctx.fillStyle=`rgba(255,80,80,${state.flash*.22})`; ctx.fillRect(0,0,canvas.width,canvas.height); } }
+  function drawCallouts(){
+    state.callouts.forEach(callout => {
+      const alpha = clamp(callout.life / callout.maxLife, 0, 1);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.textAlign = 'center';
+      ctx.font = `${Math.round(15 * callout.scale)}px Inter, sans-serif`;
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = `rgba(4,10,22,${0.45 * alpha})`;
+      ctx.strokeText(callout.text, callout.x, callout.y);
+      const grad = ctx.createLinearGradient(callout.x - 90, callout.y - 10, callout.x + 90, callout.y + 10);
+      grad.addColorStop(0, callout.color);
+      grad.addColorStop(1, callout.accent);
+      ctx.fillStyle = grad;
+      ctx.fillText(callout.text, callout.x, callout.y);
+      ctx.restore();
+    });
+  }
+  function drawVignette(){ const g=ctx.createRadialGradient(canvas.width*.5,canvas.height*.5,canvas.width*.22,canvas.width*.5,canvas.height*.5,canvas.width*.78); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,state.currentTheme.vignette); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height); if(state.flow > 1.08){ const flowAlpha = Math.min(.16, (state.flow - 1) * .09) * (state.settings.reducedMotion ? .72 : 1); ctx.fillStyle = `rgba(99,242,255,${flowAlpha})`; ctx.fillRect(0,0,canvas.width,canvas.height); } if(state.flash>0){ ctx.fillStyle=`rgba(255,80,80,${state.flash*.22})`; ctx.fillRect(0,0,canvas.width,canvas.height); } }
   function drawTransitionOverlay(){
     if(state.transitionTimer <= 0 || !state.transitionMax) return;
     const progress = clamp(state.transitionTimer / state.transitionMax, 0, 1);
@@ -1542,7 +1631,7 @@
     roundedRect(barX, barY, barW * intro, 8, 5, true);
     ctx.restore();
   }
-  function render(){ drawSceneBackground(); const shake=state.cameraShake*8*motionScale(); ctx.save(); ctx.translate(rand(-shake,shake), rand(-shake,shake)); drawMaze(); drawGate(); drawRibbons(); drawRouteAssist(); drawShard(); drawExitPortal(); drawDecoys(); drawLinks(); drawPulses(); drawThreatTelegraphs(); drawThreatCompass(); drawDrones(); drawDangerHalo(); drawPlayer(); drawParticles(); ctx.restore(); drawRadar(); drawVignette(); drawTransitionOverlay(); }
+  function render(){ drawSceneBackground(); const shake=state.cameraShake*8*motionScale(); ctx.save(); ctx.translate(rand(-shake,shake), rand(-shake,shake)); drawMaze(); drawGate(); drawRibbons(); drawRouteAssist(); drawShard(); drawExitPortal(); drawDecoys(); drawLinks(); drawPulses(); drawThreatTelegraphs(); drawThreatCompass(); drawDrones(); drawDangerHalo(); drawPlayer(); drawParticles(); drawCallouts(); ctx.restore(); drawRadar(); drawVignette(); drawTransitionOverlay(); }
   function frame(ts){ if(!state.lastTs) state.lastTs=ts; const dt=Math.min((ts-state.lastTs)/1000,.033); state.lastTs=ts; update(dt); render(); requestAnimationFrame(frame); }
   function startGame(){ initAudio(); if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); resetGame(); state.running=true; overlay.classList.add('hidden'); playSfx('start'); syncHud(); }
   function togglePause(){ if(!state.running||state.over) return; state.paused=!state.paused; syncHud(); }

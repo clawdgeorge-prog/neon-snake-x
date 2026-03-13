@@ -36,6 +36,7 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - Adaptive soundtrack now changes by district and swells during hunter locks / exit-rush pressure so the run has more cinematic momentum even before new content is added
 - New ability-readiness strip makes pulse charge, decoy restock progress, and arc-lash priming readable at a glance, while the Pulse / Decoy touch buttons now glow or dim based on live availability
 - New in-canvas tactical radar gives a compact live overview of maze walls, player position, drones, gate anchors, decoys, shard / exit location, and your current breadcrumb route — especially useful on mobile when pressure gets dense
+- New flow-scoring system rewards stylish clean play: risky shard pickups, multi-drone arc-lash stuns, and fast portal breaches now build a live multiplier, with floating callouts, light audio feedback, and a subtle screen glow that makes momentum readable without cluttering the maze
 
 ## Next polish ideas
 - richer soundtrack / SFX layering beyond the new district-reactive base score

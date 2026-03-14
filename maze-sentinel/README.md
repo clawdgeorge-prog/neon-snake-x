@@ -49,6 +49,11 @@ Neon browser arcade prototype focused on maze-chase + route-control gameplay.
 - District arrival celebration: enhanced particle bursts with new district colors, stronger camera shake, screen flash, and a celebratory callout announcing the new district when you breach
 - Enhanced ability visual effects: pulse burst now has multi-ring expansion with shockwave and radiating particles, decoy beacon features rotating energy rays and pulsing energy field, arc-lash combo has electric crackling with branching sparks and traveling energy pulses plus screen flash on hit
 - Additional particle burst upgrades on ability activation for more tactile feedback
+- **Boss waves** every 5 levels (5, 10, 15, etc.) with three unique boss types:
+  - **Titan** (red): Large and slow, charges up and rushes player for high damage
+  - **Phantom** (cyan): Fast and erratic, creates damaging afterimages
+  - **Siphon** (purple): Creates a leech field that drains charge and heals slightly
+  - Bosses have health bars and take damage from pulse, defeated bosses award bonus score
 
 ## Next polish ideas
-- boss waves at certain level milestones
+- Additional boss types with unique mechanics

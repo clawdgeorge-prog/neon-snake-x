@@ -867,6 +867,16 @@
     addParticles(portalPos.x, portalPos.y, '#ffffff', 32, 4.5, 0.95);
     // Energy ring explosion
     state.level += 1;
+    // Boss wave every 5 levels (5, 10, 15, etc.)
+    state.bossWave = (state.level % 5 === 0);
+    if (state.bossWave) {
+      state.bossType = ['titan', 'phantom', 'siphon'][Math.floor(state.level / 5) % 3];
+      state.bossAnnounce = 3.5;
+      // Boss wave means extra drones cleared bonus
+      awardScore(500 + state.level * 75, state.player.x, state.player.y - 24, 'Boss Wave', '#ff63d4');
+    } else {
+      state.bossType = null;
+    }
     state.districtsCleared += 1;
     localStorage.setItem('maze-sentinel-districts', String(state.districtsCleared));
     state.modules += 1;
@@ -883,6 +893,10 @@
     spawnDrone();
     if(state.drones.length < 3 + state.level){
       spawnDrone();
+    }
+    // Spawn boss on boss wave levels
+    if (state.bossWave) {
+      spawnBoss();
     }
     advanceDistrict();
     state.transitionMax = state.settings.reducedMotion ? .95 : 1.45;
@@ -929,9 +943,91 @@
     });
     playSfx('spawn');
   }
+  function spawnBoss() {
+    if (!state.bossWave || !state.bossType) return;
+    let c = randomOpenCell();
+    // Keep boss away from player at spawn
+    while (Math.hypot(c.x - state.player.x, c.y - state.player.y) < TILE * 6) {
+      c = randomOpenCell();
+    }
+    const diff = difficulties[state.difficulty];
+    const bossConfigs = {
+      titan: { 
+        hue: 0, // Red - aggressive
+        speed: diff.enemySpeed * 0.7, 
+        radius: TILE * 0.42, 
+        wobble: 0.6,
+        health: 3,
+        name: 'Titan',
+        desc: 'Massive and slow, but hits hard. Watch for charge-up attacks.',
+        ability: 'charge'
+      },
+      phantom: { 
+        hue: 180, // Cyan - slippery
+        speed: diff.enemySpeed * 1.35, 
+        radius: TILE * 0.24, 
+        wobble: 3.2,
+        health: 2,
+        name: 'Phantom',
+        desc: 'Fast and erratic. Leaves afterimages that deal damage.',
+        ability: 'afterimage'
+      },
+      siphon: { 
+        hue: 280, // Purple - draining
+        speed: diff.enemySpeed * 0.85, 
+        radius: TILE * 0.32, 
+        wobble: 1.8,
+        health: 2,
+        name: 'Siphon',
+        desc: 'Creates a leech field that drains your charge over time.',
+        ability: 'leech'
+      }
+    };
+    const config = bossConfigs[state.bossType];
+    state.waveType = '⚠ ' + config.name.toUpperCase();
+    const bossDrone = {
+      x: c.x, y: c.y, 
+      radius: config.radius, 
+      speed: config.speed, 
+      hue: config.hue, 
+      stunned: 0, 
+      trail: [], 
+      wobble: rand(0, Math.PI * 2), 
+      type: state.bossType,
+      isBoss: true,
+      bossHealth: config.health,
+      bossMaxHealth: config.health,
+      intent: 'Pursuit', 
+      nearMissCooldown: 0,
+      // Titan specific
+      chargeTimer: 0,
+      chargeActive: false,
+      chargeTarget: { x: c.x, y: c.y },
+      // Phantom specific
+      afterimageTimer: 0,
+      afterimageActive: false,
+      afterimageCount: 0,
+      // Siphon specific
+      leechTimer: 0,
+      leechField: 0,
+      leechDrain: 0
+    };
+    state.drones.push(bossDrone);
+    playSfx('spawn');
+    playSfx('breach'); // Boss spawn gets special sound
+    // Big spawn effect
+    state.cameraShake = 0.6;
+    state.flash = Math.max(state.flash, 0.25);
+    addParticles(c.x, c.y, config.hue === 0 ? '#ff3333' : config.hue === 180 ? '#33ffff' : '#aa33ff', 42, 5.5, 1.3);
+    // Announce boss
+    addCallout(canvas.width / 2, canvas.height * 0.32, `${config.name} APPEARS!`, config.hue === 0 ? '#ff5555' : config.hue === 180 ? '#55ffff' : '#bb55ff', '#ffffff', 1.4, 1.2);
+  }
   function resetGame(){
     state.running=false; state.paused=false; state.over=false; state.score=0; state.level=1; state.health=3; state.charge=0; state.shards=0; state.levelShards=0; state.objectiveTarget=4; state.drones=[]; state.particles=[]; state.ribbons=[]; state.pulses=[]; state.decoys=[]; state.links=[]; state.routePath=[]; state.routeType='shard'; state.routePulse=0; state.spawnTimer=0; state.flash=0; state.cameraShake=0; state.shardGlow=0; state.pulseCounter=0; state.decoyCharges=1; state.waveType='Scout'; state.districtBannerTimer=0; state.exitPortal=null; state.dangerLevel=0; state.dangerLabel='Clear'; state.hunterPressure=false; state.threatVectors=[]; state.intelLabel='Pursuit'; state.exitTimer=0; state.exitTimerMax=0; state.exitAlarmTimer=0; state.exitRelocations=0; state.flow=1; state.flowTimer=0; state.flowPeak=1; state.callouts=[]; state.overdrive=0; state.overdriveTimer=0; state.nearMissPulse=0; state.transitionTimer=0; state.transitionMax=0; state.transitionTitle=''; state.transitionText=''; state.transitionAccent=state.currentTheme?.gateA || '#63f2ff'; state.portalWarp={active:false,progress:0,x:0,y:0};
     state.modules = loadModules();
+    state.bossWave = false;
+    state.bossType = null;
+    state.bossAnnounce = 0;
     state.player=initPlayer(); setDistrictTheme(0, false); spawnShard(); spawnGate(); for(let i=0;i<3;i++) spawnDrone(); updateRouteAssist(); syncHud();
     const owned=getOwnedUpgrades(); upgrades.forEach(u=>{ if(owned[u.id])u.apply(state); }); syncHud();
     overlay.classList.remove('hidden');
@@ -1346,6 +1442,133 @@
           drone.wobble += dt * 7.5; // Faster wobble when invisible
         }
       }
+      // Boss-specific behaviors
+      if (drone.isBoss) {
+        if (drone.stunned > 0) {
+          // Boss is stunned - reset abilities
+          drone.chargeActive = false;
+          drone.afterimageActive = false;
+          drone.leechField = 0;
+        } else {
+          // Titan: Charge attack - telegraph then rush
+          if (drone.type === 'titan') {
+            drone.chargeTimer = (drone.chargeTimer || 0) - dt;
+            if (drone.chargeActive) {
+              // Charging forward - fast movement
+              const toPlayer = { x: state.player.x - drone.x, y: state.player.y - drone.y };
+              const distToPlayer = Math.hypot(toPlayer.x, toPlayer.y);
+              if (distToPlayer > 0) {
+                const chargeSpeed = drone.speed * 2.8;
+                drone.x += (toPlayer.x / distToPlayer) * chargeSpeed * dt;
+                drone.y += (toPlayer.y / distToPlayer) * chargeSpeed * dt;
+              }
+              // Charge end
+              if (drone.chargeTimer <= 0.05) {
+                addParticles(drone.x, drone.y, '#ff3333', 28, 5.5, 1.0);
+                state.cameraShake = Math.max(state.cameraShake, .25);
+                playSfx('surge');
+                drone.chargeActive = false;
+              }
+            } else if ((drone.chargeTimer || 0) <= 0) {
+              // Telegraph charge attack
+              const distToPlayer = dist(drone, state.player);
+              if (distToPlayer < TILE * 7 && distToPlayer > TILE * 2.5) {
+                drone.chargeTimer = 0.65; // Telegraph duration
+                drone.chargeTarget = { x: state.player.x, y: state.player.y };
+                // Telegraph effect
+                addParticles(drone.x, drone.y, 'rgba(255, 80, 80, 0.7)', 12, 3.0, 0.5);
+                state.cameraShake = Math.max(state.cameraShake, .08);
+              } else {
+                drone.chargeTimer = 1.2; // Wait longer
+              }
+            }
+          }
+          // Phantom: Afterimage attack
+          if (drone.type === 'phantom') {
+            drone.afterimageTimer = (drone.afterimageTimer || 0) - dt;
+            if (drone.afterimageActive) {
+              // Spawning afterimages periodically
+              drone.afterimageTimer -= dt;
+              if (drone.afterimageTimer <= 0.25 && drone.afterimageCount < 3) {
+                // Create afterimage
+                const afterimage = {
+                  x: drone.x, y: drone.y,
+                  radius: drone.radius * 0.7,
+                  speed: drone.speed * 0.9,
+                  hue: drone.hue,
+                  stunned: 0,
+                  trail: [],
+                  wobble: drone.wobble,
+                  type: 'phantom',
+                  isBoss: false,
+                  isAfterimage: true,
+                  intent: 'Pursuit',
+                  nearMissCooldown: 0,
+                  life: 2.8
+                };
+                state.drones.push(afterimage);
+                addParticles(drone.x, drone.y, 'hsla(180, 100%, 65%, 0.8)', 14, 3.5, 0.6);
+                drone.afterimageCount++;
+                drone.afterimageTimer = 0.35;
+              }
+              drone.afterimageTimer = Math.max(0, drone.afterimageTimer);
+              if (drone.afterimageTimer <= 0) {
+                drone.afterimageActive = false;
+                drone.afterimageTimer = rand(4.0, 6.5);
+                drone.afterimageCount = 0;
+              }
+            } else if ((drone.afterimageTimer || 0) <= 0) {
+              const distToPlayer = dist(drone, state.player);
+              if (distToPlayer < TILE * 5.5) {
+                drone.afterimageActive = true;
+                drone.afterimageTimer = 1.8;
+                drone.afterimageCount = 0;
+                addParticles(drone.x, drone.y, 'hsla(180, 100%, 70%, 0.75)', 16, 4.0, 0.65);
+                state.cameraShake = Math.max(state.cameraShake, .1);
+              } else {
+                drone.afterimageTimer = 1.5;
+              }
+            }
+          }
+          // Siphon: Leech field
+          if (drone.type === 'siphon') {
+            drone.leechTimer = (drone.leechTimer || 0) - dt;
+            if (drone.leechField > 0) {
+              // Active leech field - drain player charge
+              const distToPlayer = dist(drone, state.player);
+              if (distToPlayer < TILE * 3.5) {
+                const drainRate = 8 * dt; // Charge per second
+                state.charge = Math.max(0, state.charge - drainRate);
+                drone.leechDrain += drainRate;
+                // Visual feedback
+                if (Math.random() < 0.15) {
+                  addParticles(state.player.x, state.player.y, 'hsla(280, 100%, 65%, 0.5)', 4, 1.5, 0.3);
+                }
+              }
+              drone.leechField -= dt;
+              if (drone.leechField <= 0) {
+                // Field ended - heal boss slightly if it drained enough
+                if (drone.leechDrain > 15) {
+                  drone.bossHealth = Math.min(drone.bossMaxHealth, drone.bossHealth + 0.5);
+                }
+                drone.leechDrain = 0;
+                addParticles(drone.x, drone.y, 'hsla(280, 90%, 58%, 0.7)', 18, 4.2, 0.6);
+              }
+            } else if ((drone.leechTimer || 0) <= 0) {
+              const distToPlayer = dist(drone, state.player);
+              if (distToPlayer < TILE * 4.5) {
+                drone.leechField = rand(2.5, 3.5);
+                drone.leechTimer = rand(5.5, 8.0);
+                drone.leechDrain = 0;
+                addParticles(drone.x, drone.y, 'hsla(280, 85%, 62%, 0.65)', 14, 3.2, 0.55);
+                state.cameraShake = Math.max(state.cameraShake, .08);
+              } else {
+                drone.leechTimer = 1.8;
+              }
+            }
+          }
+        }
+      }
       const dc=nearestCell(drone.x,drone.y); const opts=pathOptions(dc.cx,dc.cy); let choice={x:0,y:0};
       const intent = pickDroneIntent(drone, playerCell, liveObjective, interceptCell, activeDecoy);
       drone.intent = intent.label;
@@ -1385,8 +1608,45 @@
       }
       if(!isPhasing && separation<hitRadius&&state.player.hitCooldown<=0){ state.player.hitCooldown=1.3; const dmg = hasUpgrade('damageReduce') ? 0.85 : 1; state.health-=dmg; state.flash=.55; state.cameraShake=.22; state.overdrive = Math.max(0, state.overdrive - .6); state.overdriveTimer = 0; addParticles(state.player.x,state.player.y,'#ff7272',38,6,1.3); breakFlow('Flow Broken'); playSfx('hit'); vibrate([24,40,24]); if(state.health<=0) gameOver(); }
     });
+    // Remove dead bosses and expired afterimages
+    state.drones = state.drones.filter(drone => {
+      if (drone.isBoss && drone.bossHealth <= 0) return false;
+      if (drone.isAfterimage) {
+        drone.life -= dt;
+        if (drone.life <= 0) {
+          addParticles(drone.x, drone.y, 'hsla(180, 100%, 65%, 0.6)', 10, 2.5, 0.4);
+          return false;
+        }
+      }
+      return true;
+    });
   }
-  function updatePulses(dt){ state.pulses=state.pulses.filter(p=>{ p.life-=dt; p.radius+=p.growth*dt; state.drones.forEach(drone=>{ if(dist(drone,p)<p.radius) drone.stunned=Math.max(drone.stunned, (drone.type==='hunter'?1.05:1.5) + currentPulseStunBonus()); }); return p.life>0; }); }
+  function updatePulses(dt){ state.pulses=state.pulses.filter(p=>{ p.life-=dt; p.radius+=p.growth*dt; state.drones.forEach(drone=>{ if(dist(drone,p)<p.radius){ 
+        if (drone.isBoss) {
+          // Boss takes damage from pulse
+          drone.bossHealth -= 1;
+          drone.stunned = Math.max(drone.stunned, 0.8);
+          addParticles(drone.x, drone.y, drone.type === 'titan' ? '#ff5555' : drone.type === 'phantom' ? '#55ffff' : '#bb55ff', 24, 4.5, 0.8);
+          state.cameraShake = Math.max(state.cameraShake, .15);
+          // Boss death check
+          if (drone.bossHealth <= 0) {
+            // Boss defeated!
+            const bonus = drone.type === 'titan' ? 800 : drone.type === 'phantom' ? 600 : 700;
+            awardScore(bonus + state.level * 50, drone.x, drone.y - 24, `${drone.type.charAt(0).toUpperCase() + drone.type.slice(1)} Defeated`, drone.type === 'titan' ? '#ff5555' : drone.type === 'phantom' ? '#55ffff' : '#bb55ff');
+            addParticles(drone.x, drone.y, drone.type === 'titan' ? '#ff3333' : drone.type === 'phantom' ? '#33ffff' : '#aa33ff', 52, 7.5, 1.4);
+            state.cameraShake = Math.max(state.cameraShake, .45);
+            playSfx('breach');
+            addCallout(canvas.width / 2, canvas.height * 0.32, `${drone.type.toUpperCase()} DEFEATED!`, drone.type === 'titan' ? '#ff5555' : drone.type === 'phantom' ? '#55ffff' : '#bb55ff', '#ffffff', 1.5, 1.25);
+          }
+        } else if (drone.isAfterimage) {
+          // Afterimages are destroyed by pulse
+          drone.life = 0;
+          drone.stunned = 999; // Mark for removal
+          addParticles(drone.x, drone.y, 'hsla(180, 100%, 72%, 0.8)', 16, 3.5, 0.6);
+        } else {
+          drone.stunned=Math.max(drone.stunned, (drone.type==='hunter'?1.05:1.5) + currentPulseStunBonus());
+        }
+      }}); return p.life>0; }); }
   function updateDecoys(dt){
     state.decoys = state.decoys.filter(decoy => {
       decoy.life -= dt;
@@ -2398,6 +2658,81 @@
           ctx.shadowBlur = 52;
           ctx.shadowColor = `hsla(${drone.hue}, 100%, 72%, .95)`;
         }
+      }
+      // Boss-specific rendering
+      if (drone.isBoss) {
+        // Boss glow effect
+        ctx.save();
+        const bossHue = drone.type === 'titan' ? 0 : drone.type === 'phantom' ? 180 : 280;
+        ctx.shadowBlur = 58;
+        ctx.shadowColor = `hsla(${bossHue}, 100%, 65%, .85)`;
+        
+        // Boss health bar
+        if (drone.bossMaxHealth > 1) {
+          const healthPct = drone.bossHealth / drone.bossMaxHealth;
+          const barWidth = drone.radius * 3.2;
+          const barHeight = 5;
+          const barY = -drone.radius * 1.7;
+          
+          // Background
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+          ctx.fillRect(-barWidth / 2, barY, barWidth, barHeight);
+          
+          // Health
+          const healthColor = healthPct > 0.5 ? '#79ffb1' : healthPct > 0.25 ? '#ffd76a' : '#ff7272';
+          ctx.fillStyle = healthColor;
+          ctx.fillRect(-barWidth / 2 + 1, barY + 1, (barWidth - 2) * healthPct, barHeight - 2);
+        }
+        
+        // Titan charge telegraph
+        if (drone.type === 'titan' && drone.chargeTimer > 0 && !drone.chargeActive) {
+          ctx.strokeStyle = 'rgba(255, 80, 80, 0.75)';
+          ctx.lineWidth = 3;
+          ctx.setLineDash([8, 6]);
+          ctx.beginPath();
+          ctx.arc(0, 0, drone.radius * 2.2, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        
+        // Phantom afterimage trail
+        if (drone.type === 'phantom' && drone.afterimageActive) {
+          ctx.globalAlpha = 0.45;
+          ctx.beginPath();
+          ctx.arc(-drone.radius * 0.8, -drone.radius * 0.5, drone.radius * 0.6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(drone.radius * 0.6, drone.radius * 0.7, drone.radius * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+        
+        // Siphon leech field
+        if (drone.type === 'siphon' && drone.leechField > 0) {
+          const fieldRadius = TILE * 3.2;
+          const fieldAlpha = Math.min(0.28, drone.leechField * 0.1);
+          const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, fieldRadius);
+          gradient.addColorStop(0, `hsla(280, 100%, 62%, ${fieldAlpha})`);
+          gradient.addColorStop(0.6, `hsla(280, 90%, 52%, ${fieldAlpha * 0.5})`);
+          gradient.addColorStop(1, 'hsla(280, 80%, 42%, 0)');
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(0, 0, fieldRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        ctx.restore();
+      }
+      else if (drone.isAfterimage) {
+        // Afterimage rendering - semi-transparent ghost
+        ctx.save();
+        ctx.globalAlpha = 0.55;
+        ctx.shadowBlur = 22;
+        ctx.shadowColor = `hsla(180, 100%, 65%, .65)`;
+        ctx.beginPath();
+        ctx.arc(0, 0, drone.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
       else { ctx.beginPath(); ctx.moveTo(0,-drone.radius*1.25); ctx.lineTo(drone.radius*1.08,drone.radius*.9); ctx.lineTo(0,drone.radius*.45); ctx.lineTo(-drone.radius*1.08,drone.radius*.9); ctx.closePath(); ctx.fill(); }
       ctx.restore(); }); }
